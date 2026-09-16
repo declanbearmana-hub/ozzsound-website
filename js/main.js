@@ -54,3 +54,19 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const mobileCta=document.querySelector('.mobileDateCta'), availability=document.querySelector('#availability');
   if(mobileCta&&availability){const update=()=>{const r=availability.getBoundingClientRect();mobileCta.classList.toggle('hide',r.top<window.innerHeight*.72&&r.bottom>80)};update();window.addEventListener('scroll',update,{passive:true});}
 })();
+
+// Stage 2 reviews: the section stays completely hidden until genuine reviews are added to config.
+(()=>{
+  const section=document.querySelector('#reviews'), grid=document.querySelector('#reviewGrid');
+  const reviews=Array.isArray(cfg.testimonials)?cfg.testimonials.filter(x=>x&&x.quote&&x.name):[];
+  if(!section||!grid||!reviews.length)return;
+  reviews.slice(0,6).forEach(r=>{
+    const card=document.createElement('article'); card.className='reviewCard';
+    const quote=document.createElement('blockquote'); quote.textContent=r.quote;
+    const name=document.createElement('strong'); name.textContent=r.name;
+    const event=document.createElement('small'); event.textContent=r.event||'Ozzsound client';
+    const stars=document.createElement('div'); stars.className='reviewStars'; stars.setAttribute('aria-label','Client review'); stars.textContent='★★★★★';
+    card.append(quote,name,event,stars); grid.appendChild(card);
+  });
+  section.hidden=false;
+})();

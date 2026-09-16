@@ -9,6 +9,10 @@ window.OZZSOUND_CONFIG = {
   bookedDates: [],
   limitedDates: [],
 
+  // Genuine client reviews only. Add entries here and the reviews section appears automatically.
+  // Example: { quote: "...", name: "First name", event: "Wedding · Hobart" }
+  testimonials: [],
+
   // Add real Ozzsound media here as it arrives. Photos and videos can be mixed.
   // Missing files are skipped automatically, so the site still works while the library is empty.
   heroMedia: [
