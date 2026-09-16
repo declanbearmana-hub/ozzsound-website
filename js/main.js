@@ -70,3 +70,18 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   });
   section.hidden=false;
 })();
+
+// Stage 3 mobile menu: full-screen navigation, keyboard friendly and closes after selection.
+(()=>{
+  const toggle=document.querySelector('#menuToggle'), menu=document.querySelector('#mobileMenu');
+  if(!toggle||!menu)return;
+  const setOpen=open=>{
+    toggle.classList.toggle('open',open); menu.classList.toggle('open',open);
+    document.body.classList.toggle('menu-open',open); toggle.setAttribute('aria-expanded',String(open));
+    toggle.setAttribute('aria-label',open?'Close menu':'Open menu'); menu.setAttribute('aria-hidden',String(!open));
+  };
+  toggle.addEventListener('click',()=>setOpen(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false)});
+  addEventListener('resize',()=>{if(innerWidth>800)setOpen(false)},{passive:true});
+})();
