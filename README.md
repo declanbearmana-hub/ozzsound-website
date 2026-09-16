@@ -20,3 +20,7 @@ Missing files listed in the config are automatically skipped, so the site remain
 
 ## Contact details
 Phone, email and social links remain blank in `config/site-config.js` until the correct Ozzsound details are ready.
+
+
+## Stage 4 media
+Add genuine event photos/videos to `assets/images/...` or `assets/videos/`, then list them in `config/site-config.js` under `galleryMedia`. The gallery supports category filters, video playback and a full-screen lightbox. Optional `eventMedia` files become event-card backgrounds automatically. Missing files are ignored.
