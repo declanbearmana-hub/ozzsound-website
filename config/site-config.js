@@ -4,6 +4,11 @@ window.OZZSOUND_CONFIG = {
   facebook: "",
   instagram: "",
 
+  // Availability calendar — use YYYY-MM-DD.
+  // Add/remove dates here, commit, and push to update the public calendar.
+  bookedDates: [],
+  limitedDates: [],
+
   // Add real Ozzsound media here as it arrives. Photos and videos can be mixed.
   // Missing files are skipped automatically, so the site still works while the library is empty.
   heroMedia: [
