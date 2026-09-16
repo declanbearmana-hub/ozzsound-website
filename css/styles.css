@@ -21,3 +21,15 @@
 .brand:hover .logo{transform:scale(1.025);filter:drop-shadow(0 0 13px rgba(242,43,255,.34)) drop-shadow(0 0 18px rgba(40,230,255,.30));}
 @media(max-width:800px){.logo{width:250px}}
 @media(max-width:520px){.logo{width:215px}}
+
+/* Sticky compact navigation: full-size at top, slim after scrolling */
+.nav{transition:height .32s ease,background .32s ease,box-shadow .32s ease,backdrop-filter .32s ease,width .32s ease,padding .32s ease;}
+.nav.nav-scrolled{position:fixed;top:0;height:68px;width:100%;max-width:none;padding-left:max(24px,calc((100vw - 1180px)/2));padding-right:max(24px,calc((100vw - 1180px)/2));background:rgba(5,6,9,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(120,225,255,.12);box-shadow:0 10px 35px rgba(0,0,0,.28);}
+.nav.nav-scrolled .logo{width:155px;filter:drop-shadow(0 0 8px rgba(242,43,255,.22)) drop-shadow(0 0 10px rgba(40,230,255,.20));}
+.nav.nav-scrolled .brand:hover .logo{transform:scale(1.06);filter:drop-shadow(0 0 13px rgba(242,43,255,.42)) drop-shadow(0 0 18px rgba(40,230,255,.38));}
+.nav.nav-scrolled .navlinks{font-size:13px;gap:22px;}
+.nav.nav-scrolled .pill{padding:10px 16px;}
+.brand{cursor:pointer;}
+@media(max-width:800px){.nav.nav-scrolled{height:62px;padding-left:20px;padding-right:20px}.nav.nav-scrolled .logo{width:135px}.nav.nav-scrolled .navlinks{gap:12px}}
+@media(max-width:520px){.nav.nav-scrolled{height:58px;padding-left:14px;padding-right:14px}.nav.nav-scrolled .logo{width:120px}.nav.nav-scrolled .pill{padding:9px 12px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.nav{transition:none}}
