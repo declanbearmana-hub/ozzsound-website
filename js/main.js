@@ -97,3 +97,25 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   document.querySelectorAll('.serviceEnquire').forEach(a=>a.addEventListener('click',()=>applyService(a.dataset.service)));
   gearEnquire?.addEventListener('click',()=>applyService('Gear Hire'));
 })();
+
+// Stage 4.2 — Configurable gear catalogue, quantity, hire period and enquiry cart.
+(()=>{
+  const catalogue=document.querySelector('#hireCatalogue'); if(!catalogue)return;
+  const products=Array.isArray(cfg.gearCatalogue)?cfg.gearCatalogue:[];
+  const cart=new Map(), cartItems=document.querySelector('#hireCartItems'), empty=document.querySelector('#hireCartEmpty');
+  const summary=document.querySelector('#gearSelectionText'), enquire=document.querySelector('#gearEnquire');
+  const period=document.querySelector('#overallHirePeriod'), hireDate=document.querySelector('#gearHireDate');
+  const eventType=document.querySelector('#eventType'), eventDate=document.querySelector('#eventDate'), message=document.querySelector('textarea[name="message"]');
+  const icons={sound:'🔊',lighting:'✦',microphones:'🎤',karaoke:'🎙',dj:'◉'};
+  const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const renderProduct=p=>{const a=document.createElement('article');a.className='hireProduct';a.dataset.category=p.category||'other';a.innerHTML=`<div class="hireProductVisual"><div class="gearFallback">${icons[p.category]||'♫'}</div><small>${esc(p.category)}</small></div><div class="hireProductBody"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="hireControls"><label><span>Qty</span><input class="hireQty" type="number" min="1" max="20" value="1"></label><label><span>Hire period</span><select class="itemPeriod"><option>1 day</option><option>2 days</option><option>Weekend</option><option>3–7 days</option><option>Discuss with us</option></select></label></div><button class="addHire" type="button">Add to hire list +</button></div>`;
+    if(p.image){const im=new Image();im.onload=()=>{const v=a.querySelector('.hireProductVisual');v.querySelector('.gearFallback')?.remove();im.alt=p.name||'Ozzsound hire gear';v.prepend(im)};im.src=p.image}
+    a.querySelector('.addHire').addEventListener('click',()=>{const qty=Math.max(1,Number(a.querySelector('.hireQty').value)||1), per=a.querySelector('.itemPeriod').value;cart.set(p.id,{...p,qty,period:per});sync();a.querySelector('.addHire').textContent='Added ✓';setTimeout(()=>a.querySelector('.addHire').textContent='Update hire list +',900)});return a};
+  products.forEach(p=>catalogue.appendChild(renderProduct(p)));
+  function sync(){cartItems.innerHTML='';const vals=[...cart.values()];empty.hidden=vals.length>0;vals.forEach(x=>{const r=document.createElement('div');r.className='hireCartRow';r.innerHTML=`<strong>${esc(x.name)}</strong><span>Qty ${x.qty}</span><span>${esc(x.period)}</span><button type="button" aria-label="Remove ${esc(x.name)}">×</button>`;r.querySelector('button').onclick=()=>{cart.delete(x.id);sync()};cartItems.appendChild(r)});summary.textContent=vals.length?`${vals.reduce((n,x)=>n+x.qty,0)} item${vals.reduce((n,x)=>n+x.qty,0)===1?'':'s'} · ${vals.length} gear type${vals.length===1?'':'s'} selected`:'Nothing selected yet';enquire.classList.toggle('ready',vals.length>0)}
+  document.querySelector('#clearHire')?.addEventListener('click',()=>{cart.clear();sync()});
+  document.querySelector('#gearFilters')?.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#gearFilters button').forEach(x=>x.classList.toggle('active',x===b));const f=b.dataset.gearFilter;document.querySelectorAll('.hireProduct').forEach(x=>x.classList.toggle('filtered',f!=='all'&&x.dataset.category!==f))});
+  const today=new Date(); if(hireDate)hireDate.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  enquire?.addEventListener('click',()=>{const vals=[...cart.values()];if(eventType)eventType.value='Gear Hire';if(hireDate?.value&&eventDate)eventDate.value=hireDate.value;if(!vals.length||!message)return;const lines=['Gear hire request:',...vals.map(x=>`- ${x.name} — Qty ${x.qty} — ${x.period}`),`Overall hire period: ${period?.value||'Not specified'}`,`Hire date: ${hireDate?.value||'Not specified'}`];const block=lines.join('\n');const old=message.value.replace(/\n*Gear hire request:[\s\S]*$/,'').trim();message.value=(old?old+'\n\n':'')+block});
+  sync();
+})();
