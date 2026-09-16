@@ -28,3 +28,29 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
 // Compact sticky header after leaving the top. Clicking the logo always returns home.
 (()=>{const nav=document.querySelector('.nav'),brand=document.querySelector('.brand');if(!nav)return;const updateNav=()=>nav.classList.toggle('nav-scrolled',window.scrollY>120);updateNav();window.addEventListener('scroll',updateNav,{passive:true});if(brand){brand.addEventListener('click',e=>{e.preventDefault();window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});});}})();
+
+// Stage 1 booking funnel: calendar/event cards prefill the enquiry form.
+(()=>{
+  const form=document.querySelector('#enquiryForm'); if(!form)return;
+  const eventSelect=document.querySelector('#eventType'), dateInput=document.querySelector('#eventDate');
+  const submit=document.querySelector('#submitEnquiry'), status=document.querySelector('#formStatus');
+  const fallback=document.querySelector('#contactFallback');
+  const eventMap={weddings:'Wedding',parties:'Birthday & Party',kids:'Kids & Teens',corporate:'Corporate Event',sporting:'Sporting Event',other:'Other Event'};
+  const today=new Date(); dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{eventSelect.value=eventMap[card.dataset.event]||'';}));
+  document.querySelector('.eventDetail .btn')?.addEventListener('click',()=>{const active=document.querySelector('.event.active');if(active)eventSelect.value=eventMap[active.dataset.event]||'';});
+  document.querySelector('#dateEnquire')?.addEventListener('click',e=>{const k=e.currentTarget.dataset.date;if(k)dateInput.value=k;});
+
+  if(cfg.email){fallback.hidden=true;submit.disabled=false;}else{submit.disabled=true;status.textContent='The enquiry form is ready. Add the new Ozzsound email in site-config.js to activate sending.';}
+
+  form.addEventListener('submit',e=>{
+    e.preventDefault(); if(!form.reportValidity()||!cfg.email)return;
+    const d=new FormData(form), subject=`Ozzsound enquiry — ${d.get('eventType')} — ${d.get('eventDate')}`;
+    const body=[`Name: ${d.get('name')}`,`Phone: ${d.get('phone')}`,`Email: ${d.get('email')||'Not supplied'}`,`Event: ${d.get('eventType')}`,`Date: ${d.get('eventDate')}`,`Venue / suburb: ${d.get('venue')}`,`Approx. guests: ${d.get('guests')||'Not supplied'}`,`Times: ${d.get('times')||'Not supplied'}`,'',`Message:`,d.get('message')||'No additional message'].join('\n');
+    window.location.href=`mailto:${cfg.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+
+  const mobileCta=document.querySelector('.mobileDateCta'), availability=document.querySelector('#availability');
+  if(mobileCta&&availability){const update=()=>{const r=availability.getBoundingClientRect();mobileCta.classList.toggle('hide',r.top<window.innerHeight*.72&&r.bottom>80)};update();window.addEventListener('scroll',update,{passive:true});}
+})();
