@@ -28,7 +28,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 (()=>{const grid=document.querySelector('#calendarGrid');if(!grid)return;const monthLabel=document.querySelector('#calendarMonth'),result=document.querySelector('#dateResult'),enquire=document.querySelector('#dateEnquire');const booked=new Set(cfg.bookedDates||[]),limited=new Set(cfg.limitedDates||[]);const today=new Date();today.setHours(0,0,0,0);let view=new Date(today.getFullYear(),today.getMonth(),1);const pad=n=>String(n).padStart(2,'0'),key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;function render(){grid.innerHTML='';const y=view.getFullYear(),m=view.getMonth();monthLabel.textContent=view.toLocaleDateString('en-AU',{month:'long',year:'numeric'});['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(x=>{const e=document.createElement('div');e.className='weekday';e.textContent=x;grid.appendChild(e)});let first=new Date(y,m,1).getDay();first=(first+6)%7;for(let i=0;i<first;i++){const e=document.createElement('div');e.className='calDay empty';grid.appendChild(e)}const days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const dt=new Date(y,m,d),k=key(y,m,d),b=document.createElement('button');b.type='button';b.className='calDay';const isPast=dt<today,status=booked.has(k)?'booked':limited.has(k)?'limited':'available';b.classList.add(isPast?'past':status);b.disabled=isPast||status==='booked';b.innerHTML=`<span>${d}</span><small>${isPast?'Past':status==='booked'?'Booked':status==='limited'?'Enquire':'Available'}</small>`;b.setAttribute('aria-label',`${dt.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}: ${isPast?'past':status}`);if(!b.disabled)b.addEventListener('click',()=>select(dt,k,status,b));grid.appendChild(b)}}function select(dt,k,status,b){grid.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');const pretty=dt.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});result.classList.add('actionable');result.querySelector('strong').textContent=status==='limited'?`${pretty} — Limited availability`:`${pretty} — Available`;result.querySelector('p').textContent=status==='limited'?'This date may still be possible. Send an enquiry to confirm.':'This date is currently showing as available. Send an enquiry to confirm your booking.';enquire.dataset.date=k;enquire.textContent='Enquire about this date →'}document.querySelector('#calPrev').addEventListener('click',()=>{const prev=new Date(view.getFullYear(),view.getMonth()-1,1);if(prev>=new Date(today.getFullYear(),today.getMonth(),1)){view=prev;render()}});document.querySelector('#calNext').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});render()})();
 
 // Compact sticky header after leaving the top. Clicking the logo always returns home.
-(()=>{const nav=document.querySelector('.nav'),brand=document.querySelector('.brand');if(!nav)return;const updateNav=()=>nav.classList.toggle('nav-scrolled',window.scrollY>120);updateNav();window.addEventListener('scroll',updateNav,{passive:true});if(brand){brand.addEventListener('click',e=>{e.preventDefault();window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});});}})();
+(()=>{const nav=document.querySelector('.nav'),brand=document.querySelector('.brand');if(!nav)return;const updateNav=()=>nav.classList.toggle('nav-scrolled',window.scrollY>120);updateNav();window.addEventListener('scroll',updateNav,{passive:true});if(brand){brand.addEventListener('click',e=>{const href=brand.getAttribute('href')||'';if(href.startsWith('#')){e.preventDefault();window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});}});}})();
 
 // Stage 1 booking funnel: calendar/event cards prefill the enquiry form.
 (()=>{
@@ -119,7 +119,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   gearEnquire?.addEventListener('click',()=>applyService('Gear Hire'));
 })();
 
-// Stage 4.2 — Configurable gear catalogue, quantity, hire period and enquiry cart.
+// Stage 4.2 — Configurable gear catalogue, package hire period and enquiry cart.
 (()=>{
   const catalogue=document.querySelector('#hireCatalogue'); if(!catalogue)return;
   const products=Array.isArray(cfg.gearCatalogue)?cfg.gearCatalogue:[];
@@ -129,14 +129,96 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const eventType=document.querySelector('#eventType'), eventDate=document.querySelector('#eventDate'), message=document.querySelector('textarea[name="message"]');
   const icons={sound:'🔊',lighting:'✦',microphones:'🎤',karaoke:'🎙',dj:'◉'};
   const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const renderProduct=p=>{const a=document.createElement('article');a.className='hireProduct';a.dataset.category=p.category||'other';a.innerHTML=`<div class="hireProductVisual"><div class="gearFallback">${icons[p.category]||'♫'}</div><small>${esc(p.category)}</small></div><div class="hireProductBody"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="hireControls"><label><span>Qty</span><input class="hireQty" type="number" min="1" max="20" value="1"></label><label><span>Hire period</span><select class="itemPeriod"><option>1 day</option><option>2 days</option><option>Weekend</option><option>3–7 days</option><option>Discuss with us</option></select></label></div><button class="addHire" type="button">Add to hire list +</button></div>`;
+  const renderProduct=p=>{const a=document.createElement('article');a.className='hireProduct';a.dataset.category=p.category||'other';a.innerHTML=`<div class="hireProductVisual"><div class="gearFallback">${icons[p.category]||'♫'}</div><small>${esc(p.category)}</small></div><div class="hireProductBody"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="hireControls"><label><span>Qty</span><input class="hireQty" type="number" min="1" max="20" value="1"></label></div><button class="addHire" type="button">Add to hire list +</button></div>`;
     if(p.image){const im=new Image();im.onload=()=>{const v=a.querySelector('.hireProductVisual');v.querySelector('.gearFallback')?.remove();im.alt=p.name||'Ozzsound hire gear';v.prepend(im)};im.src=p.image}
-    a.querySelector('.addHire').addEventListener('click',()=>{const qty=Math.max(1,Number(a.querySelector('.hireQty').value)||1), per=a.querySelector('.itemPeriod').value;cart.set(p.id,{...p,qty,period:per});sync();a.querySelector('.addHire').textContent='Added ✓';setTimeout(()=>a.querySelector('.addHire').textContent='Update hire list +',900)});return a};
+    a.querySelector('.addHire').addEventListener('click',()=>{const qty=Math.max(1,Number(a.querySelector('.hireQty').value)||1);cart.set(p.id,{...p,qty});sync();a.querySelector('.addHire').textContent='Added ✓';setTimeout(()=>a.querySelector('.addHire').textContent='Update hire list +',900)});return a};
   products.forEach(p=>catalogue.appendChild(renderProduct(p)));
-  function sync(){cartItems.innerHTML='';const vals=[...cart.values()];empty.hidden=vals.length>0;vals.forEach(x=>{const r=document.createElement('div');r.className='hireCartRow';r.innerHTML=`<strong>${esc(x.name)}</strong><span>Qty ${x.qty}</span><span>${esc(x.period)}</span><button type="button" aria-label="Remove ${esc(x.name)}">×</button>`;r.querySelector('button').onclick=()=>{cart.delete(x.id);sync()};cartItems.appendChild(r)});summary.textContent=vals.length?`${vals.reduce((n,x)=>n+x.qty,0)} item${vals.reduce((n,x)=>n+x.qty,0)===1?'':'s'} · ${vals.length} gear type${vals.length===1?'':'s'} selected`:'Nothing selected yet';enquire.classList.toggle('ready',vals.length>0)}
+  function sync(){cartItems.innerHTML='';const vals=[...cart.values()];empty.hidden=vals.length>0;vals.forEach(x=>{const r=document.createElement('div');r.className='hireCartRow';r.innerHTML=`<strong>${esc(x.name)}</strong><span>Qty ${x.qty}</span><button type="button" aria-label="Remove ${esc(x.name)}">×</button>`;r.querySelector('button').onclick=()=>{cart.delete(x.id);sync()};cartItems.appendChild(r)});const total=vals.reduce((n,x)=>n+x.qty,0);summary.textContent=vals.length?`${total} item${total===1?'':'s'} · ${vals.length} gear type${vals.length===1?'':'s'} selected`:'Nothing selected yet';enquire.classList.toggle('ready',vals.length>0)}
   document.querySelector('#clearHire')?.addEventListener('click',()=>{cart.clear();sync()});
   document.querySelector('#gearFilters')?.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#gearFilters button').forEach(x=>x.classList.toggle('active',x===b));const f=b.dataset.gearFilter;document.querySelectorAll('.hireProduct').forEach(x=>x.classList.toggle('filtered',f!=='all'&&x.dataset.category!==f))});
-  const today=new Date(); if(hireDate)hireDate.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  enquire?.addEventListener('click',e=>{const vals=[...cart.values()];if(!vals.length){e.preventDefault();summary.textContent='Choose at least one item before continuing';return;}const payload={items:vals,overallPeriod:period?.value||'Not specified',hireDate:hireDate?.value||''};try{localStorage.setItem('ozzsoundGearHire',JSON.stringify(payload));}catch(err){}if(eventType)eventType.value='Gear Hire';if(hireDate?.value&&eventDate)eventDate.value=hireDate.value;if(message){const lines=['Gear hire request:',...vals.map(x=>`- ${x.name} — Qty ${x.qty} — ${x.period}`),`Overall hire period: ${payload.overallPeriod}`,`Hire date: ${payload.hireDate||'Not specified'}`];message.value=lines.join('\n');}});
+
+  // Custom future-only calendar. Weekend package mode highlights and restricts selection to Saturday/Sunday.
+  const calGrid=document.querySelector('#gearCalendarGrid'), calMonth=document.querySelector('#gearCalMonth'), calPrev=document.querySelector('#gearCalPrev'), calNext=document.querySelector('#gearCalNext'), dateDisplay=document.querySelector('#gearDateDisplay'), hint=document.querySelector('#gearCalendarHint');
+  const now=new Date(), today=new Date(now.getFullYear(),now.getMonth(),now.getDate()); let view=new Date(today.getFullYear(),today.getMonth(),1), selected=null;
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const pretty=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+  function packageDates(startDate){
+    if(!startDate)return [];
+    const value=period?.value||'1 day';
+    const out=[];
+    if(value==='Weekend'){
+      // Highlight the selected weekend as one package. Never include a date before today.
+      const day=startDate.getDay();
+      const sat=new Date(startDate); sat.setDate(startDate.getDate()-(day===0?1:0));
+      const sun=new Date(sat); sun.setDate(sat.getDate()+1);
+      [sat,sun].forEach(d=>{if(d>=today)out.push(d)});
+      return out;
+    }
+    const match=value.match(/^(\d+) day/);
+    const count=match?Number(match[1]):1;
+    for(let i=0;i<count;i++){const d=new Date(startDate);d.setDate(startDate.getDate()+i);out.push(d)}
+    return out;
+  }
+  function renderCalendar(){
+    if(!calGrid)return;
+    calGrid.innerHTML='';
+    calMonth.textContent=view.toLocaleDateString('en-AU',{month:'long',year:'numeric'});
+    const first=(view.getDay()+6)%7, days=new Date(view.getFullYear(),view.getMonth()+1,0).getDate(), weekend=period?.value==='Weekend';
+    const range=new Set(packageDates(selected).map(iso));
+    const startKey=selected?iso(selected):'';
+    for(let i=0;i<first;i++){const blank=document.createElement('span');blank.className='calBlank';calGrid.appendChild(blank)}
+    for(let n=1;n<=days;n++){
+      const d=new Date(view.getFullYear(),view.getMonth(),n), past=d<today, isWeekend=d.getDay()===0||d.getDay()===6, blocked=past||(weekend&&!isWeekend), k=iso(d);
+      const inRange=range.has(k), isStart=k===startKey;
+      const b=document.createElement('button');b.type='button';b.textContent=n;
+      b.className='calDay'+(isWeekend?' weekend':'')+(past?' past':'')+(weekend&&isWeekend&&!past?' weekendActive':'')+(inRange?' hireRange':'')+(isStart?' selected rangeStart':'');
+      b.disabled=blocked;b.setAttribute('aria-label',pretty(d)+(blocked?' unavailable':inRange?' included in hire period':''));
+      if(!blocked)b.addEventListener('click',()=>{selected=d;hireDate.value=iso(d);dateDisplay.textContent=pretty(d);renderCalendar()});
+      calGrid.appendChild(b)
+    }
+    calPrev.disabled=view.getFullYear()===today.getFullYear()&&view.getMonth()===today.getMonth();
+    if(hint){
+      if(!selected) hint.textContent=weekend?'Weekend package selected — choose a Saturday or Sunday.':'Choose any date from today onwards.';
+      else {const dates=packageDates(selected), last=dates[dates.length-1]; hint.textContent=weekend?`Weekend package: ${pretty(dates[0])}${last&&iso(last)!==iso(dates[0])?' to '+pretty(last):''}.`:`${period?.value||'1 day'} package: ${pretty(dates[0])}${dates.length>1?' to '+pretty(last):''}.`;}
+    }
+  }
+  calPrev?.addEventListener('click',()=>{const prev=new Date(view.getFullYear(),view.getMonth()-1,1);if(prev>=new Date(today.getFullYear(),today.getMonth(),1)){view=prev;renderCalendar()}});calNext?.addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCalendar()});period?.addEventListener('change',()=>{if(period.value==='Weekend'&&selected&&![0,6].includes(selected.getDay())){selected=null;hireDate.value='';dateDisplay.textContent='Choose a weekend date'}renderCalendar()});renderCalendar();
+
+  enquire?.addEventListener('click',e=>{const vals=[...cart.values()];if(!vals.length){e.preventDefault();summary.textContent='Choose at least one item before continuing';return;}if(!hireDate?.value){e.preventDefault();summary.textContent='Choose a hire date before continuing';document.querySelector('#gearCalendar')?.scrollIntoView({behavior:'smooth',block:'center'});return;}const payload={items:vals,overallPeriod:period?.value||'Not specified',hireDate:hireDate.value};try{localStorage.setItem('ozzsoundGearHire',JSON.stringify(payload));}catch(err){}if(eventType)eventType.value='Gear Hire';if(eventDate)eventDate.value=hireDate.value;if(message){const lines=['Gear hire request:',...vals.map(x=>`- ${x.name} — Qty ${x.qty}`),`Package hire period: ${payload.overallPeriod}`,`Hire date: ${payload.hireDate}`];message.value=lines.join('\n');}});
   sync();
+})();
+
+// Stage 4.4 — Dedicated karaoke builder and enquiry handoff.
+(()=>{
+  const groups=[...document.querySelectorAll('[data-karaoke-group]')];
+  const summary=document.querySelector('#karaokeSummaryText'), cont=document.querySelector('#karaokeContinue'), requests=document.querySelector('#karaokeRequests');
+  if(!groups.length)return;
+  const state={eras:new Set(),genres:new Set(),event:new Set()};
+  const sync=()=>{
+    const eras=[...state.eras], genres=[...state.genres], event=[...state.event][0]||'';
+    const bits=[]; if(eras.length)bits.push(eras.join(', ')); if(genres.length)bits.push(genres.join(', ')); if(event)bits.push(event);
+    summary.textContent=bits.length?bits.join(' · '):'Start choosing your eras and music styles above.';
+    cont.classList.toggle('ready',eras.length>0||genres.length>0||!!event);
+  };
+  groups.forEach(group=>group.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return; const key=group.dataset.karaokeGroup, val=b.dataset.value; const set=state[key];
+    if(group.classList.contains('single')){group.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));set.clear();set.add(val);b.classList.add('selected');}
+    else {set.has(val)?set.delete(val):set.add(val);b.classList.toggle('selected',set.has(val));}
+    sync();
+  }));
+  cont?.addEventListener('click',()=>{const payload={eras:[...state.eras],genres:[...state.genres],event:[...state.event][0]||'',requests:(requests?.value||'').trim()};try{localStorage.setItem('ozzsoundKaraoke',JSON.stringify(payload));}catch(e){}});
+  sync();
+})();
+
+(()=>{
+  const box=document.querySelector('#karaokeReviewContent'), form=document.querySelector('#enquiryForm');
+  if(!box||!form)return;
+  try{
+    const data=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null'); if(!data)return;
+    const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    const rows=[];
+    if(data.eras?.length)rows.push(['Eras',data.eras.join(', ')]); if(data.genres?.length)rows.push(['Genres',data.genres.join(', ')]); if(data.event)rows.push(['Event style',data.event]); if(data.requests)rows.push(['Requests',data.requests]);
+    if(rows.length)box.innerHTML=rows.map(x=>`<div class="gearReviewRow"><strong>${esc(x[0])}</strong><span>${esc(x[1])}</span></div>`).join('');
+    const msg=form.querySelector('textarea[name="message"]'); if(msg){const lines=['Karaoke preferences:',`Eras: ${data.eras?.join(', ')||'Open to suggestions'}`,`Genres: ${data.genres?.join(', ')||'Open to suggestions'}`,`Event style: ${data.event||'Not specified'}`,`Artists / songs / requests: ${data.requests||'None supplied'}`];msg.value=lines.join('\n');}
+  }catch(e){console.warn(e)}
 })();
