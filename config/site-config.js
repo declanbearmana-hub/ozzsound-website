@@ -37,6 +37,7 @@ window.OZZSOUND_CONFIG = {
     parties: "assets/images/parties/card-party.jpg",
     kids: "assets/images/kids/card-kids.jpg",
     corporate: "assets/images/corporate/card-corporate.jpg",
-    sporting: "assets/images/sporting/card-sporting.jpg"
+    sporting: "assets/images/sporting/card-sporting.jpg",
+    karaoke: "assets/images/karaoke/card-karaoke.jpg"
   }
 };
