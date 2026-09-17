@@ -44,13 +44,51 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{eventSelect.value=eventMap[card.dataset.event]||'';}));
   document.querySelector('#dateEnquire')?.addEventListener('click',e=>{const k=e.currentTarget.dataset.date;if(k)dateInput.value=k;});
 
-  if(cfg.email){fallback.hidden=true;submit.disabled=false;}else{submit.disabled=true;status.textContent='The enquiry form is ready. Add the new Ozzsound email in site-config.js to activate sending.';}
+  if(cfg.supabaseUrl&&cfg.supabasePublishableKey){fallback.hidden=true;submit.disabled=false;}else{submit.disabled=true;status.textContent='Secure enquiry storage is not configured yet.';}
 
-  form.addEventListener('submit',e=>{
-    e.preventDefault(); if(!form.reportValidity()||!cfg.email)return;
-    const d=new FormData(form), subject=`Ozzsound enquiry — ${d.get('eventType')} — ${d.get('eventDate')}`;
-    const body=[`Name: ${d.get('name')}`,`Phone: ${d.get('phone')}`,`Email: ${d.get('email')||'Not supplied'}`,`Event: ${d.get('eventType')}`,`Date: ${d.get('eventDate')}`,`Venue / suburb: ${d.get('venue')}`,`Approx. guests: ${d.get('guests')||'Not supplied'}`,`Times: ${d.get('times')||'Not supplied'}`,'',`Message:`,d.get('message')||'No additional message'].join('\n');
-    window.location.href=`mailto:${cfg.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  async function saveEnquiry(record){
+    const url=`${cfg.supabaseUrl}/rest/v1/enquiries`;
+    const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:`Bearer ${cfg.supabasePublishableKey}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(record)});
+    if(!res.ok){let detail='';try{detail=await res.text()}catch(e){};throw new Error(`Enquiry save failed (${res.status}). ${detail}`)}
+  }
+
+  form.addEventListener('submit',async e=>{
+    e.preventDefault(); if(!form.reportValidity()||!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
+    submit.disabled=true;
+    const enquiryId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const d=new FormData(form);
+    let uploads={count:0,paths:[],folder:''};
+    try{
+      if(window.OZZSOUND_UPLOADS){
+        status.textContent='Securely uploading your photos…';
+        uploads=await window.OZZSOUND_UPLOADS(enquiryId,{name:d.get('name')||'',venue:d.get('venue')||'',eventDate:d.get('eventDate')||''});
+      }
+      status.textContent='Saving your enquiry securely…';
+      await saveEnquiry({
+        id:enquiryId,
+        name:String(d.get('name')||''),
+        phone:String(d.get('phone')||''),
+        email:String(d.get('email')||''),
+        event_type:String(d.get('eventType')||''),
+        event_date:String(d.get('eventDate')||''),
+        venue_suburb:String(d.get('venue')||''),
+        approx_guests:d.get('guests')?Number(d.get('guests')):null,
+        event_times:String(d.get('times')||''),
+        message:String(d.get('message')||''),
+        upload_folder:uploads.folder||null,
+        upload_paths:uploads.paths||[],
+        upload_count:uploads.count||0,
+        source:'website'
+      });
+      status.textContent=`Thanks — your enquiry has been securely received. Reference: ${enquiryId.slice(0,8).toUpperCase()}`;
+      status.classList.add('success');
+      submit.textContent='Enquiry sent ✓';
+      form.querySelectorAll('input,select,textarea,button').forEach(el=>{if(el!==submit)el.disabled=true});
+    }catch(err){
+      console.error(err);
+      status.textContent=uploads.count?'Your photos uploaded, but the enquiry details could not be saved. Please contact Ozzsound and quote the upload folder shown in the console, or try again.':'We could not securely send your enquiry. Nothing has been sent — please try again.';
+      submit.disabled=false;
+    }
   });
 
   const mobileCta=document.querySelector('.mobileDateCta'), availability=document.querySelector('#availability');
@@ -224,29 +262,53 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   }catch(e){console.warn(e)}
 })();
 
-// Enquiry photo pickers — front-end ready for secure Supabase storage.
+// Enquiry photo pickers — secure private uploads to Supabase Storage.
 (()=>{
   const form=document.querySelector('#enquiryForm'); if(!form)return;
   const eventType=form.querySelector('[name="eventType"]');
-  const MAX_FILES=50, MAX_BYTES=15*1024*1024, allowed=/^image\/(jpeg|png|webp|heic|heif)$/i;
+  const MAX_FILES=50, MAX_BYTES=10*1024*1024, allowed=/^image\/(jpeg|png|webp|heic|heif)$/i;
   const pickers=[];
-  const setupPicker=(cfg)=>{
-    const wrap=document.querySelector(cfg.wrap), input=document.querySelector(cfg.input), grid=document.querySelector(cfg.grid), count=document.querySelector(cfg.count), note=document.querySelector(cfg.note);
+  const setupPicker=(opts)=>{
+    const wrap=document.querySelector(opts.wrap), input=document.querySelector(opts.input), grid=document.querySelector(opts.grid), count=document.querySelector(opts.count), note=document.querySelector(opts.note);
     if(!wrap||!input||!grid||!count||!note)return null;
     let files=[];
     const render=()=>{
       count.textContent=`${files.length} photo${files.length===1?'':'s'}`; grid.innerHTML='';
       files.forEach((file,i)=>{const card=document.createElement('div');card.className='photoThumb';const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label',`Remove ${file.name}`);remove.dataset.photoRemove=i;if(/^image\/(jpeg|png|webp)$/i.test(file.type)){const img=document.createElement('img');img.alt=file.name;img.src=URL.createObjectURL(file);img.onload=()=>URL.revokeObjectURL(img.src);card.appendChild(img)}else{const ph=document.createElement('div');ph.className='photoNoPreview';ph.textContent=file.name;card.appendChild(ph)}card.appendChild(remove);grid.appendChild(card)});
-      note.textContent=files.length?'Photos selected. Secure upload will be completed through Ozzsound storage when connected.':'Your selected photos will stay with this enquiry once secure Ozzsound storage is connected.';note.className=files.length?'photoUploadNote warn':'photoUploadNote';
+      note.textContent=files.length?'Ready for secure upload when you send your enquiry.':'Photos are optional. Selected photos will be securely stored with your enquiry.';note.className='photoUploadNote';
     };
-    input.addEventListener('change',()=>{for(const f of [...input.files]){if(files.length>=MAX_FILES)break;if(f.size>MAX_BYTES)continue;if(!allowed.test(f.type)&&!f.name.match(/\.(jpe?g|png|webp|heic|heif)$/i))continue;if(!files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))files.push(f)}input.value='';render()});
+    input.addEventListener('change',()=>{let rejected=false;for(const f of [...input.files]){if(files.length>=MAX_FILES){rejected=true;break}if(f.size>MAX_BYTES){rejected=true;continue}if(!allowed.test(f.type)&&!f.name.match(/\.(jpe?g|png|webp|heic|heif)$/i)){rejected=true;continue}if(!files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))files.push(f)}input.value='';render();if(rejected){note.textContent='Some photos were skipped. Use JPG, PNG, WEBP, HEIC or HEIF files up to 10 MB each, maximum 50 photos.';note.className='photoUploadNote warn'}});
     grid.addEventListener('click',e=>{const b=e.target.closest('[data-photo-remove]');if(!b)return;files.splice(Number(b.dataset.photoRemove),1);render()});
-    render(); const api={wrap,note,get files(){return files}}; pickers.push(api); return api;
+    render(); const api={wrap,note,category:opts.category,get files(){return files}}; pickers.push(api); return api;
   };
-  const general=setupPicker({wrap:'#enquiryAttachments',input:'#attachmentPhotos',grid:'#attachmentPreview',count:'#attachmentCount',note:'#attachmentNote'});
-  const wedding=setupPicker({wrap:'#weddingPhotoUpload',input:'#weddingPhotos',grid:'#weddingPhotoPreview',count:'#weddingPhotoCount',note:'#weddingPhotoNote'});
+  setupPicker({wrap:'#enquiryAttachments',input:'#attachmentPhotos',grid:'#attachmentPreview',count:'#attachmentCount',note:'#attachmentNote',category:'attachments'});
+  const wedding=setupPicker({wrap:'#weddingPhotoUpload',input:'#weddingPhotos',grid:'#weddingPhotoPreview',count:'#weddingPhotoCount',note:'#weddingPhotoNote',category:'display-photos'});
   const help=document.querySelector('#attachmentHelp');
   const sync=()=>{const type=eventType?.value||'';if(wedding)wedding.wrap.hidden=type!=='Wedding';if(help){help.textContent=type==='Gear Hire'?'Upload venue/setup photos, access areas, power locations or anything relevant to your hire.':type==='Karaoke'?'Upload venue photos, setup-area photos or anything else that helps us plan your karaoke night.':type==='Wedding'?'Upload venue photos, setup-area photos, inspiration or other planning images. Photos for display on the day can be added separately below.':'Upload venue photos, setup-area photos, event inspiration or anything else that helps Ozzsound plan your event.'}};
   eventType?.addEventListener('change',sync); sync();
-  form.addEventListener('submit',e=>{const selected=pickers.filter(p=>p.files.length&& !p.wrap.hidden);if(!selected.length)return;e.preventDefault();e.stopImmediatePropagation();const status=document.querySelector('#formStatus');if(status)status.textContent='Your photos are selected, but secure storage still needs to be connected before they can be sent. Your photos have not been uploaded yet.';selected.forEach(p=>{p.note.textContent='Photos have NOT been uploaded yet. Connect Supabase storage before accepting photo enquiries.';p.note.className='photoUploadNote warn'});selected[0].wrap.scrollIntoView({behavior:'smooth',block:'center'})},true);
+  const cleanName=name=>String(name||'photo').normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g,'-').replace(/-+/g,'-').slice(-100);
+  const cleanFolderPart=value=>String(value||'').normalize('NFKD').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').replace(/-+/g,'-').slice(0,60);
+  const shortRef=id=>String(id||'').replace(/[^a-zA-Z0-9]/g,'').slice(0,6).toUpperCase()||Math.random().toString(36).slice(2,8).toUpperCase();
+  window.OZZSOUND_UPLOADS=async (enquiryId, details={})=>{
+    const selected=pickers.filter(p=>p.files.length&&!p.wrap.hidden); if(!selected.length)return {count:0,paths:[],folder:''};
+    if(!cfg.supabaseUrl||!cfg.supabasePublishableKey||!cfg.supabaseUploadBucket)throw new Error('Secure upload storage is not configured.');
+    const client=cleanFolderPart(details.name)||'Client';
+    const location=cleanFolderPart(details.venue)||'Location-TBC';
+    const date=cleanFolderPart(details.eventDate)||'Date-TBC';
+    const folder=`${client}_${location}_${date}_${shortRef(enquiryId)}`;
+    const paths=[]; let done=0, total=selected.reduce((n,p)=>n+p.files.length,0);
+    for(const picker of selected){
+      picker.note.textContent='Uploading securely…'; picker.note.className='photoUploadNote';
+      for(const file of picker.files){
+        const id=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+        const path=`${folder}/${picker.category}/${id}-${cleanName(file.name)}`;
+        const url=`${cfg.supabaseUrl}/storage/v1/object/${encodeURIComponent(cfg.supabaseUploadBucket)}/${path.split('/').map(encodeURIComponent).join('/')}`;
+        const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:`Bearer ${cfg.supabasePublishableKey}`,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
+        if(!res.ok){let detail='';try{detail=await res.text()}catch(e){};throw new Error(`Photo upload failed (${res.status}). ${detail}`)}
+        paths.push(path);done++;picker.note.textContent=`Securely uploaded ${done} of ${total} photo${total===1?'':'s'}…`;
+      }
+      picker.note.textContent='Photos securely uploaded with this enquiry.'; picker.note.className='photoUploadNote';
+    }
+    return {count:paths.length,paths,folder};
+  };
 })();

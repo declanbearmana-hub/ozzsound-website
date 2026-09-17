@@ -1,6 +1,10 @@
 window.OZZSOUND_CONFIG = {
+  // Supabase public browser connection. Never put a secret/service-role key here.
+  supabaseUrl: "https://lnritqkwejumknddyfzu.supabase.co",
+  supabasePublishableKey: "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx",
+  supabaseUploadBucket: "event-uploads",
   phone: "",
-  email: "",
+  email: "ozzsound@hotmail.com",
   facebook: "",
   instagram: "",
 

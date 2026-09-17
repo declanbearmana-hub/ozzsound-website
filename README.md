@@ -24,3 +24,6 @@ Phone, email and social links remain blank in `config/site-config.js` until the 
 
 ## Stage 4 media
 Add genuine event photos/videos to `assets/images/...` or `assets/videos/`, then list them in `config/site-config.js` under `galleryMedia`. The gallery supports category filters, video playback and a full-screen lightbox. Optional `eventMedia` files become event-card backgrounds automatically. Missing files are ignored.
+
+## Supabase enquiry storage (V1.7)
+Before deploying the new direct-submit enquiry form, run `SUPABASE-SETUP.sql` once in the Ozzsound Supabase project's SQL Editor. The public website can insert enquiries but has no public read/update/delete policy. Photos remain in the private `event-uploads` bucket and their private paths are saved with the matching enquiry.
