@@ -223,3 +223,30 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     const msg=form.querySelector('textarea[name="message"]'); if(msg){const lines=['Karaoke preferences:',`Eras: ${data.eras?.join(', ')||'Open to suggestions'}`,`Genres: ${data.genres?.join(', ')||'Open to suggestions'}`,`Event style: ${data.event||'Not specified'}`,`Artists / songs / requests: ${data.requests||'None supplied'}`];msg.value=lines.join('\n');}
   }catch(e){console.warn(e)}
 })();
+
+// Enquiry photo pickers — front-end ready for secure Supabase storage.
+(()=>{
+  const form=document.querySelector('#enquiryForm'); if(!form)return;
+  const eventType=form.querySelector('[name="eventType"]');
+  const MAX_FILES=50, MAX_BYTES=15*1024*1024, allowed=/^image\/(jpeg|png|webp|heic|heif)$/i;
+  const pickers=[];
+  const setupPicker=(cfg)=>{
+    const wrap=document.querySelector(cfg.wrap), input=document.querySelector(cfg.input), grid=document.querySelector(cfg.grid), count=document.querySelector(cfg.count), note=document.querySelector(cfg.note);
+    if(!wrap||!input||!grid||!count||!note)return null;
+    let files=[];
+    const render=()=>{
+      count.textContent=`${files.length} photo${files.length===1?'':'s'}`; grid.innerHTML='';
+      files.forEach((file,i)=>{const card=document.createElement('div');card.className='photoThumb';const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label',`Remove ${file.name}`);remove.dataset.photoRemove=i;if(/^image\/(jpeg|png|webp)$/i.test(file.type)){const img=document.createElement('img');img.alt=file.name;img.src=URL.createObjectURL(file);img.onload=()=>URL.revokeObjectURL(img.src);card.appendChild(img)}else{const ph=document.createElement('div');ph.className='photoNoPreview';ph.textContent=file.name;card.appendChild(ph)}card.appendChild(remove);grid.appendChild(card)});
+      note.textContent=files.length?'Photos selected. Secure upload will be completed through Ozzsound storage when connected.':'Your selected photos will stay with this enquiry once secure Ozzsound storage is connected.';note.className=files.length?'photoUploadNote warn':'photoUploadNote';
+    };
+    input.addEventListener('change',()=>{for(const f of [...input.files]){if(files.length>=MAX_FILES)break;if(f.size>MAX_BYTES)continue;if(!allowed.test(f.type)&&!f.name.match(/\.(jpe?g|png|webp|heic|heif)$/i))continue;if(!files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))files.push(f)}input.value='';render()});
+    grid.addEventListener('click',e=>{const b=e.target.closest('[data-photo-remove]');if(!b)return;files.splice(Number(b.dataset.photoRemove),1);render()});
+    render(); const api={wrap,note,get files(){return files}}; pickers.push(api); return api;
+  };
+  const general=setupPicker({wrap:'#enquiryAttachments',input:'#attachmentPhotos',grid:'#attachmentPreview',count:'#attachmentCount',note:'#attachmentNote'});
+  const wedding=setupPicker({wrap:'#weddingPhotoUpload',input:'#weddingPhotos',grid:'#weddingPhotoPreview',count:'#weddingPhotoCount',note:'#weddingPhotoNote'});
+  const help=document.querySelector('#attachmentHelp');
+  const sync=()=>{const type=eventType?.value||'';if(wedding)wedding.wrap.hidden=type!=='Wedding';if(help){help.textContent=type==='Gear Hire'?'Upload venue/setup photos, access areas, power locations or anything relevant to your hire.':type==='Karaoke'?'Upload venue photos, setup-area photos or anything else that helps us plan your karaoke night.':type==='Wedding'?'Upload venue photos, setup-area photos, inspiration or other planning images. Photos for display on the day can be added separately below.':'Upload venue photos, setup-area photos, event inspiration or anything else that helps Ozzsound plan your event.'}};
+  eventType?.addEventListener('change',sync); sync();
+  form.addEventListener('submit',e=>{const selected=pickers.filter(p=>p.files.length&& !p.wrap.hidden);if(!selected.length)return;e.preventDefault();e.stopImmediatePropagation();const status=document.querySelector('#formStatus');if(status)status.textContent='Your photos are selected, but secure storage still needs to be connected before they can be sent. Your photos have not been uploaded yet.';selected.forEach(p=>{p.note.textContent='Photos have NOT been uploaded yet. Connect Supabase storage before accepting photo enquiries.';p.note.className='photoUploadNote warn'});selected[0].wrap.scrollIntoView({behavior:'smooth',block:'center'})},true);
+})();
