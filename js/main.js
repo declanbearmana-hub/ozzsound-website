@@ -17,7 +17,7 @@ function cycleHero(index=0){if(!usable.length)return;const item=usable[index%usa
 Promise.all(candidates.map(async x=>(await probe(x))?x:null)).then(found=>{usable.push(...found.filter(Boolean));if(usable.length)cycleHero(0);});
 
 const details={weddings:['Weddings','Music and atmosphere shaped around your day — from arrivals and formalities through to the dance floor.'],parties:['Birthdays & Parties','Milestones, private functions and celebrations with a soundtrack built around your crowd.'],kids:['Kids & Teens','Age-appropriate entertainment for birthdays, school events, family functions and younger crowds.'],corporate:['Corporate Events','Clean, professional entertainment for staff functions, launches, awards nights and business events.'],sporting:['Sporting Events','Club nights, presentations, celebrations and sporting functions that need energy and reliable sound.'],karaoke:['Karaoke','Hosted karaoke for parties, venues, corporate events and private functions — built around the crowd and the night.'],other:['Your Event','If it needs music, sound and atmosphere, Ozzsound can tailor an entertainment setup around it.']};
-document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{document.querySelectorAll('.event').forEach(x=>x.classList.remove('active'));card.classList.add('active');const d=details[card.dataset.event];document.querySelector('#detailTitle').textContent=d[0];document.querySelector('#detailText').textContent=d[1];document.querySelector('.eventDetail').animate([{opacity:.45,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:320,easing:'ease-out'});}));
+document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{document.querySelectorAll('.event').forEach(x=>x.classList.remove('active'));card.classList.add('active');}));;
 
 document.documentElement.classList.add('js-reveal');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.1});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
@@ -34,13 +34,13 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 (()=>{
   const form=document.querySelector('#enquiryForm'); if(!form)return;
   const eventSelect=document.querySelector('#eventType'), dateInput=document.querySelector('#eventDate');
+  try{const v=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null');if(v){const msg=form.querySelector('textarea[name="message"]');if(msg&&!msg.value){const gear=(v.items||[]).map(x=>x.name).join(', ');msg.value='Virtual Setup created'+(gear?' with: '+gear:'')+'.\nA venue preview was created in the Virtual Setup planning tool.';}}}catch(e){}
   const submit=document.querySelector('#submitEnquiry'), status=document.querySelector('#formStatus');
   const fallback=document.querySelector('#contactFallback');
   const eventMap={weddings:'Wedding',parties:'Birthday & Party',kids:'Kids & Teens',corporate:'Corporate Event',sporting:'Sporting Event',karaoke:'Karaoke',other:'Other Event'};
   const today=new Date(); dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
   document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{eventSelect.value=eventMap[card.dataset.event]||'';}));
-  document.querySelector('.eventDetail .btn')?.addEventListener('click',()=>{const active=document.querySelector('.event.active');if(active)eventSelect.value=eventMap[active.dataset.event]||'';});
   document.querySelector('#dateEnquire')?.addEventListener('click',e=>{const k=e.currentTarget.dataset.date;if(k)dateInput.value=k;});
 
   if(cfg.email){fallback.hidden=true;submit.disabled=false;}else{submit.disabled=true;status.textContent='The enquiry form is ready. Add the new Ozzsound email in site-config.js to activate sending.';}
