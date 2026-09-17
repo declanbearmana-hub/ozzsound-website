@@ -27,3 +27,6 @@ Add genuine event photos/videos to `assets/images/...` or `assets/videos/`, then
 
 ## Supabase enquiry storage (V1.7)
 Before deploying the new direct-submit enquiry form, run `SUPABASE-SETUP.sql` once in the Ozzsound Supabase project's SQL Editor. The public website can insert enquiries but has no public read/update/delete policy. Photos remain in the private `event-uploads` bucket and their private paths are saved with the matching enquiry.
+
+## V1.8 Supabase enquiry alignment
+Run `SUPABASE-SETUP.sql` once in Supabase SQL Editor before deploying this version. The website now uses one `OZZ-XXXXXXXX` reference for the customer message, database row and upload folder, and stores attachment paths, wedding display-photo paths and complete enquiry/builder data.

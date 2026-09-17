@@ -56,31 +56,35 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     e.preventDefault(); if(!form.reportValidity()||!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
     submit.disabled=true;
     const enquiryId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const enquiryRef=`OZZ-${String(enquiryId).replace(/[^a-fA-F0-9]/g,'').slice(0,8).toUpperCase()}`;
     const d=new FormData(form);
-    let uploads={count:0,paths:[],folder:''};
+    let uploads={count:0,paths:[],attachmentPaths:[],displayPhotoPaths:[],folder:''};
     try{
       if(window.OZZSOUND_UPLOADS){
         status.textContent='Securely uploading your photos…';
-        uploads=await window.OZZSOUND_UPLOADS(enquiryId,{name:d.get('name')||'',venue:d.get('venue')||'',eventDate:d.get('eventDate')||''});
+        uploads=await window.OZZSOUND_UPLOADS(enquiryRef,{name:d.get('name')||'',venue:d.get('venue')||'',eventDate:d.get('eventDate')||''});
       }
+      let weddingData=null,karaokeData=null,virtualSetupData=null;
+      try{weddingData=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null')}catch(e){}
+      try{karaokeData=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null')}catch(e){}
+      try{virtualSetupData=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null')}catch(e){}
+      const enquiryData={
+        name:String(d.get('name')||''), phone:String(d.get('phone')||''), email:String(d.get('email')||''),
+        eventType:String(d.get('eventType')||''), eventDate:String(d.get('eventDate')||''), venue:String(d.get('venue')||''),
+        guests:d.get('guests')?Number(d.get('guests')):null, times:String(d.get('times')||''), message:String(d.get('message')||''),
+        wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
+      };
       status.textContent='Saving your enquiry securely…';
       await saveEnquiry({
-        id:enquiryId,
-        name:String(d.get('name')||''),
-        phone:String(d.get('phone')||''),
-        email:String(d.get('email')||''),
-        event_type:String(d.get('eventType')||''),
-        event_date:String(d.get('eventDate')||''),
-        venue_suburb:String(d.get('venue')||''),
-        approx_guests:d.get('guests')?Number(d.get('guests')):null,
-        event_times:String(d.get('times')||''),
-        message:String(d.get('message')||''),
-        upload_folder:uploads.folder||null,
-        upload_paths:uploads.paths||[],
-        upload_count:uploads.count||0,
+        id:enquiryId, enquiry_ref:enquiryRef, enquiry_type:String(d.get('eventType')||''),
+        name:enquiryData.name, phone:enquiryData.phone, email:enquiryData.email,
+        event_type:enquiryData.eventType, event_date:enquiryData.eventDate, venue_suburb:enquiryData.venue,
+        approx_guests:enquiryData.guests, event_times:enquiryData.times, message:enquiryData.message,
+        upload_folder:uploads.folder||null, upload_paths:uploads.paths||[], upload_count:uploads.count||0,
+        attachment_paths:uploads.attachmentPaths||[], display_photo_paths:uploads.displayPhotoPaths||[], enquiry_data:enquiryData,
         source:'website'
       });
-      status.textContent=`Thanks — your enquiry has been securely received. Reference: ${enquiryId.slice(0,8).toUpperCase()}`;
+      status.textContent=`Thanks — your enquiry has been securely received. Reference: ${enquiryRef}`;
       status.classList.add('success');
       submit.textContent='Enquiry sent ✓';
       form.querySelectorAll('input,select,textarea,button').forEach(el=>{if(el!==submit)el.disabled=true});
@@ -290,13 +294,13 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const cleanFolderPart=value=>String(value||'').normalize('NFKD').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').replace(/-+/g,'-').slice(0,60);
   const shortRef=id=>String(id||'').replace(/[^a-zA-Z0-9]/g,'').slice(0,6).toUpperCase()||Math.random().toString(36).slice(2,8).toUpperCase();
   window.OZZSOUND_UPLOADS=async (enquiryId, details={})=>{
-    const selected=pickers.filter(p=>p.files.length&&!p.wrap.hidden); if(!selected.length)return {count:0,paths:[],folder:''};
+    const selected=pickers.filter(p=>p.files.length&&!p.wrap.hidden); if(!selected.length)return {count:0,paths:[],attachmentPaths:[],displayPhotoPaths:[],folder:''};
     if(!cfg.supabaseUrl||!cfg.supabasePublishableKey||!cfg.supabaseUploadBucket)throw new Error('Secure upload storage is not configured.');
     const client=cleanFolderPart(details.name)||'Client';
     const location=cleanFolderPart(details.venue)||'Location-TBC';
     const date=cleanFolderPart(details.eventDate)||'Date-TBC';
     const folder=`${client}_${location}_${date}_${shortRef(enquiryId)}`;
-    const paths=[]; let done=0, total=selected.reduce((n,p)=>n+p.files.length,0);
+    const paths=[], attachmentPaths=[], displayPhotoPaths=[]; let done=0, total=selected.reduce((n,p)=>n+p.files.length,0);
     for(const picker of selected){
       picker.note.textContent='Uploading securely…'; picker.note.className='photoUploadNote';
       for(const file of picker.files){
@@ -305,10 +309,12 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         const url=`${cfg.supabaseUrl}/storage/v1/object/${encodeURIComponent(cfg.supabaseUploadBucket)}/${path.split('/').map(encodeURIComponent).join('/')}`;
         const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:`Bearer ${cfg.supabasePublishableKey}`,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
         if(!res.ok){let detail='';try{detail=await res.text()}catch(e){};throw new Error(`Photo upload failed (${res.status}). ${detail}`)}
-        paths.push(path);done++;picker.note.textContent=`Securely uploaded ${done} of ${total} photo${total===1?'':'s'}…`;
+        paths.push(path);
+        if(picker.category==='display-photos')displayPhotoPaths.push(path);else attachmentPaths.push(path);
+        done++;picker.note.textContent=`Securely uploaded ${done} of ${total} photo${total===1?'':'s'}…`;
       }
       picker.note.textContent='Photos securely uploaded with this enquiry.'; picker.note.className='photoUploadNote';
     }
-    return {count:paths.length,paths,folder};
+    return {count:paths.length,paths,attachmentPaths,displayPhotoPaths,folder};
   };
 })();
