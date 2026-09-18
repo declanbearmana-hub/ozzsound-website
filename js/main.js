@@ -24,8 +24,294 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targe
 
 if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('pointermove',e=>{document.documentElement.style.setProperty('--mx',`${e.clientX/window.innerWidth*100}%`);document.documentElement.style.setProperty('--my',`${e.clientY/window.innerHeight*100}%`);});document.querySelectorAll('.btn').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.035}px,${(e.clientY-r.top-r.height/2)*.055-3}px)`;});b.addEventListener('pointerleave',()=>b.style.transform='');});window.addEventListener('scroll',()=>{const y=window.scrollY;document.documentElement.style.setProperty('--scrollY',`${Math.min(y*.08,42)}px`);},{passive:true});}
 
-// Public availability calendar. Edit bookedDates / limitedDates in config/site-config.js.
-(()=>{const grid=document.querySelector('#calendarGrid');if(!grid)return;const monthLabel=document.querySelector('#calendarMonth'),result=document.querySelector('#dateResult'),enquire=document.querySelector('#dateEnquire');const booked=new Set(cfg.bookedDates||[]),limited=new Set(cfg.limitedDates||[]);const today=new Date();today.setHours(0,0,0,0);let view=new Date(today.getFullYear(),today.getMonth(),1);const pad=n=>String(n).padStart(2,'0'),key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;function render(){grid.innerHTML='';const y=view.getFullYear(),m=view.getMonth();monthLabel.textContent=view.toLocaleDateString('en-AU',{month:'long',year:'numeric'});['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(x=>{const e=document.createElement('div');e.className='weekday';e.textContent=x;grid.appendChild(e)});let first=new Date(y,m,1).getDay();first=(first+6)%7;for(let i=0;i<first;i++){const e=document.createElement('div');e.className='calDay empty';grid.appendChild(e)}const days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const dt=new Date(y,m,d),k=key(y,m,d),b=document.createElement('button');b.type='button';b.className='calDay';const isPast=dt<today,status=booked.has(k)?'booked':limited.has(k)?'limited':'available';b.classList.add(isPast?'past':status);b.disabled=isPast||status==='booked';b.innerHTML=`<span>${d}</span><small>${isPast?'Past':status==='booked'?'Booked':status==='limited'?'Enquire':'Available'}</small>`;b.setAttribute('aria-label',`${dt.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}: ${isPast?'past':status}`);if(!b.disabled)b.addEventListener('click',()=>select(dt,k,status,b));grid.appendChild(b)}}function select(dt,k,status,b){grid.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');const pretty=dt.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long',year:'numeric'});result.classList.add('actionable');result.querySelector('strong').textContent=status==='limited'?`${pretty} — Limited availability`:`${pretty} — Available`;result.querySelector('p').textContent=status==='limited'?'This date may still be possible. Send an enquiry to confirm.':'This date is currently showing as available. Send an enquiry to confirm your booking.';enquire.dataset.date=k;enquire.textContent='Enquire about this date →'}document.querySelector('#calPrev').addEventListener('click',()=>{const prev=new Date(view.getFullYear(),view.getMonth()-1,1);if(prev>=new Date(today.getFullYear(),today.getMonth(),1)){view=prev;render()}});document.querySelector('#calNext').addEventListener('click',()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});render()})();
+// Public availability calendar.
+// Confirmed DJ bookings come from Supabase in real time.
+// A quiet two-minute fallback check updates ONLY this calendar;
+// it never refreshes the page or clears anything a customer has typed.
+(()=>{
+  const grid=document.querySelector('#calendarGrid');
+  if(!grid)return;
+
+  const monthLabel=document.querySelector('#calendarMonth');
+  const result=document.querySelector('#dateResult');
+  const enquire=document.querySelector('#dateEnquire');
+  const manualBooked=new Set(cfg.bookedDates||[]);
+  const liveBooked=new Set();
+  const limited=new Set(cfg.limitedDates||[]);
+  const today=new Date();
+  today.setHours(0,0,0,0);
+
+  let view=new Date(today.getFullYear(),today.getMonth(),1);
+  let selectedKey='';
+  let selectedPretty='';
+  let availabilityClient=null;
+  let availabilityChannel=null;
+
+  const pad=n=>String(n).padStart(2,'0');
+  const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+  const isBooked=k=>manualBooked.has(k)||liveBooked.has(k);
+
+  function render(){
+    grid.innerHTML='';
+
+    const y=view.getFullYear();
+    const m=view.getMonth();
+
+    monthLabel.textContent=view.toLocaleDateString(
+      'en-AU',
+      {month:'long',year:'numeric'}
+    );
+
+    ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(x=>{
+      const e=document.createElement('div');
+      e.className='weekday';
+      e.textContent=x;
+      grid.appendChild(e);
+    });
+
+    let first=new Date(y,m,1).getDay();
+    first=(first+6)%7;
+
+    for(let i=0;i<first;i++){
+      const e=document.createElement('div');
+      e.className='calDay empty';
+      grid.appendChild(e);
+    }
+
+    const days=new Date(y,m+1,0).getDate();
+
+    for(let d=1;d<=days;d++){
+      const dt=new Date(y,m,d);
+      const k=key(y,m,d);
+      const b=document.createElement('button');
+
+      b.type='button';
+      b.className='calDay';
+
+      const isPast=dt<today;
+      const status=isBooked(k)
+        ?'booked'
+        :limited.has(k)
+          ?'limited'
+          :'available';
+
+      b.classList.add(isPast?'past':status);
+      b.disabled=isPast||status==='booked';
+
+      if(selectedKey===k&&!b.disabled){
+        b.classList.add('selected');
+      }
+
+      b.innerHTML=`<span>${d}</span><small>${
+        isPast
+          ?'Past'
+          :status==='booked'
+            ?'Booked'
+            :status==='limited'
+              ?'Enquire'
+              :'Available'
+      }</small>`;
+
+      b.setAttribute(
+        'aria-label',
+        `${dt.toLocaleDateString('en-AU',{
+          day:'numeric',
+          month:'long',
+          year:'numeric'
+        })}: ${isPast?'past':status}`
+      );
+
+      if(!b.disabled){
+        b.addEventListener(
+          'click',
+          ()=>select(dt,k,status,b)
+        );
+      }
+
+      grid.appendChild(b);
+    }
+
+    /*
+      If another booking is confirmed while this page is open,
+      change only the calendar message. Do not touch the enquiry
+      form or any customer-entered values.
+    */
+    if(selectedKey&&isBooked(selectedKey)){
+      if(result){
+        result.classList.remove('actionable');
+
+        const strong=result.querySelector('strong');
+        const paragraph=result.querySelector('p');
+
+        if(strong){
+          strong.textContent=
+            `${selectedPretty||'That date'} — Now booked`;
+        }
+
+        if(paragraph){
+          paragraph.textContent=
+            'Ozzsound has just confirmed a booking for this date. Please choose another available date.';
+        }
+      }
+
+      if(enquire){
+        delete enquire.dataset.date;
+      }
+
+      selectedKey='';
+      selectedPretty='';
+    }
+  }
+
+  function select(dt,k,status,b){
+    grid.querySelectorAll('.selected').forEach(
+      x=>x.classList.remove('selected')
+    );
+
+    b.classList.add('selected');
+
+    const pretty=dt.toLocaleDateString(
+      'en-AU',
+      {
+        weekday:'long',
+        day:'numeric',
+        month:'long',
+        year:'numeric'
+      }
+    );
+
+    selectedKey=k;
+    selectedPretty=pretty;
+
+    result.classList.add('actionable');
+
+    result.querySelector('strong').textContent=
+      status==='limited'
+        ?`${pretty} — Limited availability`
+        :`${pretty} — Available`;
+
+    result.querySelector('p').textContent=
+      status==='limited'
+        ?'This date may still be possible. Send an enquiry to confirm.'
+        :'This date is currently showing as available. Send an enquiry to confirm your booking.';
+
+    enquire.dataset.date=k;
+    enquire.textContent='Enquire about this date →';
+  }
+
+  async function loadConfirmedBookings(){
+    if(!availabilityClient)return;
+
+    const {
+      data,
+      error
+    }=await availabilityClient
+      .from('public_availability_dates')
+      .select('event_date,status')
+      .eq('status','booked');
+
+    if(error){
+      console.error(
+        'Ozzsound availability refresh failed:',
+        error
+      );
+      return;
+    }
+
+    liveBooked.clear();
+
+    (data||[]).forEach(row=>{
+      if(row?.event_date){
+        liveBooked.add(row.event_date);
+      }
+    });
+
+    render();
+  }
+
+  function startLiveAvailability(){
+    if(
+      !window.supabase||
+      !cfg.supabaseUrl||
+      !cfg.supabasePublishableKey
+    ){
+      return;
+    }
+
+    availabilityClient=window.supabase.createClient(
+      cfg.supabaseUrl,
+      cfg.supabasePublishableKey,
+      {
+        auth:{
+          persistSession:false,
+          autoRefreshToken:false,
+          detectSessionInUrl:false
+        }
+      }
+    );
+
+    loadConfirmedBookings();
+
+    availabilityChannel=availabilityClient
+      .channel('ozzsound-public-availability')
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'public_availability_dates'
+        },
+        ()=>loadConfirmedBookings()
+      )
+      .subscribe();
+
+    /*
+      Fallback only: every two minutes re-check booked dates.
+      This is NOT a page refresh and cannot wipe customer form data.
+    */
+    window.setInterval(
+      loadConfirmedBookings,
+      120000
+    );
+  }
+
+  document.querySelector('#calPrev').addEventListener(
+    'click',
+    ()=>{
+      const prev=new Date(
+        view.getFullYear(),
+        view.getMonth()-1,
+        1
+      );
+
+      if(
+        prev>=new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          1
+        )
+      ){
+        view=prev;
+        render();
+      }
+    }
+  );
+
+  document.querySelector('#calNext').addEventListener(
+    'click',
+    ()=>{
+      view=new Date(
+        view.getFullYear(),
+        view.getMonth()+1,
+        1
+      );
+      render();
+    }
+  );
+
+  render();
+  startLiveAvailability();
+})();
 
 // Compact sticky header after leaving the top. Clicking the logo always returns home.
 (()=>{const nav=document.querySelector('.nav'),brand=document.querySelector('.brand');if(!nav)return;const updateNav=()=>nav.classList.toggle('nav-scrolled',window.scrollY>120);updateNav();window.addEventListener('scroll',updateNav,{passive:true});if(brand){brand.addEventListener('click',e=>{const href=brand.getAttribute('href')||'';if(href.startsWith('#')){e.preventDefault();window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});}});}})();
