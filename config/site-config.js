@@ -29,7 +29,7 @@ window.OZZSOUND_CONFIG = {
   ],
 
   // Stage 4 media gallery. Add genuine Ozzsound photos/videos here.
-  // category: wedding, party, kids, corporate, sporting or general.
+  // category: wedding, party, school, seasonal, corporate, sporting or general.
   galleryMedia: [
     // { type: "image", src: "assets/images/weddings/reception-01.jpg", category: "wedding", label: "Wedding reception" },
     // { type: "video", src: "assets/videos/dancefloor-01.mp4", poster: "assets/images/general/dancefloor-poster.jpg", category: "party", label: "Dance floor" }
@@ -50,7 +50,8 @@ window.OZZSOUND_CONFIG = {
   eventMedia: {
     weddings: "assets/images/weddings/card-wedding.jpg",
     parties: "assets/images/parties/card-party.jpg",
-    kids: "assets/images/kids/card-kids.jpg",
+    schools: "assets/images/schools/card-school.jpg",
+    seasonal: "assets/images/seasonal/card-seasonal.jpg",
     corporate: "assets/images/corporate/card-corporate.jpg",
     sporting: "assets/images/sporting/card-sporting.jpg",
     karaoke: "assets/images/karaoke/card-karaoke.jpg"
