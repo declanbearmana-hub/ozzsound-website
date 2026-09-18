@@ -2698,6 +2698,20 @@
     }
 
 
+    function roundCurrency(
+      value
+    ) {
+
+      return Math.round(
+        (
+          Number(value || 0) +
+          Number.EPSILON
+        ) *
+        100
+      ) / 100;
+    }
+
+
     function updateQuoteTotals() {
 
       const subtotal =
@@ -2716,13 +2730,17 @@
 
 
       const gstAmount =
-        gstExclusiveTotal *
-        AUSTRALIAN_GST_RATE;
+        roundCurrency(
+          gstExclusiveTotal *
+          AUSTRALIAN_GST_RATE
+        );
 
 
       const total =
-        gstExclusiveTotal +
-        gstAmount;
+        roundCurrency(
+          gstExclusiveTotal +
+          gstAmount
+        );
 
 
       const subtotalEl =
@@ -3214,13 +3232,17 @@ The automatic customer decline email will be added in the next customer-response
 
 
       const gstAmount =
-        gstExclusiveTotal *
-        gstRate;
+        roundCurrency(
+          gstExclusiveTotal *
+          gstRate
+        );
 
 
       const total =
-        gstExclusiveTotal +
-        gstAmount;
+        roundCurrency(
+          gstExclusiveTotal +
+          gstAmount
+        );
 
 
       const customerComments =
