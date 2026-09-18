@@ -1272,6 +1272,10 @@
       "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx";
 
 
+    const AUSTRALIAN_GST_RATE =
+      0.10;
+
+
     const { createClient } =
       supabase;
 
@@ -2606,7 +2610,7 @@
                 value="${Number(
                   item.unit_price || 0
                 ).toFixed(2)}"
-                aria-label="Unit price"
+                aria-label="Unit price ex GST"
                 onchange="
                   updateQuoteItem(
                     ${index},
@@ -2704,11 +2708,21 @@
         quoteAdjustment();
 
 
-      const total =
+      const gstExclusiveTotal =
         Math.max(
           0,
           subtotal + adjustment
         );
+
+
+      const gstAmount =
+        gstExclusiveTotal *
+        AUSTRALIAN_GST_RATE;
+
+
+      const total =
+        gstExclusiveTotal +
+        gstAmount;
 
 
       const subtotalEl =
@@ -2720,6 +2734,12 @@
       const adjustmentEl =
         document.getElementById(
           "quoteAdjustmentDisplay"
+        );
+
+
+      const gstEl =
+        document.getElementById(
+          "quoteGst"
         );
 
 
@@ -2740,6 +2760,13 @@
 
         adjustmentEl.textContent =
           money(adjustment);
+      }
+
+
+      if (gstEl) {
+
+        gstEl.textContent =
+          money(gstAmount);
       }
 
 
@@ -3175,11 +3202,25 @@ The automatic customer decline email will be added in the next customer-response
         quoteAdjustment();
 
 
-      const total =
+      const gstExclusiveTotal =
         Math.max(
           0,
           subtotal + adjustment
         );
+
+
+      const gstRate =
+        AUSTRALIAN_GST_RATE;
+
+
+      const gstAmount =
+        gstExclusiveTotal *
+        gstRate;
+
+
+      const total =
+        gstExclusiveTotal +
+        gstAmount;
 
 
       const customerComments =
@@ -3230,6 +3271,12 @@ The automatic customer decline email will be added in the next customer-response
 
                 adjustment,
 
+                gst_rate:
+                  gstRate,
+
+                gst_amount:
+                  gstAmount,
+
                 total,
 
                 customer_visible_comments:
@@ -3276,6 +3323,12 @@ The automatic customer decline email will be added in the next customer-response
                 subtotal,
 
                 adjustment,
+
+                gst_rate:
+                  gstRate,
+
+                gst_amount:
+                  gstAmount,
 
                 total,
 
@@ -4161,8 +4214,9 @@ The automatic customer decline email will be added in the next customer-response
 
                 <p>
                   Build the proposed equipment and service list.
-                  Prices stay private until the customer quote
-                  stage is connected.
+                  Enter line-item prices excluding GST. Australian
+                  GST is calculated at 10% and shown separately
+                  before the GST-inclusive total.
                 </p>
 
               </div>
@@ -4218,6 +4272,10 @@ The automatic customer decline email will be added in the next customer-response
 
 
             <div class="info-banner">
+
+              Inventory prices are GST-exclusive.
+              Australian GST is added to the quote at 10%.
+              <br><br>
 
               Inventory currently contains
 
@@ -4277,7 +4335,7 @@ The automatic customer decline email will be added in the next customer-response
               <div>
 
                 <label for="customItemPrice">
-                  Unit price
+                  Unit price (ex GST)
                 </label>
 
                 <input
@@ -4342,7 +4400,7 @@ The automatic customer decline email will be added in the next customer-response
               <div class="summary-row">
 
                 <span>
-                  Subtotal
+                  Subtotal (ex GST)
                 </span>
 
                 <strong id="quoteSubtotal">
@@ -4360,7 +4418,7 @@ The automatic customer decline email will be added in the next customer-response
               >
 
                 <span>
-                  Adjustment / discount
+                  Adjustment / discount (ex GST)
                 </span>
 
                 <input
@@ -4382,10 +4440,23 @@ The automatic customer decline email will be added in the next customer-response
               <div class="summary-row">
 
                 <span>
-                  Adjustment
+                  Adjustment (ex GST)
                 </span>
 
                 <strong id="quoteAdjustmentDisplay">
+                  $0.00
+                </strong>
+
+              </div>
+
+
+              <div class="summary-row">
+
+                <span>
+                  GST (10%)
+                </span>
+
+                <strong id="quoteGst">
                   $0.00
                 </strong>
 
@@ -4400,7 +4471,7 @@ The automatic customer decline email will be added in the next customer-response
               >
 
                 <span>
-                  Total
+                  Total (incl. GST)
                 </span>
 
                 <strong id="quoteTotal">
