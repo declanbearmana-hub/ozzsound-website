@@ -22,7 +22,45 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="css/styles.css?v=20260919-5">
+  <link rel="stylesheet" href="css/styles.css?v=20260919-6">
+
+  <!-- Critical booked-date styling: keep visible even if an older stylesheet is cached -->
+  <style>
+    #calendarGrid .calDay.booked{
+      opacity:1!important;
+      text-decoration:none!important;
+      border:2px solid #f22bff!important;
+      background:
+        radial-gradient(circle at 50% 15%,rgba(242,43,255,.32),transparent 55%),
+        linear-gradient(145deg,rgba(242,43,255,.25),rgba(112,70,255,.16)),
+        #120916!important;
+      color:#fff!important;
+      box-shadow:
+        0 0 0 1px rgba(242,43,255,.20),
+        0 0 24px rgba(242,43,255,.32),
+        inset 0 0 24px rgba(242,43,255,.10)!important;
+    }
+    #calendarGrid .calDay.booked span{
+      color:#fff!important;
+      font-weight:950!important;
+      text-shadow:0 0 12px rgba(242,43,255,.8)!important;
+    }
+    #calendarGrid .calDay.booked small{
+      display:block!important;
+      color:#ff79ef!important;
+      font-weight:950!important;
+      text-decoration:none!important;
+      text-shadow:0 0 10px rgba(242,43,255,.65)!important;
+    }
+    @media(max-width:700px){
+      #calendarGrid .calDay.booked small{
+        font-size:clamp(6px,1.8vw,8px)!important;
+        line-height:1!important;
+        letter-spacing:.02em!important;
+      }
+    }
+  </style>
+
 </head>
 
 
@@ -1658,7 +1696,7 @@
 
 <script src="config/site-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/main.js?v=20260919-4"></script>
+<script src="js/main.js?v=20260919-5"></script>
 
 </body>
 </html>
