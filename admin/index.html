@@ -1593,6 +1593,62 @@
     }
 
 
+    function formatEventTimes(value) {
+
+      if (
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+      ) {
+        return "Not supplied";
+      }
+
+
+      const text =
+        String(value).trim();
+
+
+      /*
+        Older enquiries sometimes used a simple 24-hour value
+        such as 2100. Make those easier to read while keeping
+        the original enquiry intact.
+      */
+      if (/^\d{4}$/.test(text)) {
+
+        const hour24 =
+          Number(text.slice(0, 2));
+
+        const minute =
+          text.slice(2, 4);
+
+
+        if (
+          hour24 >= 0 &&
+          hour24 <= 23 &&
+          Number(minute) >= 0 &&
+          Number(minute) <= 59
+        ) {
+
+          const period =
+            hour24 >= 12
+              ? "PM"
+              : "AM";
+
+          const hour12 =
+            hour24 % 12 || 12;
+
+
+          return escapeHtml(
+            `${hour12}:${minute} ${period} — finish time not supplied`
+          );
+        }
+      }
+
+
+      return escapeHtml(text);
+    }
+
+
     function formatDateTime(value) {
 
       if (!value) {
@@ -1913,6 +1969,8 @@
               venue_suburb,
               approx_guests,
               event_times,
+              event_start_time,
+              event_finish_time,
               message,
               upload_count,
               attachment_paths,
@@ -2803,7 +2861,7 @@
               "bookings"
             )
             .select(
-              "id,enquiry_id,quote_id,event_date,booking_type,status,confirmed_at,created_at"
+              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,created_at"
             )
             .eq(
               "enquiry_id",
@@ -4523,6 +4581,18 @@ The automatic customer decline email will be added in the next customer-response
           event_date:
             data?.event_date ||
             currentEnquiry.event_date,
+          event_start_time:
+            data?.event_start_time ||
+            currentEnquiry.event_start_time ||
+            null,
+          event_finish_time:
+            data?.event_finish_time ||
+            currentEnquiry.event_finish_time ||
+            null,
+          event_times:
+            data?.event_times ||
+            currentEnquiry.event_times ||
+            null,
           booking_type:
             data?.booking_type ||
             "dj",
@@ -4938,7 +5008,7 @@ The automatic customer decline email will be added in the next customer-response
             </div>
 
             <div class="detail-text">
-              ${displayValue(
+              ${formatEventTimes(
                 enquiry.event_times
               )}
             </div>
@@ -5025,6 +5095,16 @@ The automatic customer decline email will be added in the next customer-response
 
                     <br><br>
 
+                    <strong>
+                      Event time:
+                    </strong>
+
+                    ${formatEventTimes(
+                      enquiry.event_times
+                    )}
+
+                    <br><br>
+
                     <button
                       type="button"
                       class="action-button action-save"
@@ -5069,18 +5149,41 @@ The automatic customer decline email will be added in the next customer-response
 
                   <div class="booking-box">
 
+                    <strong>
+                      Booking:
+                    </strong>
+
                     ${escapeHtml(
                       currentBooking.booking_type ||
                       "dj"
                     )}
 
-                    booking ·
+                    <br><br>
+
+                    <strong>
+                      Date:
+                    </strong>
 
                     ${formatDate(
                       currentBooking.event_date
                     )}
 
-                    ·
+                    <br><br>
+
+                    <strong>
+                      Time:
+                    </strong>
+
+                    ${formatEventTimes(
+                      currentBooking.event_times ||
+                      enquiry.event_times
+                    )}
+
+                    <br><br>
+
+                    <strong>
+                      Status:
+                    </strong>
 
                     ${escapeHtml(
                       currentBooking.status ||
