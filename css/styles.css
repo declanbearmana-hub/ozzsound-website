@@ -542,3 +542,8 @@
     font-size:6px;
   }
 }
+
+
+/* Public calendar extended legend */
+.legendAvailableFrom{background:#8f7cff}
+.legendUnavailable{background:#ff647c}
