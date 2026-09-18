@@ -148,3 +148,328 @@
 .weddingPhotoUpload{border:1px solid rgba(94,223,255,.22);border-radius:18px;padding:20px;background:linear-gradient(135deg,rgba(55,216,255,.05),rgba(235,54,255,.05))}.photoUploadHead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px}.photoUploadTitle{display:block;font-weight:800;color:#eef6ff;font-size:16px}.photoUploadHead p,.photoUploadNote{margin:5px 0 0;color:#8795a9;font-size:13px;line-height:1.5}.photoCount{white-space:nowrap;border:1px solid #344155;border-radius:999px;padding:7px 10px;color:#b8c7d9;font-size:12px;font-weight:800}.photoDrop{display:flex!important;align-items:center;justify-content:space-between;gap:14px;border:1px dashed #3b4a61;border-radius:15px;padding:17px 18px;background:#080c12;cursor:pointer;transition:.2s}.photoDrop:hover{border-color:#5edfff;background:rgba(62,217,255,.04)}.photoDrop strong{color:#eef6ff}.photoDrop span{color:#7f8da1;font-size:12px}.photoDrop input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none}.photoPreviewGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:14px}.photoThumb{position:relative;aspect-ratio:1;border:1px solid #273246;border-radius:12px;overflow:hidden;background:#070a0f}.photoThumb img{width:100%;height:100%;object-fit:cover;display:block}.photoThumb button{position:absolute;right:5px;top:5px;width:27px;height:27px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(3,5,9,.82);color:#fff;cursor:pointer;font-weight:900}.photoThumb .photoNoPreview{height:100%;display:grid;place-items:center;padding:8px;text-align:center;color:#9aabc0;font-size:11px}.photoUploadNote.warn{color:#ffc36b}.photoUploadNote.ready{color:#74e6b1}@media(max-width:800px){.photoPreviewGrid{grid-template-columns:repeat(4,1fr)}.photoDrop,.photoUploadHead{align-items:flex-start;flex-direction:column}}@media(max-width:520px){.photoPreviewGrid{grid-template-columns:repeat(3,1fr)}}
 
 .uploadSafetyNotice{margin:9px 2px 0;color:#718096;font-size:11px;line-height:1.45}.uploadSafetyNotice span{margin-right:4px;color:#8fa0b5}.enquiryUpload{margin-top:4px}
+
+
+/* Mobile-first usability pass — 2026-09-19 */
+@media(max-width:800px){
+  /*
+    Keep the existing sticky Ozzsound header, but make it calmer and
+    easier to use on a phone. The menu button remains available at all
+    times while scrolling.
+  */
+  .nav{
+    height:72px;
+    width:calc(100% - 28px);
+  }
+  .nav .logo{
+    width:178px!important;
+    max-width:58vw;
+  }
+  .nav.nav-scrolled{
+    height:60px;
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .nav.nav-scrolled .logo{
+    width:124px!important;
+  }
+  .menuToggle{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+  }
+  .nav.nav-scrolled .menuToggle{
+    width:40px;
+    height:40px;
+    flex-basis:40px;
+  }
+
+  /*
+    The old full-screen menu was visually strong but used a lot of
+    vertical space. This keeps the premium look while making every
+    destination quicker to reach on smaller phones.
+  */
+  .mobileMenuInner{
+    width:calc(100% - 32px);
+    max-width:520px;
+    padding:88px 0 max(28px,env(safe-area-inset-bottom));
+  }
+  .mobileMenuEyebrow{
+    margin-bottom:14px;
+    font-size:9px;
+  }
+  .mobileMenuInner>a{
+    grid-template-columns:34px 1fr;
+    padding:12px 2px;
+    font-size:clamp(22px,6.8vw,30px);
+    line-height:1.05;
+  }
+  .mobileMenuInner>a small{
+    font-size:9px;
+  }
+  .mobileMenuFoot{
+    margin-top:22px;
+    padding-top:18px;
+  }
+
+  section[id]{
+    scroll-margin-top:72px;
+  }
+
+  /*
+    General phone spacing: less dead space, no cramped edges and
+    comfortable tap targets.
+  */
+  section{
+    padding-top:76px;
+    padding-bottom:76px;
+  }
+  .sectionTop{
+    margin-bottom:28px;
+  }
+  .sectionTop h2{
+    font-size:clamp(36px,10vw,50px);
+  }
+  .sectionTop p{
+    margin-top:14px;
+    font-size:15px;
+    line-height:1.6;
+  }
+  .btn{
+    min-height:46px;
+  }
+}
+
+@media(max-width:700px){
+  /*
+    Availability calendar: use almost the full phone width and force
+    every one of the seven columns to shrink cleanly inside the screen.
+  */
+  .availability{
+    padding-top:72px;
+    padding-bottom:72px;
+    overflow:hidden;
+  }
+  .availability>.wrap{
+    width:calc(100% - 20px);
+  }
+  .availability .sectionTop{
+    padding-left:4px;
+    padding-right:4px;
+  }
+  .calendarShell{
+    width:100%;
+    max-width:100%;
+    margin-top:24px;
+    padding:14px 10px 12px;
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .calendarHead{
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .calendarHead h3{
+    min-width:0;
+    font-size:clamp(1.25rem,6vw,1.6rem);
+    line-height:1.1;
+  }
+  .calNav{
+    flex:0 0 auto;
+    gap:7px;
+  }
+  .calNav button{
+    width:42px;
+    height:42px;
+    font-size:19px;
+  }
+  .calendarLegend{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+    margin-bottom:14px;
+    font-size:10px;
+    line-height:1.2;
+  }
+  .calendarLegend span{
+    min-width:0;
+    gap:5px;
+    align-items:flex-start;
+  }
+  .calendarLegend i{
+    width:8px;
+    height:8px;
+    flex:0 0 8px;
+    margin-top:2px;
+  }
+  .calendarGrid{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:4px;
+  }
+  .calendarGrid .weekday{
+    min-width:0;
+    padding:6px 0;
+    overflow:hidden;
+    font-size:9px;
+    letter-spacing:.03em;
+    white-space:nowrap;
+  }
+  .calendarGrid .calDay{
+    box-sizing:border-box;
+    width:100%;
+    min-width:0;
+    min-height:0;
+    aspect-ratio:1;
+    padding:0;
+    border-radius:8px;
+    font-size:13px;
+    line-height:1;
+    touch-action:manipulation;
+  }
+  .calendarGrid .calDay span{
+    display:block;
+    font-size:13px;
+  }
+  .calendarGrid .calDay small{
+    display:none;
+  }
+  .calendarGrid .calDay.available:hover,
+  .calendarGrid .calDay.available.selected,
+  .calendarGrid .calDay.limited:hover,
+  .calendarGrid .calDay.limited.selected{
+    transform:none;
+  }
+  .dateResult{
+    margin-top:14px;
+    padding:14px;
+    gap:12px;
+    border-radius:12px;
+  }
+  .dateResult strong{
+    font-size:1rem;
+  }
+  .dateResult p{
+    font-size:13px;
+    line-height:1.45;
+  }
+  .dateResult.actionable .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  /*
+    Gear-hire calendar gets the same no-overflow treatment.
+  */
+  .gearCalendar{
+    width:100%;
+    max-width:100%;
+    padding:10px 8px;
+    overflow:hidden;
+  }
+  .gearCalendarHead{
+    grid-template-columns:40px minmax(0,1fr) 40px;
+    gap:6px;
+  }
+  .gearCalendarDays,
+  .gearCalendarGrid{
+    width:100%;
+    min-width:0;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:3px;
+  }
+  .gearCalendarDays span{
+    min-width:0;
+    overflow:hidden;
+    font-size:8px;
+  }
+  .gearCalendarGrid .calDay,
+  .gearCalendarGrid .calBlank{
+    width:100%;
+    min-width:0;
+    min-height:0;
+    aspect-ratio:1;
+  }
+
+  /*
+    Forms stay genuinely one-column on phones, including the new
+    start/finish time selectors.
+  */
+  .enquiryForm{
+    padding:18px 14px;
+    border-radius:16px;
+  }
+  .formGrid{
+    gap:15px;
+  }
+  .timePicker{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr);
+    gap:6px;
+  }
+  .timePicker select{
+    padding-left:10px;
+    padding-right:8px;
+  }
+  .formFoot .btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  /*
+    Keep the floating availability action clear of iPhone/Android
+    gesture areas and stop it becoming wider than the viewport.
+  */
+  .mobileDateCta{
+    left:12px;
+    right:12px;
+    bottom:max(12px,env(safe-area-inset-bottom));
+    width:auto;
+    max-width:none;
+    justify-content:center;
+    min-height:48px;
+  }
+}
+
+@media(max-width:390px){
+  .availability>.wrap{
+    width:calc(100% - 12px);
+  }
+  .calendarShell{
+    padding-left:7px;
+    padding-right:7px;
+  }
+  .calendarGrid{
+    gap:3px;
+  }
+  .calendarGrid .weekday{
+    font-size:8px;
+  }
+  .calendarGrid .calDay{
+    border-radius:7px;
+    font-size:12px;
+  }
+  .calendarGrid .calDay span{
+    font-size:12px;
+  }
+  .calendarLegend{
+    font-size:9px;
+  }
+  .mobileMenuInner>a{
+    padding-top:10px;
+    padding-bottom:10px;
+  }
+}
+
+@media(max-width:340px){
+  .calendarGrid{
+    gap:2px;
+  }
+  .calendarGrid .weekday{
+    font-size:7px;
+  }
+  .calendarGrid .calDay{
+    border-radius:6px;
+  }
+}
