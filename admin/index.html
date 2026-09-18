@@ -1786,13 +1786,49 @@ const exportFolderName =
             await response.blob();
 
 
-          const fileHandle =
-            await exportDirectory.getFileHandle(
-              safeFileName(item.name),
-              {
-                create: true
-              }
-            );
+        const originalName =
+  String(item.name || "");
+
+const lastDot =
+  originalName.lastIndexOf(".");
+
+const extension =
+  lastDot > -1
+    ? originalName.slice(lastDot)
+    : "";
+
+const extensionLower =
+  extension.toLowerCase();
+
+const isImage =
+  [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+    ".gif",
+    ".heic",
+    ".heif"
+  ].includes(extensionLower);
+
+const fileNumber =
+  String(
+    selected.indexOf(item) + 1
+  ).padStart(2, "0");
+
+const fileType =
+  isImage ? "Photo" : "File";
+
+const exportFileName =
+  `${clientName} - ${fileType} ${fileNumber}${extension}`;
+
+const fileHandle =
+  await exportDirectory.getFileHandle(
+    safeFileName(exportFileName),
+    {
+      create: true
+    }
+  );
 
 
           const writable =
