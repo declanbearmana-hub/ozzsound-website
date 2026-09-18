@@ -6,14 +6,13 @@
   <title>Ozzsound Admin</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     :root {
       --bg: #07070c;
       --panel: #101018;
       --panel2: #15151f;
+      --panel3: #0b0b12;
       --border: rgba(255,255,255,0.09);
       --text: #ffffff;
       --muted: #9292a3;
@@ -38,8 +37,58 @@
 
     button,
     input,
-    select {
+    select,
+    textarea {
       font: inherit;
+    }
+
+    button {
+      transition:
+        opacity .2s ease,
+        transform .2s ease,
+        background .2s ease;
+    }
+
+    button:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 11px;
+      border: 1px solid #30303e;
+      outline: none;
+      background: #0a0a12;
+      color: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 105px;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.12);
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      color: #d7d7df;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     /* LOGIN */
@@ -70,7 +119,13 @@
       font-size: 34px;
       font-weight: 900;
       letter-spacing: 2px;
-      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      background:
+        linear-gradient(
+          90deg,
+          var(--pink),
+          var(--purple),
+          var(--cyan)
+        );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -84,31 +139,6 @@
       text-transform: uppercase;
     }
 
-    label {
-      display: block;
-      margin: 18px 0 8px;
-      color: #d7d7df;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 14px 15px;
-      border-radius: 11px;
-      border: 1px solid #30303e;
-      outline: none;
-      background: #0a0a12;
-      color: #fff;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px rgba(168,85,247,0.12);
-    }
-
     .primary-button {
       width: 100%;
       margin-top: 24px;
@@ -118,12 +148,13 @@
       cursor: pointer;
       font-weight: 800;
       color: #fff;
-      background: linear-gradient(90deg, #d629d7, #8b4dff, #00bfe8);
-    }
-
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
+      background:
+        linear-gradient(
+          90deg,
+          #d629d7,
+          #8b4dff,
+          #00bfe8
+        );
     }
 
     .message {
@@ -167,7 +198,13 @@
       font-size: 25px;
       font-weight: 900;
       letter-spacing: 1px;
-      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      background:
+        linear-gradient(
+          90deg,
+          var(--pink),
+          var(--purple),
+          var(--cyan)
+        );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -183,14 +220,30 @@
       font-size: 13px;
     }
 
-    .logout-button {
-      padding: 10px 17px;
+    .logout-button,
+    .refresh-button,
+    .secondary-button,
+    .small-button {
       border-radius: 10px;
-      border: 1px solid #343442;
+      border: 1px solid var(--border);
       color: #fff;
-      background: #1c1c27;
+      background: var(--panel2);
       cursor: pointer;
       font-weight: 700;
+    }
+
+    .logout-button,
+    .refresh-button {
+      padding: 10px 17px;
+    }
+
+    .secondary-button {
+      padding: 12px 16px;
+    }
+
+    .small-button {
+      padding: 8px 11px;
+      font-size: 12px;
     }
 
     .admin-content {
@@ -216,16 +269,6 @@
     .page-heading p {
       margin: 8px 0 0;
       color: var(--muted);
-    }
-
-    .refresh-button {
-      padding: 11px 17px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      color: #fff;
-      background: var(--panel2);
-      cursor: pointer;
-      font-weight: 700;
     }
 
     /* STATS */
@@ -279,14 +322,21 @@
 
     .enquiry-card {
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr 1fr 150px;
+      grid-template-columns:
+        1.4fr
+        1fr
+        1fr
+        1fr
+        150px;
       align-items: center;
       gap: 20px;
       padding: 20px 22px;
       border-radius: 16px;
       background: rgba(16,16,24,0.95);
       border: 1px solid var(--border);
-      transition: border-color 0.2s ease, transform 0.2s ease;
+      transition:
+        border-color .2s ease,
+        transform .2s ease;
     }
 
     .enquiry-card:hover {
@@ -311,12 +361,18 @@
       color: #717181;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.7px;
+      letter-spacing: .7px;
     }
 
     .field-value {
       color: #e5e5ed;
       font-size: 14px;
+    }
+
+    .photos {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .status {
@@ -330,59 +386,51 @@
 
     .status-new {
       color: #7debd0;
-      background: rgba(53,230,165,0.12);
-      border: 1px solid rgba(53,230,165,0.25);
+      background: rgba(53,230,165,.12);
+      border: 1px solid rgba(53,230,165,.25);
     }
 
+    .status-reviewing,
     .status-contacted {
       color: #7fdcff;
-      background: rgba(34,211,238,0.12);
-      border: 1px solid rgba(34,211,238,0.25);
+      background: rgba(34,211,238,.12);
+      border: 1px solid rgba(34,211,238,.25);
     }
 
     .status-quoted {
       color: #d2a3ff;
-      background: rgba(168,85,247,0.12);
-      border: 1px solid rgba(168,85,247,0.25);
+      background: rgba(168,85,247,.12);
+      border: 1px solid rgba(168,85,247,.25);
     }
 
     .status-booked {
       color: #ff9ee8;
-      background: rgba(255,56,209,0.12);
-      border: 1px solid rgba(255,56,209,0.25);
+      background: rgba(255,56,209,.12);
+      border: 1px solid rgba(255,56,209,.25);
     }
 
     .status-completed {
       color: #b8b8c5;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
     }
 
+    .status-declined,
     .status-cancelled {
       color: #ff9aaa;
-      background: rgba(255,100,124,0.10);
-      border: 1px solid rgba(255,100,124,0.25);
-    }
-
-    .photos {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 12px;
+      background: rgba(255,100,124,.10);
+      border: 1px solid rgba(255,100,124,.25);
     }
 
     .open-button {
       width: 100%;
       padding: 10px 12px;
       border-radius: 9px;
-      border: 1px solid rgba(168,85,247,0.35);
-      background: rgba(168,85,247,0.10);
+      border: 1px solid rgba(168,85,247,.35);
+      background: rgba(168,85,247,.10);
       color: #d9b6ff;
       cursor: pointer;
       font-weight: 800;
-    }
-
-    .open-button:hover {
-      background: rgba(168,85,247,0.18);
     }
 
     .loading,
@@ -399,8 +447,8 @@
       padding: 22px;
       border-radius: 14px;
       color: #ff9aaa;
-      background: rgba(255,70,100,0.08);
-      border: 1px solid rgba(255,70,100,0.25);
+      background: rgba(255,70,100,.08);
+      border: 1px solid rgba(255,70,100,.25);
     }
 
     /* MODAL */
@@ -412,19 +460,20 @@
       z-index: 100;
       padding: 30px 20px;
       overflow-y: auto;
-      background: rgba(0,0,0,0.78);
+      background: rgba(0,0,0,.78);
       backdrop-filter: blur(8px);
     }
 
     .modal {
       width: 100%;
-      max-width: 850px;
+      max-width: 1120px;
       margin: auto;
       border-radius: 22px;
       overflow: hidden;
       background: #101018;
       border: 1px solid var(--border);
-      box-shadow: 0 30px 100px rgba(0,0,0,0.65);
+      box-shadow:
+        0 30px 100px rgba(0,0,0,.65);
     }
 
     .modal-header {
@@ -433,6 +482,11 @@
       justify-content: space-between;
       gap: 20px;
       border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: -30px;
+      z-index: 5;
+      background: rgba(16,16,24,.97);
+      backdrop-filter: blur(12px);
     }
 
     .modal-header h2 {
@@ -454,16 +508,78 @@
       padding: 26px;
     }
 
+    .workflow-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(168,85,247,.12),
+          rgba(34,211,238,.06)
+        );
+      border: 1px solid rgba(168,85,247,.25);
+    }
+
+    .workflow-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-button {
+      padding: 11px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .action-review {
+      background: rgba(34,211,238,.12);
+      border-color: rgba(34,211,238,.28);
+      color: #9aeaff;
+    }
+
+    .action-decline {
+      background: rgba(255,100,124,.10);
+      border-color: rgba(255,100,124,.28);
+      color: #ff9aaa;
+    }
+
+    .action-save {
+      background:
+        linear-gradient(
+          135deg,
+          #8b4dff,
+          #d629d7
+        );
+      border: 0;
+    }
+
+    .action-ready {
+      background: rgba(168,85,247,.13);
+      border-color: rgba(168,85,247,.4);
+      color: #e0c1ff;
+    }
+
     .detail-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns:
+        repeat(2, 1fr);
       gap: 18px;
     }
 
     .detail-box {
       padding: 16px;
       border-radius: 12px;
-      background: #0b0b12;
+      background: var(--panel3);
       border: 1px solid var(--border);
     }
 
@@ -476,27 +592,318 @@
       color: var(--muted);
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: .8px;
     }
 
     .detail-text {
-      color: #eeeeF4;
+      color: #eeeef4;
       line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
+    .section-card {
+      grid-column: 1 / -1;
+      padding: 20px;
+      border-radius: 16px;
+      background: #0b0b12;
+      border: 1px solid var(--border);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .quote-status {
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #d9b6ff;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.25);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .quote-add-grid {
+      display: grid;
+      grid-template-columns:
+        1.6fr
+        100px
+        140px
+        auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .quote-add-grid label {
+      margin-top: 0;
+    }
+
+    .quote-items {
+      display: grid;
+      gap: 10px;
+    }
+
+    .quote-item {
+      display: grid;
+      grid-template-columns:
+        1.6fr
+        90px
+        130px
+        130px
+        90px;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+    }
+
+    .quote-item-name strong {
+      display: block;
+    }
+
+    .quote-item-name small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .money {
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .remove-button {
+      padding: 9px 10px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,100,124,.25);
+      background: rgba(255,100,124,.08);
+      color: #ff9aaa;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .quote-summary {
+      margin-top: 16px;
+      margin-left: auto;
+      width: 100%;
+      max-width: 420px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: #d8d8e2;
+    }
+
+    .summary-row.total {
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns:
+        1fr
+        1fr;
+      gap: 14px;
+    }
+
+    .info-banner {
+      padding: 13px 15px;
+      margin: 14px 0;
+      border-radius: 11px;
+      color: #b8b8c5;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .call-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 15px;
+      margin-top: 14px;
+      border-radius: 11px;
+      background: rgba(34,211,238,.07);
+      border: 1px solid rgba(34,211,238,.2);
+      color: #c8f5ff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .notes-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .note-row {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+    }
+
+    .note-meta {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .note-body {
+      color: #e9e9ef;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .photo-toolbar {
+      margin: 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(180px,1fr)
+        );
+      gap: 14px;
+    }
+
+    .photo-select-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 7px 10px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.05);
+      color: #d8d8e2;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .photo-select-label input {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      accent-color: var(--purple);
+      cursor: pointer;
+    }
+
+    .photo-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .photo-link {
+      display: block;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #08080e;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .photo-link img {
+      display: block;
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #08080e;
+    }
+
+    .photo-name {
+      padding: 10px 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+      color: #b8b8c5;
+    }
+
+    .file-link {
+      display: flex;
+      min-height: 120px;
+      padding: 18px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 14px;
+      border: 1px solid rgba(168,85,247,.3);
+      background: rgba(168,85,247,.08);
+      color: #d9b6ff;
+      text-decoration: none;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .booking-box {
+      padding: 15px;
+      border-radius: 12px;
+      background: rgba(53,230,165,.07);
+      border: 1px solid rgba(53,230,165,.22);
+      color: #b9f7e5;
+      line-height: 1.55;
+    }
+
     @media (max-width: 1050px) {
       .stats {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+          repeat(2, 1fr);
       }
 
       .enquiry-card {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+          1fr
+          1fr;
+      }
+
+      .quote-item {
+        grid-template-columns:
+          1fr
+          90px
+          120px;
       }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 760px) {
       .admin-header {
         padding: 15px 18px;
       }
@@ -515,7 +922,9 @@
       }
 
       .stats {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+          1fr
+          1fr;
       }
 
       .toolbar {
@@ -526,12 +935,40 @@
         grid-template-columns: 1fr;
       }
 
-      .detail-grid {
+      .detail-grid,
+      .two-col {
         grid-template-columns: 1fr;
       }
 
-      .detail-box.full {
+      .detail-box.full,
+      .section-card {
         grid-column: auto;
+      }
+
+      .quote-add-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quote-item {
+        grid-template-columns:
+          1fr
+          1fr;
+      }
+
+      .quote-item-name {
+        grid-column: 1 / -1;
+      }
+
+      .modal-body {
+        padding: 18px;
+      }
+
+      .modal-backdrop {
+        padding: 12px;
+      }
+
+      .modal-header {
+        top: -12px;
       }
     }
   </style>
@@ -541,16 +978,27 @@
 
   <!-- LOGIN -->
 
-  <div id="loginPage" class="login-page">
+  <div
+    id="loginPage"
+    class="login-page"
+  >
 
     <div class="login-card">
 
-      <h1 class="brand-title">OZZSOUND</h1>
-      <div class="brand-subtitle">Administration Portal</div>
+      <h1 class="brand-title">
+        OZZSOUND
+      </h1>
+
+      <div class="brand-subtitle">
+        Administration Portal
+      </div>
 
       <form id="loginForm">
 
-        <label for="email">Admin Email</label>
+        <label for="email">
+          Admin Email
+        </label>
+
         <input
           id="email"
           type="email"
@@ -559,7 +1007,10 @@
           required
         >
 
-        <label for="password">Password</label>
+        <label for="password">
+          Password
+        </label>
+
         <input
           id="password"
           type="password"
@@ -567,11 +1018,18 @@
           required
         >
 
-        <button id="loginButton" class="primary-button" type="submit">
+        <button
+          id="loginButton"
+          class="primary-button"
+          type="submit"
+        >
           Sign In
         </button>
 
-        <div id="message" class="message"></div>
+        <div
+          id="message"
+          class="message"
+        ></div>
 
       </form>
 
@@ -592,9 +1050,15 @@
 
       <div class="header-right">
 
-        <div id="adminEmail" class="admin-email"></div>
+        <div
+          id="adminEmail"
+          class="admin-email"
+        ></div>
 
-        <button id="logoutButton" class="logout-button">
+        <button
+          id="logoutButton"
+          class="logout-button"
+        >
           Sign Out
         </button>
 
@@ -608,11 +1072,21 @@
       <div class="page-heading">
 
         <div>
-          <h1>Enquiries</h1>
-          <p>Manage Ozzsound website enquiries and upcoming events.</p>
+
+          <h1>
+            Enquiries
+          </h1>
+
+          <p>
+            Review enquiries, prepare quotes and manage Ozzsound bookings.
+          </p>
+
         </div>
 
-        <button id="refreshButton" class="refresh-button">
+        <button
+          id="refreshButton"
+          class="refresh-button"
+        >
           ↻ Refresh
         </button>
 
@@ -622,23 +1096,51 @@
       <section class="stats">
 
         <div class="stat-card">
-          <div class="stat-label">Total Enquiries</div>
-          <div id="totalCount" class="stat-number">0</div>
+          <div class="stat-label">
+            Total Enquiries
+          </div>
+          <div
+            id="totalCount"
+            class="stat-number"
+          >
+            0
+          </div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-label">New</div>
-          <div id="newCount" class="stat-number">0</div>
+          <div class="stat-label">
+            New
+          </div>
+          <div
+            id="newCount"
+            class="stat-number"
+          >
+            0
+          </div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-label">Booked</div>
-          <div id="bookedCount" class="stat-number">0</div>
+          <div class="stat-label">
+            Booked
+          </div>
+          <div
+            id="bookedCount"
+            class="stat-number"
+          >
+            0
+          </div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-label">With Photos</div>
-          <div id="photoCount" class="stat-number">0</div>
+          <div class="stat-label">
+            With Uploads
+          </div>
+          <div
+            id="photoCount"
+            class="stat-number"
+          >
+            0
+          </div>
         </div>
 
       </section>
@@ -653,19 +1155,48 @@
         >
 
         <select id="statusFilter">
-          <option value="all">All statuses</option>
-          <option value="new">New</option>
-          <option value="contacted">Contacted</option>
-          <option value="quoted">Quoted</option>
-          <option value="booked">Booked</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+
+          <option value="all">
+            All statuses
+          </option>
+
+          <option value="new">
+            New
+          </option>
+
+          <option value="reviewing">
+            Reviewing
+          </option>
+
+          <option value="quoted">
+            Quote Ready
+          </option>
+
+          <option value="booked">
+            Booked
+          </option>
+
+          <option value="completed">
+            Completed
+          </option>
+
+          <option value="declined">
+            Declined
+          </option>
+
+          <option value="cancelled">
+            Cancelled
+          </option>
+
         </select>
 
       </section>
 
 
-      <section id="enquiryList" class="enquiry-list">
+      <section
+        id="enquiryList"
+        class="enquiry-list"
+      >
 
         <div class="loading">
           Loading enquiries...
@@ -680,24 +1211,42 @@
 
   <!-- ENQUIRY MODAL -->
 
-  <div id="modalBackdrop" class="modal-backdrop">
+  <div
+    id="modalBackdrop"
+    class="modal-backdrop"
+  >
 
     <div class="modal">
 
       <div class="modal-header">
 
         <div>
-          <h2 id="modalTitle">Enquiry</h2>
-          <div id="modalReference" class="reference"></div>
+
+          <h2 id="modalTitle">
+            Enquiry
+          </h2>
+
+          <div
+            id="modalReference"
+            class="reference"
+          ></div>
+
         </div>
 
-        <button id="closeModal" class="close-button">
+        <button
+          id="closeModal"
+          class="close-button"
+          type="button"
+        >
           ×
         </button>
 
       </div>
 
-      <div id="modalBody" class="modal-body"></div>
+      <div
+        id="modalBody"
+        class="modal-body"
+      ></div>
 
     </div>
 
@@ -706,53 +1255,137 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
   <script>
 
     const SUPABASE_URL =
       "https://lnritqkwejumknddyfzu.supabase.co";
 
+
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx";
 
 
-    const { createClient } = supabase;
+    const { createClient } =
+      supabase;
 
-    const supabaseClient = createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
+
+    const supabaseClient =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
         }
-      }
-    );
+      );
 
 
     let allEnquiries = [];
+    let inventory = [];
+
+    let currentEnquiry = null;
+    let currentQuote = null;
+    let currentQuoteItems = [];
+    let currentNotes = [];
+    let currentBooking = null;
+
+    let currentUserId = null;
+    let deepLinkOpened = false;
 
 
-    const loginPage = document.getElementById("loginPage");
-    const adminArea = document.getElementById("adminArea");
-    const loginForm = document.getElementById("loginForm");
-    const loginButton = document.getElementById("loginButton");
-    const logoutButton = document.getElementById("logoutButton");
-    const message = document.getElementById("message");
-    const adminEmail = document.getElementById("adminEmail");
-    const enquiryList = document.getElementById("enquiryList");
-    const searchInput = document.getElementById("searchInput");
-    const statusFilter = document.getElementById("statusFilter");
-    const refreshButton = document.getElementById("refreshButton");
+    const requestedEnquiryId =
+      new URLSearchParams(
+        window.location.search
+      ).get("enquiry");
 
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalReference = document.getElementById("modalReference");
-    const modalBody = document.getElementById("modalBody");
-    const closeModal = document.getElementById("closeModal");
+
+    const loginPage =
+      document.getElementById(
+        "loginPage"
+      );
+
+    const adminArea =
+      document.getElementById(
+        "adminArea"
+      );
+
+    const loginForm =
+      document.getElementById(
+        "loginForm"
+      );
+
+    const loginButton =
+      document.getElementById(
+        "loginButton"
+      );
+
+    const logoutButton =
+      document.getElementById(
+        "logoutButton"
+      );
+
+    const message =
+      document.getElementById(
+        "message"
+      );
+
+    const adminEmail =
+      document.getElementById(
+        "adminEmail"
+      );
+
+    const enquiryList =
+      document.getElementById(
+        "enquiryList"
+      );
+
+    const searchInput =
+      document.getElementById(
+        "searchInput"
+      );
+
+    const statusFilter =
+      document.getElementById(
+        "statusFilter"
+      );
+
+    const refreshButton =
+      document.getElementById(
+        "refreshButton"
+      );
+
+    const modalBackdrop =
+      document.getElementById(
+        "modalBackdrop"
+      );
+
+    const modalTitle =
+      document.getElementById(
+        "modalTitle"
+      );
+
+    const modalReference =
+      document.getElementById(
+        "modalReference"
+      );
+
+    const modalBody =
+      document.getElementById(
+        "modalBody"
+      );
+
+    const closeModal =
+      document.getElementById(
+        "closeModal"
+      );
 
 
     function escapeHtml(value) {
+
       return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -763,6 +1396,7 @@
 
 
     function displayValue(value) {
+
       if (
         value === null ||
         value === undefined ||
@@ -777,87 +1411,296 @@
 
     function formatDate(value) {
 
-      if (!value) return "Not supplied";
+      if (!value) {
+        return "Not supplied";
+      }
 
-      const parts = String(value).split("-");
+      const parts =
+        String(value).split("-");
 
       if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+        return (
+          `${parts[2]}/${parts[1]}/${parts[0]}`
+        );
       }
 
       return escapeHtml(value);
     }
 
 
-    function normaliseStatus(value) {
+    function formatDateTime(value) {
 
-      const allowed = [
-        "new",
-        "contacted",
-        "quoted",
-        "booked",
-        "completed",
-        "cancelled"
-      ];
+      if (!value) {
+        return "";
+      }
 
-      const status = String(value || "new").toLowerCase();
+      const date =
+        new Date(value);
 
-      return allowed.includes(status) ? status : "new";
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return escapeHtml(value);
+      }
+
+      return date.toLocaleString(
+        "en-AU",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
     }
 
 
-    function showMessage(text, type) {
-      message.textContent = text;
-      message.className = "message " + type;
+    function money(value) {
+
+      return new Intl.NumberFormat(
+        "en-AU",
+        {
+          style: "currency",
+          currency: "AUD"
+        }
+      ).format(
+        Number(value || 0)
+      );
+    }
+
+
+    function normaliseStatus(value) {
+
+      const status =
+        String(
+          value || "new"
+        ).toLowerCase();
+
+
+      if (
+        status === "contacted"
+      ) {
+        return "reviewing";
+      }
+
+
+      const allowed = [
+        "new",
+        "reviewing",
+        "quoted",
+        "booked",
+        "completed",
+        "declined",
+        "cancelled"
+      ];
+
+
+      return allowed.includes(status)
+        ? status
+        : "new";
+    }
+
+
+    function statusLabel(value) {
+
+      const status =
+        normaliseStatus(value);
+
+
+      const labels = {
+        new: "New",
+        reviewing: "Reviewing",
+        quoted: "Quote Ready",
+        booked: "Booked",
+        completed: "Completed",
+        declined: "Declined",
+        cancelled: "Cancelled"
+      };
+
+
+      return (
+        labels[status] ||
+        "New"
+      );
+    }
+
+
+    function pathArray(value) {
+
+      if (!value) {
+        return [];
+      }
+
+
+      if (
+        Array.isArray(value)
+      ) {
+
+        return value.filter(
+          item =>
+            typeof item === "string"
+        );
+      }
+
+
+      if (
+        typeof value === "string"
+      ) {
+
+        try {
+
+          const parsed =
+            JSON.parse(value);
+
+
+          if (
+            Array.isArray(parsed)
+          ) {
+
+            return parsed.filter(
+              item =>
+                typeof item === "string"
+            );
+          }
+
+        } catch (_) {}
+
+
+        return [value];
+      }
+
+
+      return [];
+    }
+
+
+    function safeFileName(name) {
+
+      return String(
+        name ||
+        "Ozzsound-file"
+      )
+        .replace(
+          /[<>:"/\\|?*\x00-\x1F]/g,
+          "_"
+        )
+        .replace(
+          /[. ]+$/g,
+          ""
+        )
+        .slice(
+          0,
+          180
+        ) ||
+        "Ozzsound-file";
+    }
+
+
+    function showMessage(
+      text,
+      type
+    ) {
+
+      message.textContent =
+        text;
+
+      message.className =
+        "message " + type;
     }
 
 
     function clearMessage() {
-      message.textContent = "";
-      message.className = "message";
+
+      message.textContent =
+        "";
+
+      message.className =
+        "message";
     }
 
 
     function showLogin() {
-      adminArea.style.display = "none";
-      loginPage.style.display = "flex";
+
+      adminArea.style.display =
+        "none";
+
+      loginPage.style.display =
+        "flex";
     }
 
 
     function showAdmin(email) {
-      loginPage.style.display = "none";
-      adminArea.style.display = "block";
-      adminEmail.textContent = email;
+
+      loginPage.style.display =
+        "none";
+
+      adminArea.style.display =
+        "block";
+
+      adminEmail.textContent =
+        email;
     }
 
 
-    async function verifyAdmin(user) {
+    async function verifyAdmin(
+      user
+    ) {
 
       if (!user) {
+
         showLogin();
+
         return false;
       }
 
-      const { data, error } =
-        await supabaseClient.rpc("is_admin");
 
-      if (error || data !== true) {
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.rpc(
+          "is_admin"
+        );
 
-        await supabaseClient.auth.signOut();
+
+      if (
+        error ||
+        data !== true
+      ) {
+
+        await supabaseClient
+          .auth
+          .signOut();
+
 
         showLogin();
+
 
         showMessage(
           "Access denied. This account is not an authorised Ozzsound administrator.",
           "error"
         );
 
+
         return false;
       }
 
-      showAdmin(user.email);
+
+      currentUserId =
+        user.id;
+
+
+      showAdmin(
+        user.email
+      );
+
 
       await loadEnquiries();
+
 
       return true;
     }
@@ -868,1066 +1711,4067 @@
       enquiryList.innerHTML =
         '<div class="loading">Loading enquiries...</div>';
 
-      refreshButton.disabled = true;
 
-      const { data, error } =
-        await supabaseClient
-          .from("enquiries")
-          .select(`
-            id,
-            created_at,
-            enquiry_ref,
-            enquiry_type,
-            name,
-            phone,
-            email,
-            event_type,
-            event_date,
-            venue_suburb,
-            approx_guests,
-            event_times,
-            message,
-            upload_count,
-            attachment_paths,
-            display_photo_paths,
-            upload_paths,
-            status
-          `)
-          .order("created_at", { ascending: false });
+      refreshButton.disabled =
+        true;
 
-      refreshButton.disabled = false;
 
-      if (error) {
+      const [
+        enquiryResult,
+        inventoryResult
+      ] =
+        await Promise.all([
 
-        console.error(error);
+          supabaseClient
+            .from(
+              "enquiries"
+            )
+            .select(`
+              id,
+              created_at,
+              enquiry_ref,
+              enquiry_type,
+              name,
+              phone,
+              email,
+              event_type,
+              event_date,
+              venue_suburb,
+              approx_guests,
+              event_times,
+              message,
+              upload_count,
+              attachment_paths,
+              display_photo_paths,
+              upload_paths,
+              status
+            `)
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            ),
+
+
+          supabaseClient
+            .from(
+              "equipment_inventory"
+            )
+            .select(
+              "id,name,category,description,item_type,quantity_owned,track_stock,unit_price,active"
+            )
+            .eq(
+              "active",
+              true
+            )
+            .order(
+              "category",
+              {
+                ascending: true
+              }
+            )
+            .order(
+              "name",
+              {
+                ascending: true
+              }
+            )
+
+        ]);
+
+
+      refreshButton.disabled =
+        false;
+
+
+      if (
+        enquiryResult.error
+      ) {
+
+        console.error(
+          enquiryResult.error
+        );
+
 
         enquiryList.innerHTML =
           '<div class="error-state">Could not load enquiries. Please refresh and try again.</div>';
 
+
         return;
       }
 
-      allEnquiries = data || [];
+
+      if (
+        inventoryResult.error
+      ) {
+
+        console.error(
+          "Could not load inventory:",
+          inventoryResult.error
+        );
+
+        inventory = [];
+
+      } else {
+
+        inventory =
+          inventoryResult.data || [];
+      }
+
+
+      allEnquiries =
+        enquiryResult.data || [];
+
 
       updateStats();
 
       filterEnquiries();
+
+
+      /*
+        EMAIL DIRECT LINK
+
+        If the administrator arrived from:
+        /admin/?enquiry=UUID
+
+        automatically open that enquiry.
+      */
+
+      if (
+        requestedEnquiryId &&
+        !deepLinkOpened
+      ) {
+
+        deepLinkOpened =
+          true;
+
+
+        const found =
+          allEnquiries.some(
+            item =>
+              String(item.id) ===
+              String(
+                requestedEnquiryId
+              )
+          );
+
+
+        if (found) {
+
+          await openEnquiry(
+            requestedEnquiryId
+          );
+        }
+      }
     }
 
 
     function updateStats() {
 
-      const total = allEnquiries.length;
+      const total =
+        allEnquiries.length;
+
 
       const newTotal =
         allEnquiries.filter(
-          enquiry => normaliseStatus(enquiry.status) === "new"
+          enquiry =>
+            normaliseStatus(
+              enquiry.status
+            ) === "new"
         ).length;
+
 
       const bookedTotal =
         allEnquiries.filter(
-          enquiry => normaliseStatus(enquiry.status) === "booked"
+          enquiry =>
+            normaliseStatus(
+              enquiry.status
+            ) === "booked"
         ).length;
+
 
       const withPhotos =
         allEnquiries.filter(
-          enquiry => Number(enquiry.upload_count || 0) > 0
+          enquiry =>
+            Number(
+              enquiry.upload_count || 0
+            ) > 0
         ).length;
 
-      document.getElementById("totalCount").textContent = total;
-      document.getElementById("newCount").textContent = newTotal;
-      document.getElementById("bookedCount").textContent = bookedTotal;
-      document.getElementById("photoCount").textContent = withPhotos;
+
+      document.getElementById(
+        "totalCount"
+      ).textContent =
+        total;
+
+
+      document.getElementById(
+        "newCount"
+      ).textContent =
+        newTotal;
+
+
+      document.getElementById(
+        "bookedCount"
+      ).textContent =
+        bookedTotal;
+
+
+      document.getElementById(
+        "photoCount"
+      ).textContent =
+        withPhotos;
     }
 
 
     function filterEnquiries() {
 
       const search =
-        searchInput.value.trim().toLowerCase();
+        searchInput
+          .value
+          .trim()
+          .toLowerCase();
+
 
       const selectedStatus =
         statusFilter.value;
 
+
       const filtered =
-        allEnquiries.filter(enquiry => {
+        allEnquiries.filter(
+          enquiry => {
 
-          const status =
-            normaliseStatus(enquiry.status);
+            const status =
+              normaliseStatus(
+                enquiry.status
+              );
 
-          const searchableText = [
-            enquiry.name,
-            enquiry.enquiry_ref,
-            enquiry.event_type,
-            enquiry.enquiry_type,
-            enquiry.venue_suburb,
-            enquiry.email,
-            enquiry.phone
-          ]
-            .join(" ")
-            .toLowerCase();
 
-          const matchesSearch =
-            !search || searchableText.includes(search);
+            const searchableText = [
+              enquiry.name,
+              enquiry.enquiry_ref,
+              enquiry.event_type,
+              enquiry.enquiry_type,
+              enquiry.venue_suburb,
+              enquiry.email,
+              enquiry.phone
+            ]
+              .join(" ")
+              .toLowerCase();
 
-          const matchesStatus =
-            selectedStatus === "all" ||
-            status === selectedStatus;
 
-          return matchesSearch && matchesStatus;
-        });
+            const matchesSearch =
+              !search ||
+              searchableText.includes(
+                search
+              );
 
-      renderEnquiries(filtered);
+
+            const matchesStatus =
+              selectedStatus === "all" ||
+              status === selectedStatus;
+
+
+            return (
+              matchesSearch &&
+              matchesStatus
+            );
+          }
+        );
+
+
+      renderEnquiries(
+        filtered
+      );
     }
 
 
-    function renderEnquiries(enquiries) {
+    function renderEnquiries(
+      enquiries
+    ) {
 
-      if (!enquiries.length) {
+      if (
+        !enquiries.length
+      ) {
 
         enquiryList.innerHTML =
           '<div class="empty-state">No enquiries match your current search or filter.</div>';
 
+
         return;
       }
 
+
       enquiryList.innerHTML =
-        enquiries.map(enquiry => {
+        enquiries.map(
+          enquiry => {
 
-          const status =
-            normaliseStatus(enquiry.status);
+            const status =
+              normaliseStatus(
+                enquiry.status
+              );
 
-          const eventType =
-            enquiry.event_type ||
-            enquiry.enquiry_type ||
-            "Not supplied";
 
-          const photos =
-            Number(enquiry.upload_count || 0);
+            const eventType =
+              enquiry.event_type ||
+              enquiry.enquiry_type ||
+              "Not supplied";
 
-          return `
-            <article class="enquiry-card">
 
-              <div>
-                <div class="client-name">
-                  ${displayValue(enquiry.name)}
+            const photos =
+              Number(
+                enquiry.upload_count || 0
+              );
+
+
+            return `
+              <article class="enquiry-card">
+
+                <div>
+
+                  <div class="client-name">
+                    ${displayValue(
+                      enquiry.name
+                    )}
+                  </div>
+
+                  <div class="reference">
+                    ${displayValue(
+                      enquiry.enquiry_ref
+                    )}
+                  </div>
+
+                  <div class="photos">
+                    ${photos}
+                    uploaded file${photos === 1 ? "" : "s"}
+                  </div>
+
                 </div>
 
-                <div class="reference">
-                  ${displayValue(enquiry.enquiry_ref)}
+
+                <div>
+
+                  <div class="field-label">
+                    Event
+                  </div>
+
+                  <div class="field-value">
+                    ${displayValue(
+                      eventType
+                    )}
+                  </div>
+
                 </div>
 
-                <div class="photos">
-                  ${photos} uploaded file${photos === 1 ? "" : "s"}
-                </div>
-              </div>
 
-              <div>
-                <div class="field-label">Event</div>
-                <div class="field-value">
-                  ${displayValue(eventType)}
-                </div>
-              </div>
+                <div>
 
-              <div>
-                <div class="field-label">Event Date</div>
-                <div class="field-value">
-                  ${formatDate(enquiry.event_date)}
-                </div>
-              </div>
+                  <div class="field-label">
+                    Event Date
+                  </div>
 
-              <div>
-                <div class="field-label">Venue / Suburb</div>
-                <div class="field-value">
-                  ${displayValue(enquiry.venue_suburb)}
+                  <div class="field-value">
+                    ${formatDate(
+                      enquiry.event_date
+                    )}
+                  </div>
+
                 </div>
 
-                <div style="margin-top:9px;">
-                  <span class="status status-${status}">
-                    ${escapeHtml(status)}
-                  </span>
+
+                <div>
+
+                  <div class="field-label">
+                    Venue / Suburb
+                  </div>
+
+                  <div class="field-value">
+                    ${displayValue(
+                      enquiry.venue_suburb
+                    )}
+                  </div>
+
+                  <div
+                    style="
+                      margin-top:9px;
+                    "
+                  >
+
+                    <span
+                      class="
+                        status
+                        status-${status}
+                      "
+                    >
+                      ${escapeHtml(
+                        statusLabel(
+                          status
+                        )
+                      )}
+                    </span>
+
+                  </div>
+
                 </div>
-              </div>
 
-              <div>
-                <button
-                  class="open-button"
-                  onclick="openEnquiry('${escapeHtml(enquiry.id)}')"
-                >
-                  Open Enquiry
-                </button>
-              </div>
 
-            </article>
-          `;
-        })
+                <div>
+
+                  <button
+                    class="open-button"
+                    type="button"
+                    onclick="
+                      openEnquiry(
+                        '${escapeHtml(
+                          enquiry.id
+                        )}'
+                      )
+                    "
+                  >
+                    Open Enquiry
+                  </button>
+
+                </div>
+
+              </article>
+            `;
+          }
+        )
         .join("");
     }
 
-async function openEnquiry(id) {
 
-  const enquiry =
-    allEnquiries.find(item => String(item.id) === String(id));
+    async function loadEnquiryWorkflow(
+      enquiryId
+    ) {
 
-  if (!enquiry) return;
+      const [
+        quoteResult,
+        notesResult,
+        bookingResult
+      ] =
+        await Promise.all([
 
-  const eventType =
-    enquiry.event_type ||
-    enquiry.enquiry_type ||
-    "Not supplied";
-
-  modalTitle.textContent =
-    enquiry.name || "Customer Enquiry";
-
-  modalReference.textContent =
-    enquiry.enquiry_ref || "";
-
-  modalBody.innerHTML = `
-    <div class="detail-grid">
-
-      <div class="detail-box">
-        <div class="detail-title">Event Type</div>
-        <div class="detail-text">
-          ${displayValue(eventType)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Event Date</div>
-        <div class="detail-text">
-          ${formatDate(enquiry.event_date)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Phone</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.phone)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Email</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.email)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Venue / Suburb</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.venue_suburb)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Approx. Guests</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.approx_guests)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Event Times</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.event_times)}
-        </div>
-      </div>
-
-      <div class="detail-box">
-        <div class="detail-title">Uploaded Files</div>
-        <div class="detail-text">
-          ${Number(enquiry.upload_count || 0)}
-        </div>
-      </div>
-
-      <div class="detail-box full">
-        <div class="detail-title">Customer Message</div>
-        <div class="detail-text">
-          ${displayValue(enquiry.message)}
-        </div>
-      </div>
-
-      <div class="detail-box full">
-
-        <div class="detail-title">
-          Venue Photos & Uploads
-        </div>
-<div
-  id="uploadExportControls"
-  style="
-    margin-top:14px;
-    margin-bottom:14px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-  "
->
-
-  <label
-    style="
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:10px;
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.10);
-      color:#ffffff;
-      cursor:pointer;
-      user-select:none;
-      font-size:13px;
-      font-weight:700;
-    "
-  >
-    <input
-      type="checkbox"
-      id="selectAllUploads"
-      style="
-        width:18px;
-        height:18px;
-        accent-color:#a855f7;
-        cursor:pointer;
-      "
-    >
-    Select All
-  </label>
-
-  <button
-    type="button"
-    id="downloadSelectedUploads"
-    style="
-      padding:11px 16px;
-      border:0;
-      border-radius:10px;
-      background:linear-gradient(135deg,#a855f7,#ff38d1);
-      color:#ffffff;
-      font-weight:800;
-      cursor:pointer;
-    "
-  >
-    Download Selected
-  </button>
-
-  <button
-    type="button"
-    id="saveSelectedUploads"
-    style="
-      padding:11px 16px;
-      border:1px solid rgba(168,85,247,0.55);
-      border-radius:10px;
-      background:rgba(168,85,247,0.10);
-      color:#d9b6ff;
-      font-weight:800;
-      cursor:pointer;
-    "
-  >
-    Save to Folder / USB
-  </button>
-
-  <span
-    id="selectedUploadCount"
-    style="
-      color:#9292a3;
-      font-size:13px;
-    "
-  >
-    0 selected
-  </span>
-
-</div>
-        <div
-          id="enquiryPhotoGallery"
-          style="
-            margin-top:14px;
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-            gap:14px;
-          "
-        >
-          <div style="color:#9292a3;">
-            Loading customer uploads...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  `;
-
-  modalBackdrop.style.display = "flex";
+          supabaseClient
+            .from(
+              "quotes"
+            )
+            .select("*")
+            .eq(
+              "enquiry_id",
+              enquiryId
+            )
+            .order(
+              "version",
+              {
+                ascending: false
+              }
+            )
+            .limit(1),
 
 
-  const gallery =
-    document.getElementById("enquiryPhotoGallery");
+          supabaseClient
+            .from(
+              "enquiry_notes"
+            )
+            .select(
+              "id,note_type,body,created_at"
+            )
+            .eq(
+              "enquiry_id",
+              enquiryId
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            ),
 
 
-  function pathArray(value) {
+          supabaseClient
+            .from(
+              "bookings"
+            )
+            .select(
+              "id,enquiry_id,quote_id,event_date,booking_type,status,confirmed_at,created_at"
+            )
+            .eq(
+              "enquiry_id",
+              enquiryId
+            )
+            .limit(1)
 
-    if (!value) return [];
+        ]);
 
-    if (Array.isArray(value)) {
-      return value.filter(item => typeof item === "string");
-    }
 
-    if (typeof value === "string") {
+      if (
+        quoteResult.error
+      ) {
 
-      try {
-        const parsed = JSON.parse(value);
+        console.error(
+          "Quote load error:",
+          quoteResult.error
+        );
+      }
 
-        if (Array.isArray(parsed)) {
-          return parsed.filter(item => typeof item === "string");
+
+      if (
+        notesResult.error
+      ) {
+
+        console.error(
+          "Notes load error:",
+          notesResult.error
+        );
+      }
+
+
+      if (
+        bookingResult.error
+      ) {
+
+        console.error(
+          "Booking load error:",
+          bookingResult.error
+        );
+      }
+
+
+      currentQuote =
+        quoteResult.data?.[0] ||
+        null;
+
+
+      currentNotes =
+        notesResult.data ||
+        [];
+
+
+      currentBooking =
+        bookingResult.data?.[0] ||
+        null;
+
+
+      currentQuoteItems =
+        [];
+
+
+      if (
+        currentQuote
+      ) {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from(
+              "quote_items"
+            )
+            .select(
+              "id,inventory_id,item_name,item_type,quantity,unit_price,line_total,source,is_suggestion,notes,sort_order"
+            )
+            .eq(
+              "quote_id",
+              currentQuote.id
+            )
+            .order(
+              "sort_order",
+              {
+                ascending: true
+              }
+            );
+
+
+        if (error) {
+
+          console.error(
+            "Quote item load error:",
+            error
+          );
+
+        } else {
+
+          currentQuoteItems =
+            (data || []).map(
+              item => ({
+                ...item,
+
+                quantity:
+                  Number(
+                    item.quantity || 1
+                  ),
+
+                unit_price:
+                  Number(
+                    item.unit_price || 0
+                  )
+              })
+            );
         }
-      } catch (_) {}
-
-      return [value];
+      }
     }
 
-    return [];
-  }
+
+    function venuePathsFor(
+      enquiry
+    ) {
+
+      const directVenue =
+        pathArray(
+          enquiry.attachment_paths
+        );
 
 
-  const filePaths = [
-    ...pathArray(enquiry.display_photo_paths),
-    ...pathArray(enquiry.attachment_paths),
-    ...pathArray(enquiry.upload_paths)
-  ];
+      if (
+        directVenue.length
+      ) {
+
+        return [
+          ...new Set(
+            directVenue
+          )
+        ];
+      }
 
 
-  const uniquePaths =
-    [...new Set(filePaths.filter(Boolean))];
+      /*
+        Legacy fallback:
+        if attachment_paths is empty,
+        use upload_paths but remove
+        known wedding-display photos.
+      */
+
+      const allUploads =
+        pathArray(
+          enquiry.upload_paths
+        );
 
 
-  if (!uniquePaths.length) {
-
-    gallery.innerHTML = `
-      <div style="color:#9292a3;">
-        No uploaded files are attached to this enquiry.
-      </div>
-    `;
-
-    return;
-  }
+      const display =
+        new Set(
+          pathArray(
+            enquiry.display_photo_paths
+          )
+        );
 
 
-  const { data, error } =
-    await supabaseClient
-      .storage
-      .from("event-uploads")
-      .createSignedUrls(
-        uniquePaths,
-        3600
+      return [
+        ...new Set(
+          allUploads.filter(
+            path =>
+              !display.has(path)
+          )
+        )
+      ];
+    }
+
+
+    function displayPhotoPathsFor(
+      enquiry
+    ) {
+
+      return [
+        ...new Set(
+          pathArray(
+            enquiry.display_photo_paths
+          )
+        )
+      ];
+    }
+
+
+    function inventoryOptions() {
+
+      if (
+        !inventory.length
+      ) {
+
+        return `
+          <option value="">
+            Inventory empty — stocktake to be added
+          </option>
+        `;
+      }
+
+
+      const groups = {};
+
+
+      inventory.forEach(
+        item => {
+
+          const category =
+            item.category ||
+            "Other";
+
+
+          if (
+            !groups[category]
+          ) {
+
+            groups[category] =
+              [];
+          }
+
+
+          groups[category].push(
+            item
+          );
+        }
       );
 
 
-  if (error) {
+      return `
+        <option value="">
+          Choose equipment / service
+        </option>
+      ` +
+      Object.entries(
+        groups
+      )
+        .map(
+          ([category, items]) => `
 
-    console.error(
-      "Could not create signed upload URLs:",
-      error
-    );
+            <optgroup
+              label="${escapeHtml(
+                category
+              )}"
+            >
 
-    gallery.innerHTML = `
-      <div style="color:#ff9aaa;">
-        The uploaded files could not be loaded.
-      </div>
-    `;
+              ${items.map(
+                item => `
 
-    return;
-  }
+                  <option
+                    value="${escapeHtml(
+                      item.id
+                    )}"
+                  >
+                    ${escapeHtml(
+                      item.name
+                    )}
+                    —
+                    ${money(
+                      item.unit_price
+                    )}
+                  </option>
 
+                `
+              ).join("")}
 
-  const files =
-    (data || []).filter(
-      file => file && file.signedUrl
-    );
+            </optgroup>
 
-
-  if (!files.length) {
-
-    gallery.innerHTML = `
-      <div style="color:#9292a3;">
-        No viewable uploads were found.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  gallery.innerHTML =
-    files.map(file => {
-
-      const path =
-        file.path || "";
-
-      const fileName =
-        path.split("/").pop() || "Customer upload";
-
-      const extension =
-        fileName
-          .split(".")
-          .pop()
-          .toLowerCase();
-
-      const browserImage =
-        [
-          "jpg",
-          "jpeg",
-          "png",
-          "webp",
-          "gif"
-        ].includes(extension);
-
-
- if (browserImage) {
-
-  return `
-    <div
-      style="
-        position:relative;
-        display:flex;
-        flex-direction:column;
-        gap:8px;
-      "
-    >
-
-      <label
-        style="
-          display:flex;
-          align-items:center;
-          gap:8px;
-          padding:7px 10px;
-          border-radius:9px;
-          background:rgba(255,255,255,0.05);
-          color:#d8d8e2;
-          font-size:13px;
-          cursor:pointer;
-          user-select:none;
-        "
-      >
-        <input
-          type="checkbox"
-          class="upload-select"
-          data-url="${escapeHtml(file.signedUrl)}"
-          data-name="${escapeHtml(fileName)}"
-          style="
-            width:18px;
-            height:18px;
-            accent-color:#a855f7;
-            cursor:pointer;
-          "
-        >
-        Select
-      </label>
-
-      <a
-        href="${escapeHtml(file.signedUrl)}"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="
-          display:block;
-          overflow:hidden;
-          border-radius:14px;
-          border:1px solid rgba(255,255,255,0.10);
-          background:#08080e;
-          color:#fff;
-          text-decoration:none;
-        "
-      >
-
-        <img
-          src="${escapeHtml(file.signedUrl)}"
-          alt="Customer venue upload"
-          loading="lazy"
-          style="
-            display:block;
-            width:100%;
-            height:180px;
-            object-fit:cover;
-            background:#08080e;
-          "
-        >
-
-        <div
-          style="
-            padding:10px 12px;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-            font-size:12px;
-            color:#b8b8c5;
-          "
-        >
-          ${escapeHtml(fileName)}
-        </div>
-
-      </a>
-
-    </div>
-  `;
-}
-
-
-return `
-  <div
-    style="
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    "
-  >
-
-    <label
-      style="
-        display:flex;
-        align-items:center;
-        gap:8px;
-        padding:7px 10px;
-        border-radius:9px;
-        background:rgba(255,255,255,0.05);
-        color:#d8d8e2;
-        font-size:13px;
-        cursor:pointer;
-        user-select:none;
-      "
-    >
-      <input
-        type="checkbox"
-        class="upload-select"
-        data-url="${escapeHtml(file.signedUrl)}"
-        data-name="${escapeHtml(fileName)}"
-        style="
-          width:18px;
-          height:18px;
-          accent-color:#a855f7;
-          cursor:pointer;
-        "
-      >
-      Select
-    </label>
-
-    <a
-      href="${escapeHtml(file.signedUrl)}"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="
-        display:flex;
-        min-height:120px;
-        padding:18px;
-        align-items:center;
-        justify-content:center;
-        text-align:center;
-        border-radius:14px;
-        border:1px solid rgba(168,85,247,0.30);
-        background:rgba(168,85,247,0.08);
-        color:#d9b6ff;
-        text-decoration:none;
-        font-weight:700;
-        word-break:break-word;
-      "
-    >
-      Open ${escapeHtml(fileName)}
-    </a>
-
-  </div>
-`;
-
-
-    })
-    .join("");
-    const selectAllUploads =
-    document.getElementById("selectAllUploads");
-
-  const downloadSelectedUploads =
-    document.getElementById("downloadSelectedUploads");
-
-  const saveSelectedUploads =
-    document.getElementById("saveSelectedUploads");
-
-  const selectedUploadCount =
-    document.getElementById("selectedUploadCount");
-
-
-  function getUploadCheckboxes() {
-    return [
-      ...gallery.querySelectorAll(".upload-select")
-    ];
-  }
-
-
-  function getSelectedUploads() {
-    return getUploadCheckboxes()
-      .filter(box => box.checked)
-      .map(box => ({
-        url: box.dataset.url,
-        name: box.dataset.name || "Ozzsound-file"
-      }));
-  }
-
-
-  function safeFileName(name) {
-    return String(name || "Ozzsound-file")
-      .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
-      .replace(/[. ]+$/g, "")
-      .slice(0, 180) || "Ozzsound-file";
-  }
-
-
-  function updateSelectedUploadCount() {
-
-    const boxes = getUploadCheckboxes();
-
-    const selected =
-      boxes.filter(box => box.checked);
-
-    selectedUploadCount.textContent =
-      `${selected.length} selected`;
-
-    selectAllUploads.checked =
-      boxes.length > 0 &&
-      selected.length === boxes.length;
-
-    selectAllUploads.indeterminate =
-      selected.length > 0 &&
-      selected.length < boxes.length;
-  }
-
-
-  selectAllUploads.addEventListener(
-    "change",
-    () => {
-
-      getUploadCheckboxes().forEach(box => {
-        box.checked = selectAllUploads.checked;
-      });
-
-      updateSelectedUploadCount();
+          `
+        )
+        .join("");
     }
-  );
 
 
-  gallery.addEventListener(
-    "change",
-    event => {
+    function quoteStatusText() {
 
       if (
-        event.target.classList.contains("upload-select")
+        !currentQuote
       ) {
-        updateSelectedUploadCount();
+
+        return "No quote yet";
       }
+
+
+      const labels = {
+        draft: "Draft",
+        sent: "Sent",
+        customer_accepted:
+          "Customer Accepted",
+        customer_changes:
+          "Changes Requested",
+        declined:
+          "Declined",
+        confirmed:
+          "Confirmed",
+        expired:
+          "Expired"
+      };
+
+
+      return (
+        labels[
+          currentQuote.status
+        ] ||
+        currentQuote.status ||
+        "Draft"
+      );
     }
-  );
 
 
-  downloadSelectedUploads.addEventListener(
-    "click",
-    async () => {
+    function renderQuoteItems() {
 
-      const selected =
-        getSelectedUploads();
+      const container =
+        document.getElementById(
+          "quoteItems"
+        );
 
-      if (!selected.length) {
-        alert("Please select at least one file.");
+
+      if (!container) {
         return;
       }
 
-      const originalText =
-        downloadSelectedUploads.textContent;
 
-      downloadSelectedUploads.disabled = true;
-      downloadSelectedUploads.textContent =
-        "Downloading...";
+      if (
+        !currentQuoteItems.length
+      ) {
+
+        container.innerHTML = `
+          <div class="info-banner">
+
+            No items have been added yet.
+
+            After your equipment stocktake,
+            your real Ozzsound gear and prices
+            will appear in the selector above.
+
+            You can also add a custom line now.
+
+          </div>
+        `;
+
+
+        updateQuoteTotals();
+
+        return;
+      }
+
+
+      container.innerHTML =
+        currentQuoteItems.map(
+          (item, index) => `
+
+            <div class="quote-item">
+
+              <div class="quote-item-name">
+
+                <strong>
+                  ${escapeHtml(
+                    item.item_name
+                  )}
+                </strong>
+
+                <small>
+
+                  ${
+                    item.is_suggestion
+                      ? "Ozzsound suggestion"
+                      :
+                    (
+                      item.source === "customer"
+                        ? "Customer requested"
+                        : "Ozzsound item"
+                    )
+                  }
+
+                </small>
+
+              </div>
+
+
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value="${Number(
+                  item.quantity || 1
+                )}"
+                aria-label="Quantity"
+                onchange="
+                  updateQuoteItem(
+                    ${index},
+                    'quantity',
+                    this.value
+                  )
+                "
+              >
+
+
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value="${Number(
+                  item.unit_price || 0
+                ).toFixed(2)}"
+                aria-label="Unit price"
+                onchange="
+                  updateQuoteItem(
+                    ${index},
+                    'unit_price',
+                    this.value
+                  )
+                "
+              >
+
+
+              <div class="money">
+
+                ${money(
+                  Number(
+                    item.quantity || 1
+                  ) *
+                  Number(
+                    item.unit_price || 0
+                  )
+                )}
+
+              </div>
+
+
+              <button
+                class="remove-button"
+                type="button"
+                onclick="
+                  removeQuoteItem(
+                    ${index}
+                  )
+                "
+              >
+                Remove
+              </button>
+
+            </div>
+
+          `
+        )
+        .join("");
+
+
+      updateQuoteTotals();
+    }
+
+
+    function quoteSubtotal() {
+
+      return currentQuoteItems
+        .reduce(
+          (
+            sum,
+            item
+          ) => {
+
+            return (
+              sum +
+              (
+                Number(
+                  item.quantity || 0
+                ) *
+                Number(
+                  item.unit_price || 0
+                )
+              )
+            );
+          },
+          0
+        );
+    }
+
+
+    function quoteAdjustment() {
+
+      const field =
+        document.getElementById(
+          "quoteAdjustment"
+        );
+
+
+      return Number(
+        field?.value || 0
+      );
+    }
+
+
+    function updateQuoteTotals() {
+
+      const subtotal =
+        quoteSubtotal();
+
+
+      const adjustment =
+        quoteAdjustment();
+
+
+      const total =
+        Math.max(
+          0,
+          subtotal + adjustment
+        );
+
+
+      const subtotalEl =
+        document.getElementById(
+          "quoteSubtotal"
+        );
+
+
+      const adjustmentEl =
+        document.getElementById(
+          "quoteAdjustmentDisplay"
+        );
+
+
+      const totalEl =
+        document.getElementById(
+          "quoteTotal"
+        );
+
+
+      if (subtotalEl) {
+
+        subtotalEl.textContent =
+          money(subtotal);
+      }
+
+
+      if (adjustmentEl) {
+
+        adjustmentEl.textContent =
+          money(adjustment);
+      }
+
+
+      if (totalEl) {
+
+        totalEl.textContent =
+          money(total);
+      }
+    }
+
+
+    window.updateQuoteItem =
+      function(
+        index,
+        field,
+        value
+      ) {
+
+        if (
+          !currentQuoteItems[
+            index
+          ]
+        ) {
+          return;
+        }
+
+
+        if (
+          field === "quantity"
+        ) {
+
+          currentQuoteItems[
+            index
+          ].quantity =
+            Math.max(
+              1,
+              parseInt(
+                value || "1",
+                10
+              )
+            );
+        }
+
+
+        if (
+          field === "unit_price"
+        ) {
+
+          currentQuoteItems[
+            index
+          ].unit_price =
+            Math.max(
+              0,
+              Number(
+                value || 0
+              )
+            );
+        }
+
+
+        renderQuoteItems();
+      };
+
+
+    window.removeQuoteItem =
+      function(index) {
+
+        currentQuoteItems.splice(
+          index,
+          1
+        );
+
+
+        renderQuoteItems();
+      };
+
+
+    function addInventoryItem() {
+
+      const select =
+        document.getElementById(
+          "inventorySelect"
+        );
+
+
+      const id =
+        select?.value;
+
+
+      if (!id) {
+
+        alert(
+          inventory.length
+            ? "Choose an equipment item first."
+            : "The inventory is empty. Use Add Custom Item for now, or we can enter the stocktake next."
+        );
+
+
+        return;
+      }
+
+
+      const item =
+        inventory.find(
+          entry =>
+            String(entry.id) ===
+            String(id)
+        );
+
+
+      if (!item) {
+        return;
+      }
+
+
+      currentQuoteItems.push({
+
+        inventory_id:
+          item.id,
+
+        item_name:
+          item.name,
+
+        item_type:
+          item.item_type ||
+          "equipment",
+
+        quantity:
+          1,
+
+        unit_price:
+          Number(
+            item.unit_price || 0
+          ),
+
+        source:
+          "admin",
+
+        is_suggestion:
+          false,
+
+        notes:
+          "",
+
+        sort_order:
+          currentQuoteItems.length
+
+      });
+
+
+      select.value =
+        "";
+
+
+      renderQuoteItems();
+    }
+
+
+    function addCustomItem() {
+
+      const nameField =
+        document.getElementById(
+          "customItemName"
+        );
+
+
+      const qtyField =
+        document.getElementById(
+          "customItemQty"
+        );
+
+
+      const priceField =
+        document.getElementById(
+          "customItemPrice"
+        );
+
+
+      const suggestionField =
+        document.getElementById(
+          "customItemSuggestion"
+        );
+
+
+      const name =
+        nameField
+          .value
+          .trim();
+
+
+      const quantity =
+        Math.max(
+          1,
+          parseInt(
+            qtyField.value || "1",
+            10
+          )
+        );
+
+
+      const price =
+        Math.max(
+          0,
+          Number(
+            priceField.value || 0
+          )
+        );
+
+
+      if (!name) {
+
+        alert(
+          "Enter an item or service name first."
+        );
+
+        return;
+      }
+
+
+      currentQuoteItems.push({
+
+        inventory_id:
+          null,
+
+        item_name:
+          name,
+
+        item_type:
+          "equipment",
+
+        quantity,
+
+        unit_price:
+          price,
+
+        source:
+          "admin",
+
+        is_suggestion:
+          Boolean(
+            suggestionField.checked
+          ),
+
+        notes:
+          "",
+
+        sort_order:
+          currentQuoteItems.length
+
+      });
+
+
+      nameField.value =
+        "";
+
+      qtyField.value =
+        "1";
+
+      priceField.value =
+        "0.00";
+
+      suggestionField.checked =
+        false;
+
+
+      renderQuoteItems();
+    }
+
+
+    async function updateEnquiryStatus(
+      status
+    ) {
+
+      if (
+        !currentEnquiry
+      ) {
+        return false;
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "enquiries"
+          )
+          .update({
+            status
+          })
+          .eq(
+            "id",
+            currentEnquiry.id
+          );
+
+
+      if (error) {
+
+        console.error(
+          error
+        );
+
+
+        alert(
+          "The enquiry status could not be updated."
+        );
+
+
+        return false;
+      }
+
+
+      currentEnquiry.status =
+        status;
+
+
+      const listItem =
+        allEnquiries.find(
+          item =>
+            String(item.id) ===
+            String(
+              currentEnquiry.id
+            )
+        );
+
+
+      if (listItem) {
+
+        listItem.status =
+          status;
+      }
+
+
+      updateStats();
+
+      filterEnquiries();
+
+
+      return true;
+    }
+
+
+    async function startReview() {
+
+      if (
+        await updateEnquiryStatus(
+          "reviewing"
+        )
+      ) {
+
+        renderModalContent();
+
+        await renderUploadSections();
+      }
+    }
+
+
+    async function declineEnquiry() {
+
+      if (
+        !currentEnquiry
+      ) {
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          `Decline enquiry ${
+            currentEnquiry.enquiry_ref ||
+            ""
+          } for ${
+            currentEnquiry.name ||
+            "this customer"
+          }?
+
+This records the enquiry as declined.
+
+The automatic customer decline email will be added in the next customer-response stage.`
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      if (
+        await updateEnquiryStatus(
+          "declined"
+        )
+      ) {
+
+        renderModalContent();
+
+        await renderUploadSections();
+      }
+    }
+
+
+    async function saveQuoteDraft(
+      showSuccess = true
+    ) {
+
+      if (
+        !currentEnquiry
+      ) {
+        return false;
+      }
+
+
+      const saveButton =
+        document.getElementById(
+          "saveQuoteButton"
+        );
+
+
+      if (saveButton) {
+
+        saveButton.disabled =
+          true;
+
+        saveButton.textContent =
+          "Saving...";
+      }
+
+
+      const subtotal =
+        quoteSubtotal();
+
+
+      const adjustment =
+        quoteAdjustment();
+
+
+      const total =
+        Math.max(
+          0,
+          subtotal + adjustment
+        );
+
+
+      const customerComments =
+        document.getElementById(
+          "customerQuoteComments"
+        )?.value.trim() ||
+        null;
+
+
+      const privateNotes =
+        document.getElementById(
+          "privateQuoteNotes"
+        )?.value.trim() ||
+        null;
+
 
       try {
 
-        for (const item of selected) {
+        /*
+          CREATE QUOTE IF IT
+          DOESN'T EXIST YET
+        */
 
-          const response =
-            await fetch(item.url);
+        if (
+          !currentQuote
+        ) {
 
-          if (!response.ok) {
-            throw new Error(
-              `Could not download ${item.name}`
-            );
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from(
+                "quotes"
+              )
+              .insert({
+
+                enquiry_id:
+                  currentEnquiry.id,
+
+                version:
+                  1,
+
+                status:
+                  "draft",
+
+                subtotal,
+
+                adjustment,
+
+                total,
+
+                customer_visible_comments:
+                  customerComments,
+
+                private_admin_notes:
+                  privateNotes,
+
+                call_requested:
+                  false,
+
+                created_by:
+                  currentUserId
+
+              })
+              .select()
+              .single();
+
+
+          if (error) {
+            throw error;
           }
 
-          const blob =
-            await response.blob();
 
-          const blobUrl =
-            URL.createObjectURL(blob);
+          currentQuote =
+            data;
 
-          const link =
-            document.createElement("a");
+        } else {
 
-          link.href = blobUrl;
-          link.download =
-            safeFileName(item.name);
+          /*
+            UPDATE EXISTING QUOTE
+          */
 
-          document.body.appendChild(link);
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from(
+                "quotes"
+              )
+              .update({
 
-          link.click();
-          link.remove();
+                subtotal,
 
-          setTimeout(
-            () => URL.revokeObjectURL(blobUrl),
-            2000
-          );
+                adjustment,
 
-          await new Promise(resolve =>
-            setTimeout(resolve, 250)
+                total,
+
+                customer_visible_comments:
+                  customerComments,
+
+                private_admin_notes:
+                  privateNotes
+
+              })
+              .eq(
+                "id",
+                currentQuote.id
+              )
+              .select()
+              .single();
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          currentQuote =
+            data;
+        }
+
+
+        /*
+          REBUILD QUOTE ITEMS
+        */
+
+        const {
+          error: deleteError
+        } =
+          await supabaseClient
+            .from(
+              "quote_items"
+            )
+            .delete()
+            .eq(
+              "quote_id",
+              currentQuote.id
+            );
+
+
+        if (
+          deleteError
+        ) {
+          throw deleteError;
+        }
+
+
+        if (
+          currentQuoteItems.length
+        ) {
+
+          const rows =
+            currentQuoteItems.map(
+              (
+                item,
+                index
+              ) => ({
+
+                quote_id:
+                  currentQuote.id,
+
+                inventory_id:
+                  item.inventory_id ||
+                  null,
+
+                item_name:
+                  item.item_name,
+
+                item_type:
+                  item.item_type ||
+                  "equipment",
+
+                quantity:
+                  Math.max(
+                    1,
+                    Number(
+                      item.quantity || 1
+                    )
+                  ),
+
+                unit_price:
+                  Math.max(
+                    0,
+                    Number(
+                      item.unit_price || 0
+                    )
+                  ),
+
+                source:
+                  item.source === "customer"
+                    ? "customer"
+                    : "admin",
+
+                is_suggestion:
+                  Boolean(
+                    item.is_suggestion
+                  ),
+
+                notes:
+                  item.notes ||
+                  null,
+
+                sort_order:
+                  index
+
+              })
+            );
+
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from(
+                "quote_items"
+              )
+              .insert(
+                rows
+              )
+              .select(
+                "id,inventory_id,item_name,item_type,quantity,unit_price,line_total,source,is_suggestion,notes,sort_order"
+              );
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          currentQuoteItems =
+            data || [];
+        }
+
+
+        /*
+          FIRST SAVE MOVES A NEW
+          ENQUIRY INTO REVIEWING
+        */
+
+        if (
+          normaliseStatus(
+            currentEnquiry.status
+          ) === "new"
+        ) {
+
+          await updateEnquiryStatus(
+            "reviewing"
           );
         }
+
+
+        if (
+          showSuccess
+        ) {
+
+          alert(
+            "Quote draft saved."
+          );
+        }
+
+
+        return true;
+
 
       } catch (error) {
 
         console.error(
-          "Download failed:",
+          "Quote save failed:",
           error
         );
 
+
         alert(
-          "One or more files could not be downloaded."
+          "The quote could not be saved. Please try again."
         );
+
+
+        return false;
+
 
       } finally {
 
-        downloadSelectedUploads.disabled = false;
-        downloadSelectedUploads.textContent =
-          originalText;
+        if (saveButton) {
+
+          saveButton.disabled =
+            false;
+
+          saveButton.textContent =
+            "Save Draft Quote";
+        }
       }
     }
-  );
 
 
-  saveSelectedUploads.addEventListener(
-    "click",
-    async () => {
+    async function markQuoteReady() {
 
-      const selected =
-        getSelectedUploads();
+      const saved =
+        await saveQuoteDraft(
+          false
+        );
 
-      if (!selected.length) {
-        alert("Please select at least one file.");
+
+      if (!saved) {
         return;
       }
 
 
-      if (!window.showDirectoryPicker) {
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "enquiries"
+          )
+          .update({
+            status:
+              "quoted"
+          })
+          .eq(
+            "id",
+            currentEnquiry.id
+          );
+
+
+      if (error) {
+
+        console.error(
+          error
+        );
+
 
         alert(
-          "Saving directly to a folder is not supported by this browser. Please use Download Selected instead."
+          "The quote was saved, but the enquiry could not be marked Quote Ready."
+        );
+
+
+        return;
+      }
+
+
+      currentEnquiry.status =
+        "quoted";
+
+
+      const listItem =
+        allEnquiries.find(
+          item =>
+            String(item.id) ===
+            String(
+              currentEnquiry.id
+            )
+        );
+
+
+      if (listItem) {
+
+        listItem.status =
+          "quoted";
+      }
+
+
+      updateStats();
+
+      filterEnquiries();
+
+
+      alert(
+        "Quote saved and marked Quote Ready. It has NOT been emailed to the customer yet — we will connect that customer quote email next."
+      );
+
+
+      renderModalContent();
+
+      await renderUploadSections();
+    }
+
+
+    async function addEnquiryNote() {
+
+      if (
+        !currentEnquiry
+      ) {
+        return;
+      }
+
+
+      const type =
+        document.getElementById(
+          "newNoteType"
+        )?.value ||
+        "private";
+
+
+      const body =
+        document.getElementById(
+          "newNoteBody"
+        )?.value.trim() ||
+        "";
+
+
+      if (!body) {
+
+        alert(
+          "Write a note first."
         );
 
         return;
       }
 
 
-      const originalText =
-        saveSelectedUploads.textContent;
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from(
+            "enquiry_notes"
+          )
+          .insert({
 
-      try {
+            enquiry_id:
+              currentEnquiry.id,
 
-        saveSelectedUploads.disabled = true;
-        saveSelectedUploads.textContent =
-          "Choose Folder / USB...";
+            note_type:
+              type,
+
+            body,
+
+            created_by:
+              currentUserId
+
+          })
+          .select(
+            "id,note_type,body,created_at"
+          )
+          .single();
 
 
-        const chosenDirectory =
-          await window.showDirectoryPicker({
-            mode: "readwrite"
-          });
+      if (error) {
+
+        console.error(
+          error
+        );
 
 
-        const reference =
-          safeFileName(
-            enquiry.enquiry_ref ||
-            "Ozzsound-Enquiry"
+        alert(
+          "The note could not be saved."
+        );
+
+
+        return;
+      }
+
+
+      currentNotes.unshift(
+        data
+      );
+
+
+      renderNotes();
+
+
+      document.getElementById(
+        "newNoteBody"
+      ).value =
+        "";
+    }
+
+
+    function renderNotes() {
+
+      const list =
+        document.getElementById(
+          "notesList"
+        );
+
+
+      if (!list) {
+        return;
+      }
+
+
+      if (
+        !currentNotes.length
+      ) {
+
+        list.innerHTML = `
+          <div class="info-banner">
+            No notes have been added to this enquiry yet.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      list.innerHTML =
+        currentNotes.map(
+          note => `
+
+            <div class="note-row">
+
+              <div class="note-meta">
+
+                ${escapeHtml(
+                  note.note_type === "customer"
+                    ? "Customer-visible note"
+                    : "Private admin note"
+                )}
+
+                ·
+
+                ${escapeHtml(
+                  formatDateTime(
+                    note.created_at
+                  )
+                )}
+
+              </div>
+
+              <div class="note-body">
+                ${escapeHtml(
+                  note.body
+                )}
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("");
+    }
+
+
+    function renderModalContent() {
+
+      if (
+        !currentEnquiry
+      ) {
+        return;
+      }
+
+
+      const enquiry =
+        currentEnquiry;
+
+
+      const eventType =
+        enquiry.event_type ||
+        enquiry.enquiry_type ||
+        "Not supplied";
+
+
+      const status =
+        normaliseStatus(
+          enquiry.status
+        );
+
+
+      const quote =
+        currentQuote;
+
+
+      modalTitle.textContent =
+        enquiry.name ||
+        "Customer Enquiry";
+
+
+      modalReference.textContent =
+        enquiry.enquiry_ref ||
+        "";
+
+
+      modalBody.innerHTML = `
+
+        <!-- WORKFLOW -->
+
+        <div class="workflow-bar">
+
+          <div>
+
+            <div class="field-label">
+              Current Workflow Status
+            </div>
+
+            <span
+              class="
+                status
+                status-${status}
+              "
+            >
+              ${escapeHtml(
+                statusLabel(
+                  status
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="workflow-actions">
+
+            <button
+              type="button"
+              class="
+                action-button
+                action-review
+              "
+              id="startReviewButton"
+            >
+              Review / Prepare Quote
+            </button>
+
+
+            <button
+              type="button"
+              class="
+                action-button
+                action-decline
+              "
+              id="declineButton"
+            >
+              Decline Enquiry
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="detail-grid">
+
+
+          <!-- EVENT DETAILS -->
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Event Type
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                eventType
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Event Date
+            </div>
+
+            <div class="detail-text">
+              ${formatDate(
+                enquiry.event_date
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Phone
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.phone
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Email
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.email
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Venue / Suburb
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.venue_suburb
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Approx. Guests
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.approx_guests
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Event Times
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.event_times
+              )}
+            </div>
+
+          </div>
+
+
+          <div class="detail-box">
+
+            <div class="detail-title">
+              Uploaded Files
+            </div>
+
+            <div class="detail-text">
+              ${Number(
+                enquiry.upload_count || 0
+              )}
+            </div>
+
+          </div>
+
+
+          <div
+            class="
+              detail-box
+              full
+            "
+          >
+
+            <div class="detail-title">
+              Customer Message
+            </div>
+
+            <div class="detail-text">
+              ${displayValue(
+                enquiry.message
+              )}
+            </div>
+
+          </div>
+
+
+          <!-- EXISTING BOOKING -->
+
+          ${
+            currentBooking
+              ? `
+
+                <div class="section-card">
+
+                  <div class="section-head">
+
+                    <div>
+
+                      <h3>
+                        Confirmed Booking
+                      </h3>
+
+                      <p>
+                        This enquiry already has a booking record.
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="booking-box">
+
+                    ${escapeHtml(
+                      currentBooking.booking_type ||
+                      "dj"
+                    )}
+
+                    booking ·
+
+                    ${formatDate(
+                      currentBooking.event_date
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                      currentBooking.status ||
+                      "confirmed"
+                    )}
+
+                  </div>
+
+                </div>
+
+              `
+              : ""
+          }
+
+
+          <!-- QUOTE BUILDER -->
+
+          <div class="section-card">
+
+            <div class="section-head">
+
+              <div>
+
+                <h3>
+                  Quote Builder
+                </h3>
+
+                <p>
+                  Build the proposed equipment and service list.
+                  Prices stay private until the customer quote
+                  stage is connected.
+                </p>
+
+              </div>
+
+
+              <span class="quote-status">
+
+                ${escapeHtml(
+                  quoteStatusText()
+                )}
+
+              </span>
+
+            </div>
+
+
+            <!-- INVENTORY -->
+
+            <div class="quote-add-grid">
+
+              <div>
+
+                <label for="inventorySelect">
+                  Ozzsound Inventory
+                </label>
+
+                <select id="inventorySelect">
+
+                  ${inventoryOptions()}
+
+                </select>
+
+              </div>
+
+              <div></div>
+
+              <div></div>
+
+              <button
+                type="button"
+                class="secondary-button"
+                id="addInventoryButton"
+                ${
+                  inventory.length
+                    ? ""
+                    : "disabled"
+                }
+              >
+                Add Item
+              </button>
+
+            </div>
+
+
+            <div class="info-banner">
+
+              Inventory currently contains
+
+              <strong>
+                ${inventory.length}
+              </strong>
+
+              active item${inventory.length === 1 ? "" : "s"}.
+
+              We will populate this properly from your Ozzsound
+              stocktake, including quantities and pricing.
+
+            </div>
+
+
+            <!-- CUSTOM ITEM -->
+
+            <div
+              class="quote-add-grid"
+              style="
+                margin-top:16px;
+              "
+            >
+
+              <div>
+
+                <label for="customItemName">
+                  Custom item / service
+                </label>
+
+                <input
+                  id="customItemName"
+                  type="text"
+                  placeholder="e.g. Additional lighting package"
+                >
+
+              </div>
+
+
+              <div>
+
+                <label for="customItemQty">
+                  Qty
+                </label>
+
+                <input
+                  id="customItemQty"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value="1"
+                >
+
+              </div>
+
+
+              <div>
+
+                <label for="customItemPrice">
+                  Unit price
+                </label>
+
+                <input
+                  id="customItemPrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0.00"
+                >
+
+              </div>
+
+
+              <button
+                type="button"
+                class="secondary-button"
+                id="addCustomButton"
+              >
+                Add Custom
+              </button>
+
+            </div>
+
+
+            <label
+              style="
+                display:flex;
+                align-items:center;
+                gap:9px;
+                margin:0 0 16px;
+                cursor:pointer;
+              "
+            >
+
+              <input
+                id="customItemSuggestion"
+                type="checkbox"
+                style="
+                  width:18px;
+                  height:18px;
+                  accent-color:#a855f7;
+                "
+              >
+
+              Mark the next custom item as an Ozzsound suggestion
+
+            </label>
+
+
+            <!-- QUOTE ITEMS -->
+
+            <div
+              id="quoteItems"
+              class="quote-items"
+            ></div>
+
+
+            <!-- TOTAL -->
+
+            <div class="quote-summary">
+
+              <div class="summary-row">
+
+                <span>
+                  Subtotal
+                </span>
+
+                <strong id="quoteSubtotal">
+                  $0.00
+                </strong>
+
+              </div>
+
+
+              <div
+                class="summary-row"
+                style="
+                  align-items:center;
+                "
+              >
+
+                <span>
+                  Adjustment / discount
+                </span>
+
+                <input
+                  id="quoteAdjustment"
+                  type="number"
+                  step="0.01"
+                  value="${Number(
+                    quote?.adjustment || 0
+                  ).toFixed(2)}"
+                  style="
+                    max-width:140px;
+                    text-align:right;
+                  "
+                >
+
+              </div>
+
+
+              <div class="summary-row">
+
+                <span>
+                  Adjustment
+                </span>
+
+                <strong id="quoteAdjustmentDisplay">
+                  $0.00
+                </strong>
+
+              </div>
+
+
+              <div
+                class="
+                  summary-row
+                  total
+                "
+              >
+
+                <span>
+                  Total
+                </span>
+
+                <strong id="quoteTotal">
+                  $0.00
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <!-- COMMENTS -->
+
+            <div
+              class="two-col"
+              style="
+                margin-top:20px;
+              "
+            >
+
+              <div>
+
+                <label for="customerQuoteComments">
+                  Comments / suggestions for customer
+                </label>
+
+                <textarea
+                  id="customerQuoteComments"
+                  placeholder="e.g. Based on your venue and guest numbers, Ozzsound recommends adding..."
+                >${escapeHtml(
+                  quote?.customer_visible_comments ||
+                  ""
+                )}</textarea>
+
+              </div>
+
+
+              <div>
+
+                <label for="privateQuoteNotes">
+                  Private Ozzsound notes
+                </label>
+
+                <textarea
+                  id="privateQuoteNotes"
+                  placeholder="Internal notes — not shown to the customer."
+                >${escapeHtml(
+                  quote?.private_admin_notes ||
+                  ""
+                )}</textarea>
+
+              </div>
+
+            </div>
+
+
+            <!-- PHONE REQUEST -->
+
+            <div class="call-box">
+
+              ☎ Customer phone-call request:
+
+              <strong>
+
+                ${
+                  quote?.call_requested
+                    ? "YES — CALL REQUESTED"
+                    : "No request recorded yet"
+                }
+
+              </strong>
+
+            </div>
+
+
+            <div class="info-banner">
+
+              The customer-facing quote email,
+              Accept / Request Changes buttons and
+              “Would you like a phone call?” box are the next stage.
+
+              Marking a quote ready here does
+              <strong>not</strong>
+              email the customer yet.
+
+            </div>
+
+
+            <div
+              class="workflow-actions"
+              style="
+                margin-top:16px;
+              "
+            >
+
+              <button
+                type="button"
+                class="
+                  action-button
+                  action-save
+                "
+                id="saveQuoteButton"
+              >
+                Save Draft Quote
+              </button>
+
+
+              <button
+                type="button"
+                class="
+                  action-button
+                  action-ready
+                "
+                id="markQuoteReadyButton"
+              >
+                Save & Mark Quote Ready
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- NOTES -->
+
+          <div class="section-card">
+
+            <div class="section-head">
+
+              <div>
+
+                <h3>
+                  Enquiry Notes
+                </h3>
+
+                <p>
+                  Keep private admin notes now;
+                  customer-visible notes can later flow
+                  into the customer portal.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="two-col">
+
+              <div>
+
+                <label for="newNoteType">
+                  Note type
+                </label>
+
+                <select id="newNoteType">
+
+                  <option value="private">
+                    Private admin note
+                  </option>
+
+                  <option value="customer">
+                    Customer-visible note
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div></div>
+
+            </div>
+
+
+            <label for="newNoteBody">
+              Note
+            </label>
+
+            <textarea
+              id="newNoteBody"
+              placeholder="Write a note about this enquiry..."
+            ></textarea>
+
+
+            <button
+              type="button"
+              class="secondary-button"
+              id="addNoteButton"
+              style="
+                margin-top:10px;
+              "
+            >
+              Add Note
+            </button>
+
+
+            <div
+              id="notesList"
+              class="notes-list"
+            ></div>
+
+          </div>
+
+
+          <!-- VENUE UPLOADS -->
+
+          <div
+            id="venueUploadSection"
+            class="section-card"
+            style="
+              display:none;
+            "
+          ></div>
+
+
+          <!-- WEDDING DISPLAY PHOTOS -->
+
+          <div
+            id="weddingUploadSection"
+            class="section-card"
+            style="
+              display:none;
+            "
+          ></div>
+
+
+        </div>
+      `;
+
+
+      document.getElementById(
+        "startReviewButton"
+      )?.addEventListener(
+        "click",
+        startReview
+      );
+
+
+      document.getElementById(
+        "declineButton"
+      )?.addEventListener(
+        "click",
+        declineEnquiry
+      );
+
+
+      document.getElementById(
+        "addInventoryButton"
+      )?.addEventListener(
+        "click",
+        addInventoryItem
+      );
+
+
+      document.getElementById(
+        "addCustomButton"
+      )?.addEventListener(
+        "click",
+        addCustomItem
+      );
+
+
+      document.getElementById(
+        "saveQuoteButton"
+      )?.addEventListener(
+        "click",
+        () =>
+          saveQuoteDraft(
+            true
+          )
+      );
+
+
+      document.getElementById(
+        "markQuoteReadyButton"
+      )?.addEventListener(
+        "click",
+        markQuoteReady
+      );
+
+
+      document.getElementById(
+        "addNoteButton"
+      )?.addEventListener(
+        "click",
+        addEnquiryNote
+      );
+
+
+      document.getElementById(
+        "quoteAdjustment"
+      )?.addEventListener(
+        "input",
+        updateQuoteTotals
+      );
+
+
+      renderQuoteItems();
+
+      renderNotes();
+    }
+
+
+    async function renderUploadSections() {
+
+      if (
+        !currentEnquiry
+      ) {
+        return;
+      }
+
+
+      const venuePaths =
+        venuePathsFor(
+          currentEnquiry
+        );
+
+
+      const weddingPaths =
+        displayPhotoPathsFor(
+          currentEnquiry
+        );
+
+
+      const venueSection =
+        document.getElementById(
+          "venueUploadSection"
+        );
+
+
+      const weddingSection =
+        document.getElementById(
+          "weddingUploadSection"
+        );
+
+
+      /*
+        VENUE PLANNING AREA
+
+        This section ONLY appears if
+        a venue/planning upload exists.
+      */
+
+      if (
+        venueSection
+      ) {
+
+        if (
+          venuePaths.length
+        ) {
+
+          venueSection.style.display =
+            "block";
+
+
+          venueSection.innerHTML = `
+
+            <div class="section-head">
+
+              <div>
+
+                <h3>
+                  Venue Photo & Virtual Setup
+                </h3>
+
+                <p>
+                  These are the venue/planning uploads.
+                  Venue-planning controls only appear because
+                  this enquiry contains venue uploads.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div id="venueExportControls"></div>
+
+
+            <div
+              id="venuePhotoGallery"
+              class="photo-grid"
+            >
+
+              <div
+                style="
+                  color:#9292a3;
+                "
+              >
+                Loading venue uploads...
+              </div>
+
+            </div>
+          `;
+
+
+          await renderSecureGallery(
+            "venuePhotoGallery",
+            "venueExportControls",
+            venuePaths,
+            currentEnquiry,
+            true
           );
 
 
-      const clientName =
-  safeFileName(
-    enquiry.name || "Client"
-  );
+        } else {
 
-const exportFolderName =
-  `Ozzsound - ${clientName} - ${reference}`;
+          venueSection.style.display =
+            "none";
+
+          venueSection.innerHTML =
+            "";
+        }
+      }
 
 
-        const exportDirectory =
-          await chosenDirectory.getDirectoryHandle(
-            exportFolderName,
-            {
-              create: true
+      /*
+        WEDDING DISPLAY PHOTOS
+
+        Kept completely separate from
+        venue planning.
+      */
+
+      if (
+        weddingSection
+      ) {
+
+        if (
+          weddingPaths.length
+        ) {
+
+          weddingSection.style.display =
+            "block";
+
+
+          weddingSection.innerHTML = `
+
+            <div class="section-head">
+
+              <div>
+
+                <h3>
+                  Wedding Display Photos
+                </h3>
+
+                <p>
+                  These photos are kept separate from
+                  venue-planning photos and are not treated
+                  as Virtual Setup images.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="weddingPhotoGallery"
+              class="photo-grid"
+            >
+
+              <div
+                style="
+                  color:#9292a3;
+                "
+              >
+                Loading wedding photos...
+              </div>
+
+            </div>
+          `;
+
+
+          await renderSecureGallery(
+            "weddingPhotoGallery",
+            null,
+            weddingPaths,
+            currentEnquiry,
+            false
+          );
+
+
+        } else {
+
+          weddingSection.style.display =
+            "none";
+
+          weddingSection.innerHTML =
+            "";
+        }
+      }
+    }
+
+
+    async function renderSecureGallery(
+      galleryId,
+      controlsId,
+      paths,
+      enquiry,
+      enableExport
+    ) {
+
+      const gallery =
+        document.getElementById(
+          galleryId
+        );
+
+
+      if (
+        !gallery ||
+        !paths.length
+      ) {
+        return;
+      }
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .storage
+          .from(
+            "event-uploads"
+          )
+          .createSignedUrls(
+            paths,
+            3600
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Could not create signed upload URLs:",
+          error
+        );
+
+
+        gallery.innerHTML = `
+          <div
+            style="
+              color:#ff9aaa;
+            "
+          >
+            The uploaded files could not be loaded.
+          </div>
+        `;
+
+
+        return;
+      }
+
+
+      const files =
+        (data || []).filter(
+          file =>
+            file &&
+            file.signedUrl
+        );
+
+
+      if (
+        !files.length
+      ) {
+
+        gallery.innerHTML = `
+          <div
+            style="
+              color:#9292a3;
+            "
+          >
+            No viewable uploads were found.
+          </div>
+        `;
+
+
+        return;
+      }
+
+
+      gallery.innerHTML =
+        files.map(
+          file => {
+
+            const path =
+              file.path ||
+              "";
+
+
+            const fileName =
+              path
+                .split("/")
+                .pop() ||
+              "Customer upload";
+
+
+            const extension =
+              fileName
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+            const browserImage =
+              [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp",
+                "gif"
+              ].includes(
+                extension
+              );
+
+
+            return `
+
+              <div class="photo-card">
+
+                ${
+                  enableExport
+                    ? `
+
+                      <label class="photo-select-label">
+
+                        <input
+                          type="checkbox"
+                          class="upload-select"
+                          data-url="${escapeHtml(
+                            file.signedUrl
+                          )}"
+                          data-name="${escapeHtml(
+                            fileName
+                          )}"
+                        >
+
+                        Select
+
+                      </label>
+
+                    `
+                    : ""
+                }
+
+
+                ${
+                  browserImage
+                    ? `
+
+                      <a
+                        class="photo-link"
+                        href="${escapeHtml(
+                          file.signedUrl
+                        )}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+
+                        <img
+                          src="${escapeHtml(
+                            file.signedUrl
+                          )}"
+                          alt="Customer upload"
+                          loading="lazy"
+                        >
+
+                        <div class="photo-name">
+                          ${escapeHtml(
+                            fileName
+                          )}
+                        </div>
+
+                      </a>
+
+                    `
+                    : `
+
+                      <a
+                        class="file-link"
+                        href="${escapeHtml(
+                          file.signedUrl
+                        )}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open
+                        ${escapeHtml(
+                          fileName
+                        )}
+                      </a>
+
+                    `
+                }
+
+              </div>
+
+            `;
+          }
+        )
+        .join("");
+
+
+      if (
+        enableExport &&
+        controlsId
+      ) {
+
+        setupExportControls(
+          controlsId,
+          gallery,
+          enquiry
+        );
+      }
+    }
+
+
+    function setupExportControls(
+      controlsId,
+      gallery,
+      enquiry
+    ) {
+
+      const controls =
+        document.getElementById(
+          controlsId
+        );
+
+
+      if (!controls) {
+        return;
+      }
+
+
+      controls.innerHTML = `
+
+        <div class="photo-toolbar">
+
+          <label class="photo-select-label">
+
+            <input
+              type="checkbox"
+              class="select-all-uploads"
+            >
+
+            Select All
+
+          </label>
+
+
+          <button
+            type="button"
+            class="
+              action-button
+              action-save
+              download-selected
+            "
+          >
+            Download Selected
+          </button>
+
+
+          <button
+            type="button"
+            class="
+              action-button
+              action-ready
+              save-selected
+            "
+          >
+            Save to Folder / USB
+          </button>
+
+
+          <span
+            class="selected-upload-count"
+            style="
+              color:#9292a3;
+              font-size:13px;
+            "
+          >
+            0 selected
+          </span>
+
+        </div>
+      `;
+
+
+      const selectAll =
+        controls.querySelector(
+          ".select-all-uploads"
+        );
+
+
+      const downloadButton =
+        controls.querySelector(
+          ".download-selected"
+        );
+
+
+      const saveButton =
+        controls.querySelector(
+          ".save-selected"
+        );
+
+
+      const countLabel =
+        controls.querySelector(
+          ".selected-upload-count"
+        );
+
+
+      const getBoxes =
+        () => [
+          ...gallery.querySelectorAll(
+            ".upload-select"
+          )
+        ];
+
+
+      const getSelected =
+        () =>
+          getBoxes()
+            .filter(
+              box =>
+                box.checked
+            )
+            .map(
+              box => ({
+
+                url:
+                  box.dataset.url,
+
+                name:
+                  box.dataset.name ||
+                  "Ozzsound-file"
+
+              })
+            );
+
+
+      const updateCount =
+        () => {
+
+          const boxes =
+            getBoxes();
+
+
+          const selected =
+            boxes.filter(
+              box =>
+                box.checked
+            );
+
+
+          countLabel.textContent =
+            `${selected.length} selected`;
+
+
+          selectAll.checked =
+            boxes.length > 0 &&
+            selected.length ===
+              boxes.length;
+
+
+          selectAll.indeterminate =
+            selected.length > 0 &&
+            selected.length <
+              boxes.length;
+        };
+
+
+      selectAll.addEventListener(
+        "change",
+        () => {
+
+          getBoxes().forEach(
+            box => {
+
+              box.checked =
+                selectAll.checked;
             }
           );
 
 
-        saveSelectedUploads.textContent =
-          "Saving Files...";
+          updateCount();
+        }
+      );
 
 
-        for (const item of selected) {
+      gallery.addEventListener(
+        "change",
+        event => {
 
-          const response =
-            await fetch(item.url);
+          if (
+            event.target
+              .classList
+              .contains(
+                "upload-select"
+              )
+          ) {
 
-          if (!response.ok) {
-            throw new Error(
-              `Could not retrieve ${item.name}`
+            updateCount();
+          }
+        }
+      );
+
+
+      /*
+        DOWNLOAD SELECTED
+      */
+
+      downloadButton.addEventListener(
+        "click",
+        async () => {
+
+          const selected =
+            getSelected();
+
+
+          if (
+            !selected.length
+          ) {
+
+            alert(
+              "Please select at least one venue file."
             );
+
+            return;
           }
 
 
-          const blob =
-            await response.blob();
+          const originalText =
+            downloadButton.textContent;
 
 
-        const originalName =
-  String(item.name || "");
+          downloadButton.disabled =
+            true;
 
-const lastDot =
-  originalName.lastIndexOf(".");
 
-const extension =
-  lastDot > -1
-    ? originalName.slice(lastDot)
-    : "";
+          downloadButton.textContent =
+            "Downloading...";
 
-const extensionLower =
-  extension.toLowerCase();
 
-const isImage =
-  [
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".webp",
-    ".gif",
-    ".heic",
-    ".heif"
-  ].includes(extensionLower);
+          try {
 
-const fileNumber =
-  String(
-    selected.indexOf(item) + 1
-  ).padStart(2, "0");
+            for (
+              let index = 0;
+              index < selected.length;
+              index++
+            ) {
 
-const fileType =
-  isImage ? "Photo" : "File";
+              const item =
+                selected[index];
 
-const exportFileName =
-  `${clientName} - ${fileType} ${fileNumber}${extension}`;
 
-const fileHandle =
-  await exportDirectory.getFileHandle(
-    safeFileName(exportFileName),
-    {
-      create: true
+              const response =
+                await fetch(
+                  item.url
+                );
+
+
+              if (
+                !response.ok
+              ) {
+
+                throw new Error(
+                  `Could not download ${item.name}`
+                );
+              }
+
+
+              const blob =
+                await response.blob();
+
+
+              const blobUrl =
+                URL.createObjectURL(
+                  blob
+                );
+
+
+              const link =
+                document.createElement(
+                  "a"
+                );
+
+
+              link.href =
+                blobUrl;
+
+
+              link.download =
+                safeFileName(
+                  item.name
+                );
+
+
+              document.body
+                .appendChild(
+                  link
+                );
+
+
+              link.click();
+
+              link.remove();
+
+
+              setTimeout(
+                () =>
+                  URL.revokeObjectURL(
+                    blobUrl
+                  ),
+                2000
+              );
+
+
+              await new Promise(
+                resolve =>
+                  setTimeout(
+                    resolve,
+                    250
+                  )
+              );
+            }
+
+
+          } catch (error) {
+
+            console.error(
+              "Download failed:",
+              error
+            );
+
+
+            alert(
+              "One or more files could not be downloaded."
+            );
+
+
+          } finally {
+
+            downloadButton.disabled =
+              false;
+
+
+            downloadButton.textContent =
+              originalText;
+          }
+        }
+      );
+
+
+      /*
+        SAVE TO FOLDER / USB
+      */
+
+      saveButton.addEventListener(
+        "click",
+        async () => {
+
+          const selected =
+            getSelected();
+
+
+          if (
+            !selected.length
+          ) {
+
+            alert(
+              "Please select at least one venue file."
+            );
+
+            return;
+          }
+
+
+          if (
+            !window.showDirectoryPicker
+          ) {
+
+            alert(
+              "Saving directly to a folder is not supported by this browser. Please use Download Selected instead."
+            );
+
+            return;
+          }
+
+
+          const originalText =
+            saveButton.textContent;
+
+
+          try {
+
+            saveButton.disabled =
+              true;
+
+
+            saveButton.textContent =
+              "Choose Folder / USB...";
+
+
+            const chosenDirectory =
+              await window
+                .showDirectoryPicker({
+                  mode:
+                    "readwrite"
+                });
+
+
+            const reference =
+              safeFileName(
+                enquiry.enquiry_ref ||
+                "Ozzsound-Enquiry"
+              );
+
+
+            const clientName =
+              safeFileName(
+                enquiry.name ||
+                "Client"
+              );
+
+
+            const exportFolderName =
+              `Ozzsound - ${clientName} - ${reference}`;
+
+
+            const exportDirectory =
+              await chosenDirectory
+                .getDirectoryHandle(
+                  exportFolderName,
+                  {
+                    create: true
+                  }
+                );
+
+
+            saveButton.textContent =
+              "Saving Files...";
+
+
+            for (
+              let index = 0;
+              index < selected.length;
+              index++
+            ) {
+
+              const item =
+                selected[index];
+
+
+              const response =
+                await fetch(
+                  item.url
+                );
+
+
+              if (
+                !response.ok
+              ) {
+
+                throw new Error(
+                  `Could not retrieve ${item.name}`
+                );
+              }
+
+
+              const blob =
+                await response.blob();
+
+
+              const originalName =
+                String(
+                  item.name || ""
+                );
+
+
+              const lastDot =
+                originalName
+                  .lastIndexOf(".");
+
+
+              const extension =
+                lastDot > -1
+                  ? originalName.slice(
+                      lastDot
+                    )
+                  : "";
+
+
+              const extensionLower =
+                extension
+                  .toLowerCase();
+
+
+              const isImage =
+                [
+                  ".jpg",
+                  ".jpeg",
+                  ".png",
+                  ".webp",
+                  ".gif",
+                  ".heic",
+                  ".heif"
+                ].includes(
+                  extensionLower
+                );
+
+
+              const fileNumber =
+                String(
+                  index + 1
+                ).padStart(
+                  2,
+                  "0"
+                );
+
+
+              const fileType =
+                isImage
+                  ? "Photo"
+                  : "File";
+
+
+              const exportFileName =
+                `${clientName} - ${fileType} ${fileNumber}${extension}`;
+
+
+              const fileHandle =
+                await exportDirectory
+                  .getFileHandle(
+                    safeFileName(
+                      exportFileName
+                    ),
+                    {
+                      create: true
+                    }
+                  );
+
+
+              const writable =
+                await fileHandle
+                  .createWritable();
+
+
+              await writable.write(
+                blob
+              );
+
+
+              await writable.close();
+            }
+
+
+            alert(
+              `${selected.length} file${selected.length === 1 ? "" : "s"} saved to "${exportFolderName}".`
+            );
+
+
+          } catch (error) {
+
+            if (
+              error.name !==
+              "AbortError"
+            ) {
+
+              console.error(
+                "Folder export failed:",
+                error
+              );
+
+
+              alert(
+                "The files could not be saved to that folder."
+              );
+            }
+
+
+          } finally {
+
+            saveButton.disabled =
+              false;
+
+
+            saveButton.textContent =
+              originalText;
+          }
+        }
+      );
+
+
+      updateCount();
     }
-  );
 
 
-          const writable =
-            await fileHandle.createWritable();
+    /*
+      OPEN ENQUIRY
+
+      This is exposed on window so
+      the enquiry cards can call it.
+    */
+
+    window.openEnquiry =
+      async function(id) {
+
+        const enquiry =
+          allEnquiries.find(
+            item =>
+              String(item.id) ===
+              String(id)
+          );
 
 
-          await writable.write(blob);
-
-          await writable.close();
+        if (!enquiry) {
+          return;
         }
 
 
-        alert(
-          `${selected.length} file${selected.length === 1 ? "" : "s"} saved to "${exportFolderName}".`
+        currentEnquiry =
+          enquiry;
+
+
+        currentQuote =
+          null;
+
+
+        currentQuoteItems =
+          [];
+
+
+        currentNotes =
+          [];
+
+
+        currentBooking =
+          null;
+
+
+        modalTitle.textContent =
+          enquiry.name ||
+          "Customer Enquiry";
+
+
+        modalReference.textContent =
+          enquiry.enquiry_ref ||
+          "";
+
+
+        modalBody.innerHTML = `
+          <div class="loading">
+            Loading enquiry workflow...
+          </div>
+        `;
+
+
+        modalBackdrop.style.display =
+          "flex";
+
+
+        await loadEnquiryWorkflow(
+          enquiry.id
         );
 
 
-      } catch (error) {
-
-        if (error.name !== "AbortError") {
-
-          console.error(
-            "Folder export failed:",
-            error
-          );
-
-          alert(
-            "The files could not be saved to that folder."
-          );
-        }
-
-      } finally {
-
-        saveSelectedUploads.disabled = false;
-        saveSelectedUploads.textContent =
-          originalText;
-      }
-    }
-  );
+        renderModalContent();
 
 
-  updateSelectedUploadCount();
-}
+        await renderUploadSections();
+      };
+
+
     function hideModal() {
-      modalBackdrop.style.display = "none";
+
+      modalBackdrop.style.display =
+        "none";
+
+
+      currentEnquiry =
+        null;
+
+
+      currentQuote =
+        null;
+
+
+      currentQuoteItems =
+        [];
+
+
+      currentNotes =
+        [];
+
+
+      currentBooking =
+        null;
     }
 
 
-    loginForm.addEventListener("submit", async event => {
+    /*
+      LOGIN
+    */
 
-      event.preventDefault();
+    loginForm.addEventListener(
+      "submit",
+      async event => {
 
-      clearMessage();
+        event.preventDefault();
 
-      loginButton.disabled = true;
-      loginButton.textContent = "Signing in...";
 
-      const email =
-        document.getElementById("email").value.trim();
+        clearMessage();
 
-      const password =
-        document.getElementById("password").value;
 
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
+        loginButton.disabled =
+          true;
 
-      if (error) {
 
-        showMessage(
-          "Login failed. Check your email and password.",
-          "error"
+        loginButton.textContent =
+          "Signing in...";
+
+
+        const email =
+          document.getElementById(
+            "email"
+          )
+            .value
+            .trim();
+
+
+        const password =
+          document.getElementById(
+            "password"
+          ).value;
+
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .auth
+            .signInWithPassword({
+              email,
+              password
+            });
+
+
+        if (error) {
+
+          showMessage(
+            "Login failed. Check your email and password.",
+            "error"
+          );
+
+
+          loginButton.disabled =
+            false;
+
+
+          loginButton.textContent =
+            "Sign In";
+
+
+          return;
+        }
+
+
+        await verifyAdmin(
+          data.user
         );
 
-        loginButton.disabled = false;
-        loginButton.textContent = "Sign In";
 
-        return;
+        loginButton.disabled =
+          false;
+
+
+        loginButton.textContent =
+          "Sign In";
       }
-
-      await verifyAdmin(data.user);
-
-      loginButton.disabled = false;
-      loginButton.textContent = "Sign In";
-    });
+    );
 
 
-    logoutButton.addEventListener("click", async () => {
+    /*
+      LOGOUT
+    */
 
-      await supabaseClient.auth.signOut();
+    logoutButton.addEventListener(
+      "click",
+      async () => {
 
-      document.getElementById("password").value = "";
+        await supabaseClient
+          .auth
+          .signOut();
 
-      showLogin();
 
-      clearMessage();
-    });
+        currentUserId =
+          null;
+
+
+        document.getElementById(
+          "password"
+        ).value =
+          "";
+
+
+        showLogin();
+
+        clearMessage();
+      }
+    );
 
 
     refreshButton.addEventListener(
@@ -1954,33 +5798,62 @@ const fileHandle =
     );
 
 
-    modalBackdrop.addEventListener("click", event => {
+    modalBackdrop.addEventListener(
+      "click",
+      event => {
 
-      if (event.target === modalBackdrop) {
-        hideModal();
+        if (
+          event.target ===
+          modalBackdrop
+        ) {
+
+          hideModal();
+        }
       }
+    );
 
-    });
 
+    document.addEventListener(
+      "keydown",
+      event => {
 
-    document.addEventListener("keydown", event => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
 
-      if (event.key === "Escape") {
-        hideModal();
+          hideModal();
+        }
       }
+    );
 
-    });
 
+    /*
+      INITIALISE
+    */
 
     async function initialiseAdminPortal() {
 
       const {
-        data: { session }
-      } = await supabaseClient.auth.getSession();
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
 
-      if (session?.user) {
-        await verifyAdmin(session.user);
+
+      if (
+        session?.user
+      ) {
+
+        await verifyAdmin(
+          session.user
+        );
+
       } else {
+
         showLogin();
       }
     }
