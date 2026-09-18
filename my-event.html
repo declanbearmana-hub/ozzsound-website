@@ -263,7 +263,8 @@
       border: 1px solid rgba(255,180,84,.25);
     }
 
-    .status-declined {
+    .status-declined,
+    .status-cancelled {
       color: #ff9aaa;
       background: rgba(255,100,124,.10);
       border: 1px solid rgba(255,100,124,.25);
@@ -674,6 +675,9 @@
     let currentItems = [];
     let currentNotes = [];
     let currentBooking = null;
+    let portalRealtimeChannel = null;
+    let portalRefreshTimer = null;
+    let portalRefreshInFlight = false;
 
 
     function escapeHtml(value) {
@@ -976,7 +980,7 @@
           supabaseClient
             .from("bookings")
             .select(
-              "id,event_date,booking_type,status,confirmed_at"
+              "id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,updated_at"
             )
             .eq(
               "enquiry_id",
@@ -1126,7 +1130,24 @@
 
       let responseArea = "";
 
+      const bookingCancelled =
+        enquiry.status ===
+          "cancelled" ||
+        currentBooking?.status ===
+          "cancelled";
+
       if (
+        bookingCancelled
+      ) {
+        responseArea = `
+          <div class="response-banner declined">
+            <strong>Booking cancelled.</strong><br>
+            This Ozzsound booking is currently marked as cancelled.
+            The event details above show the latest schedule held on the booking record.
+            Please contact Ozzsound if you believe this needs to be changed.
+          </div>
+        `;
+      } else if (
         quote.status ===
         "customer_accepted"
       ) {
@@ -1257,6 +1278,12 @@
         `;
       }
 
+      const portalStatus =
+        bookingCancelled
+          ? "cancelled"
+          : quote.status;
+
+
       portalContent.innerHTML = `
 
         <div class="card">
@@ -1296,14 +1323,16 @@
               class="
                 status
                 status-${escapeHtml(
-                  quote.status
+                  portalStatus
                 )}
               "
             >
               ${escapeHtml(
-                quoteStatusLabel(
-                  quote.status
-                )
+                bookingCancelled
+                  ? "Booking Cancelled"
+                  : quoteStatusLabel(
+                      quote.status
+                    )
               )}
             </span>
 
@@ -1665,6 +1694,166 @@
     }
 
 
+
+    /* CUSTOMER PORTAL LIVE BOOKING SYNC */
+
+    function capturePortalDraft() {
+      return {
+        message:
+          document.getElementById(
+            "responseMessage"
+          )?.value || "",
+        callRequested:
+          Boolean(
+            document.getElementById(
+              "callRequested"
+            )?.checked
+          )
+      };
+    }
+
+
+    function restorePortalDraft(draft) {
+      const messageField =
+        document.getElementById(
+          "responseMessage"
+        );
+
+      const callField =
+        document.getElementById(
+          "callRequested"
+        );
+
+      if (
+        messageField &&
+        draft?.message
+      ) {
+        messageField.value =
+          draft.message;
+      }
+
+      if (callField) {
+        callField.checked =
+          Boolean(
+            draft?.callRequested
+          );
+      }
+    }
+
+
+    async function refreshPortalPreservingDraft() {
+      if (
+        !currentEnquiry ||
+        portalRefreshInFlight
+      ) {
+        return;
+      }
+
+      portalRefreshInFlight =
+        true;
+
+      const draft =
+        capturePortalDraft();
+
+      try {
+        await loadPortal();
+        restorePortalDraft(
+          draft
+        );
+      } catch (error) {
+        console.error(
+          "Portal live refresh failed:",
+          error
+        );
+      } finally {
+        portalRefreshInFlight =
+          false;
+      }
+    }
+
+
+    function stopPortalLiveSync() {
+      if (
+        portalRealtimeChannel
+      ) {
+        supabaseClient.removeChannel(
+          portalRealtimeChannel
+        );
+        portalRealtimeChannel =
+          null;
+      }
+
+      if (
+        portalRefreshTimer
+      ) {
+        clearInterval(
+          portalRefreshTimer
+        );
+        portalRefreshTimer =
+          null;
+      }
+    }
+
+
+    function startPortalLiveSync() {
+      stopPortalLiveSync();
+
+      if (!enquiryId) {
+        return;
+      }
+
+      portalRealtimeChannel =
+        supabaseClient
+          .channel(
+            "ozzsound-customer-event-" +
+            enquiryId
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "enquiries",
+              filter:
+                "id=eq." +
+                enquiryId
+            },
+            refreshPortalPreservingDraft
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "bookings",
+              filter:
+                "enquiry_id=eq." +
+                enquiryId
+            },
+            refreshPortalPreservingDraft
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "quotes",
+              filter:
+                "enquiry_id=eq." +
+                enquiryId
+            },
+            refreshPortalPreservingDraft
+          )
+          .subscribe();
+
+      portalRefreshTimer =
+        setInterval(
+          refreshPortalPreservingDraft,
+          120000
+        );
+    }
+
+
     accessForm.addEventListener(
       "submit",
       async event => {
@@ -1737,6 +1926,7 @@
         }
 
         await loadPortal();
+        startPortalLiveSync();
       }
     );
 
@@ -1744,6 +1934,8 @@
     logoutButton.addEventListener(
       "click",
       async () => {
+        stopPortalLiveSync();
+
         await supabaseClient
           .auth
           .signOut();
@@ -1787,6 +1979,7 @@
         session?.user
       ) {
         await loadPortal();
+        startPortalLiveSync();
       } else {
         showAccess();
       }
