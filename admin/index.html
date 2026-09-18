@@ -1356,6 +1356,27 @@
       color: #ff8c9e;
     }
 
+
+    /* ADMIN BOOKING MANAGER — calendar actions */
+    .admin-booking-manager{display:none;margin-top:16px;padding:16px;border-radius:14px;border:1px solid rgba(255,56,209,.28);background:linear-gradient(145deg,rgba(255,56,209,.07),rgba(143,124,255,.05))}
+    .admin-booking-manager.open{display:block}
+    .admin-booking-manager h3{margin:0 0 5px;font-size:17px}
+    .admin-booking-manager>p{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.5}
+    .admin-booking-card{padding:15px;border-radius:12px;border:1px solid rgba(255,56,209,.22);background:rgba(8,8,14,.72)}
+    .admin-booking-card+.admin-booking-card{margin-top:12px}
+    .admin-booking-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+    .admin-booking-summary>div{padding:10px;border-radius:10px;border:1px solid #2c2c3a;background:#0d0d15}
+    .admin-booking-summary small{display:block;margin-bottom:5px;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .admin-booking-edit-grid{display:grid;grid-template-columns:1fr 1.25fr 1.25fr 1.4fr;gap:10px;align-items:end}
+    .admin-booking-time-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+    .admin-booking-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .admin-booking-cancel{border-color:rgba(255,100,124,.42)!important;color:#ff9aaa!important}
+    .admin-booking-message{min-height:18px;margin-top:10px;color:var(--muted);font-size:12px}
+    .admin-booking-message.success{color:var(--green)}
+    .admin-booking-message.error{color:#ff8c9e}
+    @media(max-width:1000px){.admin-booking-summary,.admin-booking-edit-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:760px){.admin-booking-summary,.admin-booking-edit-grid{grid-template-columns:1fr}.admin-booking-actions>button{width:100%}}
+
     @media (max-width: 900px) {
       .admin-calendar-form {
         grid-template-columns: 1fr 1fr;
@@ -1750,6 +1771,11 @@
           </div>
 
           <div
+            id="adminBookingManager"
+            class="admin-booking-manager"
+          ></div>
+
+          <div
             id="adminCalendarMessage"
             class="admin-calendar-message"
           ></div>
@@ -1920,6 +1946,7 @@
 
     let adminCalendarOverrides = new Map();
     let adminConfirmedDates = new Set();
+    let adminBookingsByDate = new Map();
     let adminCalendarSelectedDate = "";
     let adminCalendarView = new Date();
     adminCalendarView =
@@ -2914,6 +2941,236 @@
     }
 
 
+
+    /* CALENDAR BOOKING MANAGEMENT HELPERS */
+
+    function adminBookingsForDate(dateKey) {
+      return adminBookingsByDate.get(dateKey) || [];
+    }
+
+    function adminBookingCustomer(booking) {
+      return allEnquiries.find(
+        enquiry => String(enquiry.id) === String(booking.enquiry_id)
+      ) || null;
+    }
+
+    function adminBookingTimeParts(value) {
+      if (!value) return { hour:"", minute:"", period:"" };
+      const parts=String(value).split(":");
+      const hour24=Number(parts[0]);
+      const minute=String(parts[1]||"00").padStart(2,"0");
+      if (!Number.isFinite(hour24)) return { hour:"", minute:"", period:"" };
+      return {
+        hour:String(hour24%12||12),
+        minute,
+        period:hour24>=12?"PM":"AM"
+      };
+    }
+
+    function adminBookingTimePickerHtml(prefix,value,label) {
+      const parts=adminBookingTimeParts(value);
+      const hourOptions=Array.from({length:12},(_,i)=>i+1)
+        .map(hour=>'<option value="'+hour+'"'+(String(hour)===parts.hour?' selected':'')+'>'+hour+'</option>')
+        .join("");
+      const minuteOptions=Array.from({length:12},(_,i)=>String(i*5).padStart(2,"0"))
+        .map(minute=>'<option value="'+minute+'"'+(minute===parts.minute?' selected':'')+'>'+minute+'</option>')
+        .join("");
+      return `
+        <label class="admin-calendar-field">
+          <span>${escapeHtml(label)}</span>
+          <div class="admin-booking-time-picker">
+            <select id="${prefix}Hour" aria-label="${escapeHtml(label)} hour">
+              <option value="">Hour</option>${hourOptions}
+            </select>
+            <select id="${prefix}Minute" aria-label="${escapeHtml(label)} minutes">
+              <option value="">Min</option>${minuteOptions}
+            </select>
+            <select id="${prefix}Period" aria-label="${escapeHtml(label)} AM or PM">
+              <option value="">AM/PM</option>
+              <option value="AM" ${parts.period==="AM"?"selected":""}>AM</option>
+              <option value="PM" ${parts.period==="PM"?"selected":""}>PM</option>
+            </select>
+          </div>
+        </label>`;
+    }
+
+    function adminBookingTimeValue(prefix) {
+      const hour=Number(document.getElementById(prefix+"Hour")?.value);
+      const minute=document.getElementById(prefix+"Minute")?.value;
+      const period=document.getElementById(prefix+"Period")?.value;
+      if(!hour||minute===undefined||minute===null||minute===""||!period) return null;
+      let hour24=hour%12;
+      if(period==="PM") hour24+=12;
+      return String(hour24).padStart(2,"0")+":"+String(minute).padStart(2,"0")+":00";
+    }
+
+    async function rescheduleAdminBooking(bookingId) {
+      const booking=Array.from(adminBookingsByDate.values()).flat()
+        .find(item=>String(item.id)===String(bookingId));
+      if(!booking){alert("This booking could not be found. Refresh Admin and try again.");return;}
+
+      const prefix="booking-"+booking.id;
+      const newDate=document.getElementById(prefix+"-date")?.value;
+      const startTime=adminBookingTimeValue(prefix+"-start");
+      const finishTime=adminBookingTimeValue(prefix+"-finish");
+      const reason=document.getElementById(prefix+"-reason")?.value.trim()||null;
+      const messageField=document.getElementById(prefix+"-message");
+
+      if(!newDate||!startTime||!finishTime){
+        if(messageField){
+          messageField.className="admin-booking-message error";
+          messageField.textContent="Choose the new date, start time and finish time.";
+        }
+        return;
+      }
+
+      const customer=adminBookingCustomer(booking);
+      const confirmed=confirm(
+        "Change this booking schedule?\n\n"+
+        (customer?.name||"Customer")+"\nCurrent: "+
+        formatDate(booking.event_date)+" · "+formatEventTimes(booking.event_times)+
+        "\nNew: "+formatDate(newDate)+" · "+adminCalendarTimeDisplay(startTime)+" – "+adminCalendarTimeDisplay(finishTime)+
+        "\n\nThis will update the booking, enquiry, customer portal and public availability calendar."
+      );
+      if(!confirmed)return;
+
+      const button=document.getElementById(prefix+"-save");
+      if(button){button.disabled=true;button.textContent="UPDATING...";}
+      if(messageField){messageField.className="admin-booking-message";messageField.textContent="Updating booking everywhere...";}
+
+      try{
+        const {data,error}=await supabaseClient.rpc("admin_reschedule_booking",{
+          p_booking_id:booking.id,
+          p_event_date:newDate,
+          p_event_start_time:startTime,
+          p_event_finish_time:finishTime,
+          p_reason:reason
+        });
+        if(error)throw error;
+
+        adminCalendarSelectedDate=data?.event_date||newDate;
+        const parts=adminCalendarSelectedDate.split("-").map(Number);
+        adminCalendarView=new Date(parts[0],parts[1]-1,1);
+
+        await loadEnquiries();
+        await loadAdminCalendar();
+
+        alert("BOOKING UPDATED.\n\nThe new date and times are now saved across Ozzsound Admin, the customer event record and the public availability calendar.");
+      }catch(error){
+        console.error("Booking reschedule failed:",error);
+        if(messageField){
+          messageField.className="admin-booking-message error";
+          messageField.textContent=error?.message||"The booking could not be updated.";
+        }
+        if(button){button.disabled=false;button.textContent="SAVE NEW SCHEDULE";}
+      }
+    }
+
+    async function cancelAdminBooking(bookingId) {
+      const booking=Array.from(adminBookingsByDate.values()).flat()
+        .find(item=>String(item.id)===String(bookingId));
+      if(!booking){alert("This booking could not be found. Refresh Admin and try again.");return;}
+
+      const prefix="booking-"+booking.id;
+      const reason=document.getElementById(prefix+"-reason")?.value.trim()||null;
+      const customer=adminBookingCustomer(booking);
+      const confirmed=confirm(
+        "CANCEL THIS OZZSOUND BOOKING?\n\n"+
+        (customer?.name||"Customer")+"\n"+
+        formatDate(booking.event_date)+" · "+formatEventTimes(booking.event_times)+
+        "\n\nThe date will be released back to the public calendar unless you have a manual calendar override on that day."
+      );
+      if(!confirmed)return;
+
+      const button=document.getElementById(prefix+"-cancel");
+      const messageField=document.getElementById(prefix+"-message");
+      if(button){button.disabled=true;button.textContent="CANCELLING...";}
+
+      try{
+        const {error}=await supabaseClient.rpc("admin_cancel_booking",{
+          p_booking_id:booking.id,
+          p_reason:reason
+        });
+        if(error)throw error;
+
+        await loadEnquiries();
+        await loadAdminCalendar();
+
+        alert("BOOKING CANCELLED.\n\nThe enquiry now shows Cancelled and the public calendar has been updated automatically.");
+      }catch(error){
+        console.error("Booking cancellation failed:",error);
+        if(messageField){
+          messageField.className="admin-booking-message error";
+          messageField.textContent=error?.message||"The booking could not be cancelled.";
+        }
+        if(button){button.disabled=false;button.textContent="CANCEL BOOKING";}
+      }
+    }
+
+    function renderAdminBookingManager(dateKey) {
+      const manager=document.getElementById("adminBookingManager");
+      if(!manager)return;
+      const bookings=adminBookingsForDate(dateKey);
+
+      if(!bookings.length){
+        manager.classList.remove("open");
+        manager.innerHTML="";
+        return;
+      }
+
+      manager.classList.add("open");
+      manager.innerHTML=`
+        <h3>Booking Management</h3>
+        <p>Change a confirmed booking's date or times, open the linked enquiry, or cancel the booking. Changes are saved to the central booking record so Admin, the customer portal and public availability stay in sync.</p>
+        ${bookings.map(booking=>{
+          const customer=adminBookingCustomer(booking);
+          const prefix="booking-"+booking.id;
+          return `
+            <div class="admin-booking-card">
+              <div class="admin-booking-summary">
+                <div><small>Customer</small><strong>${escapeHtml(customer?.name||"Customer")}</strong></div>
+                <div><small>Reference</small><strong>${escapeHtml(customer?.enquiry_ref||"—")}</strong></div>
+                <div><small>Event</small><strong>${escapeHtml(customer?.event_type||customer?.enquiry_type||booking.booking_type||"Booking")}</strong></div>
+                <div><small>Current schedule</small><strong>${formatDate(booking.event_date)} · ${formatEventTimes(booking.event_times)}</strong></div>
+              </div>
+
+              <div class="admin-booking-edit-grid">
+                <label class="admin-calendar-field">
+                  <span>Booking date</span>
+                  <input id="${prefix}-date" type="date" value="${escapeHtml(booking.event_date||"")}">
+                </label>
+
+                ${adminBookingTimePickerHtml(prefix+"-start",booking.event_start_time,"Start time")}
+                ${adminBookingTimePickerHtml(prefix+"-finish",booking.event_finish_time,"Finish time")}
+
+                <label class="admin-calendar-field">
+                  <span>Admin reason / note (optional)</span>
+                  <input id="${prefix}-reason" type="text" maxlength="240" placeholder="e.g. Customer requested new time">
+                </label>
+              </div>
+
+              <div class="admin-booking-actions">
+                <button id="${prefix}-save" type="button" class="primary-button">SAVE NEW SCHEDULE</button>
+                <button type="button" class="secondary-button" data-open-booking-enquiry="${escapeHtml(booking.enquiry_id)}">OPEN ENQUIRY</button>
+                <button id="${prefix}-cancel" type="button" class="secondary-button admin-booking-cancel">CANCEL BOOKING</button>
+              </div>
+
+              <div id="${prefix}-message" class="admin-booking-message"></div>
+            </div>`;
+        }).join("")}
+      `;
+
+      bookings.forEach(booking=>{
+        const prefix="booking-"+booking.id;
+        document.getElementById(prefix+"-save")?.addEventListener("click",()=>rescheduleAdminBooking(booking.id));
+        document.getElementById(prefix+"-cancel")?.addEventListener("click",()=>cancelAdminBooking(booking.id));
+      });
+
+      manager.querySelectorAll("[data-open-booking-enquiry]").forEach(button=>{
+        button.addEventListener("click",()=>window.openEnquiry(button.dataset.openBookingEnquiry));
+      });
+    }
+
     async function loadAdminCalendar() {
 
       const grid =
@@ -2929,7 +3186,8 @@
 
       const [
         bookingResult,
-        overrideResult
+        overrideResult,
+        bookingDetailResult
       ] =
         await Promise.all([
 
@@ -2952,6 +3210,19 @@
             )
             .select(
               "event_date,status,available_from_time,public_label,updated_at"
+            ),
+
+
+          supabaseClient
+            .from(
+              "bookings"
+            )
+            .select(
+              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,updated_at"
+            )
+            .eq(
+              "status",
+              "confirmed"
             )
 
         ]);
@@ -3010,6 +3281,51 @@
                   row
                 ]
               )
+          );
+      }
+
+
+      if (
+        bookingDetailResult.error
+      ) {
+
+        console.error(
+          "Admin calendar booking detail load error:",
+          bookingDetailResult.error
+        );
+
+        adminBookingsByDate =
+          new Map();
+
+      } else {
+
+        adminBookingsByDate =
+          new Map();
+
+        (
+          bookingDetailResult.data ||
+          []
+        )
+          .filter(
+            booking =>
+              booking.event_date
+          )
+          .forEach(
+            booking => {
+              const existing =
+                adminBookingsByDate.get(
+                  booking.event_date
+                ) || [];
+
+              existing.push(
+                booking
+              );
+
+              adminBookingsByDate.set(
+                booking.event_date,
+                existing
+              );
+            }
           );
       }
 
@@ -3475,13 +3791,28 @@
 
         messageField.textContent =
           confirmed
-            ? "This date is locked by a confirmed Ozzsound booking. Cancel or change the booking itself before making the date available."
+            ? "This date has a confirmed Ozzsound booking. Use Booking Management below to change the schedule, open the enquiry or cancel it."
             :(
               override
                 ? "This day has an admin calendar setting. Restore Automatic removes the setting and returns the day to normal availability."
                 :"No admin override is set. This date follows automatic availability."
             );
       }
+
+
+      renderAdminBookingManager(
+        dateKey
+      );
+
+
+      requestAnimationFrame(
+        () => {
+          editor.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+          });
+        }
+      );
     }
 
 
