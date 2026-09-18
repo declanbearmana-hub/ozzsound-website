@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ozzsound Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(174, 0, 255, 0.18), transparent 35%),
+        radial-gradient(circle at 80% 80%, rgba(0, 225, 255, 0.12), transparent 35%),
+        #07070c;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      padding: 42px;
+      border-radius: 24px;
+      background: rgba(14, 14, 24, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow:
+        0 0 40px rgba(174, 0, 255, 0.16),
+        0 25px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #ff38d1, #a855f7, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      margin-top: 9px;
+      color: #9d9dac;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 8px;
+      color: #d7d7df;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 12px;
+      border: 1px solid #30303e;
+      outline: none;
+      background: #0a0a12;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    input:focus {
+      border-color: #b64cff;
+      box-shadow: 0 0 0 3px rgba(182, 76, 255, 0.12);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 15px 18px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(90deg, #d629d7, #8b4dff, #00bfe8);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255, 70, 100, 0.10);
+      border: 1px solid rgba(255, 70, 100, 0.35);
+      color: #ff9aaa;
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(38, 220, 160, 0.10);
+      border: 1px solid rgba(38, 220, 160, 0.35);
+      color: #78f0c5;
+    }
+
+    .security-note {
+      margin-top: 25px;
+      text-align: center;
+      color: #707080;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #adminArea {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .admin-header {
+      min-height: 80px;
+      padding: 18px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8,8,14,0.92);
+    }
+
+    .admin-logo {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #ff38d1, #a855f7, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logout-button {
+      width: auto;
+      margin: 0;
+      padding: 10px 18px;
+      background: #1c1c27;
+      border: 1px solid #343442;
+    }
+
+    .admin-content {
+      max-width: 1250px;
+      margin: auto;
+      padding: 50px 30px;
+    }
+
+    .admin-content h1 {
+      font-size: 36px;
+      margin: 0 0 8px;
+    }
+
+    .admin-content p {
+      color: #9898a8;
+    }
+
+    .status-card {
+      margin-top: 35px;
+      padding: 28px;
+      border-radius: 18px;
+      background: #101018;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: #35e6a5;
+      box-shadow: 0 0 12px #35e6a5;
+    }
+
+    @media (max-width: 600px) {
+      .login-card {
+        padding: 30px 22px;
+      }
+
+      .admin-header {
+        padding: 16px 20px;
+      }
+
+      .admin-content {
+        padding: 35px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loginPage" class="page">
+    <div class="login-card">
+
+      <div class="brand">
+        <h1 class="brand-title">OZZSOUND</h1>
+        <div class="brand-subtitle">Administration Portal</div>
+      </div>
+
+      <form id="loginForm">
+
+        <label for="email">Admin Email</label>
+        <input
+          id="email"
+          type="email"
+          value="ozzsound@hotmail.com"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button id="loginButton" type="submit">
+          Sign In
+        </button>
+
+        <div id="message" class="message"></div>
+
+      </form>
+
+      <div class="security-note">
+        Secure Ozzsound administration access.<br>
+        Authorised users only.
+      </div>
+
+    </div>
+  </div>
+
+
+  <div id="adminArea">
+
+    <header class="admin-header">
+
+      <div class="admin-logo">
+        OZZSOUND ADMIN
+      </div>
+
+      <button
+        id="logoutButton"
+        class="logout-button"
+        type="button"
+      >
+        Sign Out
+      </button>
+
+    </header>
+
+    <main class="admin-content">
+
+      <h1>Admin Dashboard</h1>
+
+      <p id="welcomeText">
+        Ozzsound management portal
+      </p>
+
+      <div class="status-card">
+        <strong>
+          <span class="status-dot"></span>
+          Administrator access confirmed
+        </strong>
+
+        <p>
+          Your secure Ozzsound admin account is connected.
+          The enquiry dashboard will be added here next.
+        </p>
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL =
+      "https://lnritqkwejumknddyfzu.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx";
+
+    const { createClient } = supabase;
+
+    const supabaseClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
+    );
+
+    const loginPage = document.getElementById("loginPage");
+    const adminArea = document.getElementById("adminArea");
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const logoutButton = document.getElementById("logoutButton");
+    const message = document.getElementById("message");
+    const welcomeText = document.getElementById("welcomeText");
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = "message " + type;
+    }
+
+    function clearMessage() {
+      message.textContent = "";
+      message.className = "message";
+    }
+
+    function showLogin() {
+      adminArea.style.display = "none";
+      loginPage.style.display = "flex";
+    }
+
+    function showAdmin(email) {
+      loginPage.style.display = "none";
+      adminArea.style.display = "block";
+
+      welcomeText.textContent =
+        "Signed in as " + email;
+    }
+
+    async function verifyAdmin(user) {
+
+      if (!user) {
+        showLogin();
+        return false;
+      }
+
+      const { data, error } =
+        await supabaseClient.rpc("is_admin");
+
+      if (error || data !== true) {
+
+        await supabaseClient.auth.signOut();
+
+        showLogin();
+
+        showMessage(
+          "Access denied. This account is not an authorised Ozzsound administrator.",
+          "error"
+        );
+
+        return false;
+      }
+
+      showAdmin(user.email);
+
+      return true;
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      clearMessage();
+
+      loginButton.disabled = true;
+      loginButton.textContent = "Signing in...";
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+
+        showMessage(
+          "Login failed. Check your email and password.",
+          "error"
+        );
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign In";
+
+        return;
+      }
+
+      const isAdmin =
+        await verifyAdmin(data.user);
+
+      if (!isAdmin) {
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign In";
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+
+      await supabaseClient.auth.signOut();
+
+      document.getElementById("password").value = "";
+
+      showLogin();
+
+      clearMessage();
+
+      loginButton.disabled = false;
+      loginButton.textContent = "Sign In";
+    });
+
+    async function initialiseAdminPortal() {
+
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      if (session?.user) {
+        await verifyAdmin(session.user);
+      } else {
+        showLogin();
+      }
+    }
+
+    initialiseAdminPortal();
+  </script>
+
+</body>
+</html>
