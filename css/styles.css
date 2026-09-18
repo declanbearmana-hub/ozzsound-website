@@ -547,3 +547,54 @@
 /* Public calendar extended legend */
 .legendAvailableFrom{background:#8f7cff}
 .legendUnavailable{background:#ff647c}
+
+
+/* Booked dates: high-visibility social-proof styling — 2026-09-19 */
+.calendarGrid .calDay.booked{
+  position:relative;
+  opacity:1;
+  cursor:not-allowed;
+  text-decoration:none;
+  border-color:rgba(242,43,255,.92);
+  background:
+    radial-gradient(circle at 50% 20%,rgba(242,43,255,.25),transparent 55%),
+    linear-gradient(145deg,rgba(242,43,255,.20),rgba(139,61,255,.13)),
+    #100914;
+  color:#fff;
+  box-shadow:
+    0 0 0 1px rgba(242,43,255,.16),
+    0 0 18px rgba(242,43,255,.22),
+    inset 0 0 20px rgba(242,43,255,.07);
+}
+.calendarGrid .calDay.booked span{
+  color:#fff;
+  font-weight:900;
+  text-shadow:0 0 10px rgba(242,43,255,.65);
+}
+.calendarGrid .calDay.booked small{
+  display:block;
+  color:#ff72ef;
+  font-weight:950;
+  letter-spacing:.10em;
+  text-decoration:none;
+  text-shadow:0 0 9px rgba(242,43,255,.48);
+}
+.legendBooked{
+  background:#f22bff;
+  box-shadow:0 0 9px rgba(242,43,255,.7);
+}
+@media(max-width:700px){
+  .calendarGrid .calDay.booked small{
+    display:block!important;
+    font-size:clamp(6px,1.75vw,8px);
+    line-height:1;
+    letter-spacing:.02em;
+  }
+  .calendarGrid .calDay.booked{
+    gap:2px;
+    box-shadow:
+      0 0 0 1px rgba(242,43,255,.14),
+      0 0 10px rgba(242,43,255,.20),
+      inset 0 0 12px rgba(242,43,255,.07);
+  }
+}
