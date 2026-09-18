@@ -2967,6 +2967,49 @@
       };
     }
 
+    function adminBookingStartValue(booking) {
+      if (booking?.event_start_time) {
+        return booking.event_start_time;
+      }
+
+      const legacy =
+        String(
+          booking?.event_times ||
+          ""
+        ).trim();
+
+      if (/^\d{4}$/.test(legacy)) {
+        const hour =
+          Number(
+            legacy.slice(0,2)
+          );
+
+        const minute =
+          Number(
+            legacy.slice(2,4)
+          );
+
+        if (
+          hour >= 0 &&
+          hour <= 23 &&
+          minute >= 0 &&
+          minute <= 59
+        ) {
+          return (
+            String(hour)
+              .padStart(2,"0") +
+            ":" +
+            String(minute)
+              .padStart(2,"0") +
+            ":00"
+          );
+        }
+      }
+
+      return null;
+    }
+
+
     function adminBookingTimePickerHtml(prefix,value,label) {
       const parts=adminBookingTimeParts(value);
       const hourOptions=Array.from({length:12},(_,i)=>i+1)
@@ -3140,7 +3183,7 @@
                   <input id="${prefix}-date" type="date" value="${escapeHtml(booking.event_date||"")}">
                 </label>
 
-                ${adminBookingTimePickerHtml(prefix+"-start",booking.event_start_time,"Start time")}
+                ${adminBookingTimePickerHtml(prefix+"-start",adminBookingStartValue(booking),"Start time")}
                 ${adminBookingTimePickerHtml(prefix+"-finish",booking.event_finish_time,"Finish time")}
 
                 <label class="admin-calendar-field">
@@ -7049,11 +7092,21 @@ The automatic customer decline email will be added in the next customer-response
                     <div>
 
                       <h3>
-                        Confirmed Booking
+                        ${
+                          currentBooking.status ===
+                          "cancelled"
+                            ? "Cancelled Booking"
+                            : "Confirmed Booking"
+                        }
                       </h3>
 
                       <p>
-                        This enquiry already has a booking record.
+                        ${
+                          currentBooking.status ===
+                          "cancelled"
+                            ? "This booking has been cancelled. The date has been released from automatic public booking availability."
+                            : "This enquiry already has a booking record."
+                        }
                       </p>
 
                     </div>
