@@ -569,6 +569,12 @@
       color: #e0c1ff;
     }
 
+    .action-send {
+      background: linear-gradient(135deg,#00a9d6,#8b4dff);
+      border: 0;
+      color: #fff;
+    }
+
     .detail-grid {
       display: grid;
       grid-template-columns:
@@ -3554,6 +3560,140 @@ The automatic customer decline email will be added in the next customer-response
     }
 
 
+    async function sendQuoteToCustomer() {
+
+      if (!currentEnquiry) {
+        return;
+      }
+
+      const saved =
+        await saveQuoteDraft(false);
+
+      if (!saved || !currentQuote) {
+        return;
+      }
+
+      if (!currentEnquiry.email) {
+        alert("This enquiry does not have a customer email address.");
+        return;
+      }
+
+      if (!currentQuoteItems.length) {
+        const proceed =
+          confirm(
+            "This quote has no individual items. Send it to the customer anyway?"
+          );
+
+        if (!proceed) {
+          return;
+        }
+      }
+
+      const confirmed =
+        confirm(
+          "Send this quote to " +
+          currentEnquiry.email +
+          "?\n\nThe customer will receive the quote, a secure access code and a link to their Ozzsound event portal."
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      const button =
+        document.getElementById(
+          "sendQuoteButton"
+        );
+
+      if (button) {
+        button.disabled = true;
+        button.textContent =
+          "Sending Quote...";
+      }
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .functions
+            .invoke(
+              "send-quote-email",
+              {
+                body: {
+                  quote_id:
+                    currentQuote.id
+                }
+              }
+            );
+
+        if (error) {
+          throw error;
+        }
+
+        if (data?.success !== true) {
+          throw new Error(
+            data?.error ||
+            "Quote email failed."
+          );
+        }
+
+        currentQuote.status =
+          "sent";
+
+        currentQuote.sent_at =
+          data.sent_at ||
+          new Date().toISOString();
+
+        currentEnquiry.status =
+          "quoted";
+
+        const listItem =
+          allEnquiries.find(
+            item =>
+              String(item.id) ===
+              String(currentEnquiry.id)
+          );
+
+        if (listItem) {
+          listItem.status =
+            "quoted";
+        }
+
+        updateStats();
+        filterEnquiries();
+
+        alert(
+          "Quote sent to the customer successfully."
+        );
+
+        renderModalContent();
+        await renderUploadSections();
+
+      } catch (error) {
+
+        console.error(
+          "Quote email failed:",
+          error
+        );
+
+        alert(
+          "The quote could not be emailed. The saved quote has not been lost."
+        );
+
+      } finally {
+
+        if (button) {
+          button.disabled = false;
+          button.textContent =
+            "Send Quote to Customer";
+        }
+      }
+    }
+
+
     async function addEnquiryNote() {
 
       if (
@@ -4342,9 +4482,11 @@ The automatic customer decline email will be added in the next customer-response
               Accept / Request Changes buttons and
               “Would you like a phone call?” box are the next stage.
 
-              Marking a quote ready here does
-              <strong>not</strong>
-              email the customer yet.
+              When the quote is ready, use
+              <strong>Send Quote to Customer</strong>.
+              The customer will receive their quote,
+              a secure access code and a link to their
+              Ozzsound event portal.
 
             </div>
 
@@ -4377,6 +4519,17 @@ The automatic customer decline email will be added in the next customer-response
                 id="markQuoteReadyButton"
               >
                 Save & Mark Quote Ready
+              </button>
+
+              <button
+                type="button"
+                class="
+                  action-button
+                  action-send
+                "
+                id="sendQuoteButton"
+              >
+                Send Quote to Customer
               </button>
 
             </div>
@@ -4538,6 +4691,14 @@ The automatic customer decline email will be added in the next customer-response
       )?.addEventListener(
         "click",
         markQuoteReady
+      );
+
+
+      document.getElementById(
+        "sendQuoteButton"
+      )?.addEventListener(
+        "click",
+        sendQuoteToCustomer
       );
 
 
