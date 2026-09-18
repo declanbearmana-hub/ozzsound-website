@@ -473,3 +473,72 @@
     border-radius:6px;
   }
 }
+
+
+/* Public calendar admin-status states — 2026-09-19 */
+.calendarGrid .calDay.available-from{
+  border-color:rgba(40,230,255,.55);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(40,230,255,.09),
+      rgba(139,61,255,.06)
+    ),
+    #0b0e14;
+}
+.calendarGrid .calDay.available-from:hover,
+.calendarGrid .calDay.available-from.selected{
+  border-color:var(--cyan);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(40,230,255,.16),
+      rgba(139,61,255,.10)
+    ),
+    #0b0e14;
+  transform:translateY(-3px);
+}
+.calendarGrid .calDay.unavailable{
+  opacity:.42;
+  cursor:not-allowed;
+  border-color:rgba(255,100,124,.28);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,100,124,.05),
+      transparent
+    ),
+    #0b0e14;
+}
+.calendarGrid .calTime{
+  display:block;
+  margin-top:1px;
+  color:#86eaff;
+  font-style:normal;
+  font-size:.58rem;
+  font-weight:800;
+  line-height:1.15;
+  letter-spacing:.015em;
+  text-align:center;
+}
+@media(max-width:700px){
+  .calendarGrid .calDay.available-from:hover,
+  .calendarGrid .calDay.available-from.selected{
+    transform:none;
+  }
+  .calendarGrid .calDay.available-from{
+    gap:1px;
+  }
+  .calendarGrid .calTime{
+    margin-top:0;
+    font-size:clamp(6px,1.75vw,8px);
+    line-height:1.05;
+    letter-spacing:-.02em;
+    white-space:nowrap;
+  }
+}
+@media(max-width:390px){
+  .calendarGrid .calTime{
+    font-size:6px;
+  }
+}
