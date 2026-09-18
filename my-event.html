@@ -1617,6 +1617,50 @@
           data?.call_requested
         );
 
+
+      /*
+        The database response is already safely recorded at this
+        point. Now trigger the immediate Ozzsound admin email.
+        A notification-email problem must never undo or hide the
+        customer's successful quote response.
+      */
+      try {
+
+        const {
+          error: notifyError
+        } =
+          await supabaseClient
+            .functions
+            .invoke(
+              "notify-quote-response",
+              {
+                body: {
+                  quote_id:
+                    currentQuote.id
+                }
+              }
+            );
+
+
+        if (notifyError) {
+
+          console.error(
+            "Admin response email notification failed:",
+            notifyError
+          );
+        }
+
+      } catch (
+        notifyError
+      ) {
+
+        console.error(
+          "Admin response email notification failed:",
+          notifyError
+        );
+      }
+
+
       await loadPortal();
     }
 
