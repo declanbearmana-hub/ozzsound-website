@@ -1064,98 +1064,317 @@
         .join("");
     }
 
+async function openEnquiry(id) {
 
-    function openEnquiry(id) {
+  const enquiry =
+    allEnquiries.find(item => String(item.id) === String(id));
 
-      const enquiry =
-        allEnquiries.find(item => String(item.id) === String(id));
+  if (!enquiry) return;
 
-      if (!enquiry) return;
+  const eventType =
+    enquiry.event_type ||
+    enquiry.enquiry_type ||
+    "Not supplied";
 
-      const eventType =
-        enquiry.event_type ||
-        enquiry.enquiry_type ||
-        "Not supplied";
+  modalTitle.textContent =
+    enquiry.name || "Customer Enquiry";
 
-      modalTitle.textContent =
-        enquiry.name || "Customer Enquiry";
+  modalReference.textContent =
+    enquiry.enquiry_ref || "";
 
-      modalReference.textContent =
-        enquiry.enquiry_ref || "";
+  modalBody.innerHTML = `
+    <div class="detail-grid">
 
-      modalBody.innerHTML = `
-        <div class="detail-grid">
-
-          <div class="detail-box">
-            <div class="detail-title">Event Type</div>
-            <div class="detail-text">
-              ${displayValue(eventType)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Event Date</div>
-            <div class="detail-text">
-              ${formatDate(enquiry.event_date)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Phone</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.phone)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Email</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.email)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Venue / Suburb</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.venue_suburb)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Approx. Guests</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.approx_guests)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Event Times</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.event_times)}
-            </div>
-          </div>
-
-          <div class="detail-box">
-            <div class="detail-title">Uploaded Files</div>
-            <div class="detail-text">
-              ${Number(enquiry.upload_count || 0)}
-            </div>
-          </div>
-
-          <div class="detail-box full">
-            <div class="detail-title">Customer Message</div>
-            <div class="detail-text">
-              ${displayValue(enquiry.message)}
-            </div>
-          </div>
-
+      <div class="detail-box">
+        <div class="detail-title">Event Type</div>
+        <div class="detail-text">
+          ${displayValue(eventType)}
         </div>
-      `;
+      </div>
 
-      modalBackdrop.style.display = "flex";
+      <div class="detail-box">
+        <div class="detail-title">Event Date</div>
+        <div class="detail-text">
+          ${formatDate(enquiry.event_date)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Phone</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.phone)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Email</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.email)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Venue / Suburb</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.venue_suburb)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Approx. Guests</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.approx_guests)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Event Times</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.event_times)}
+        </div>
+      </div>
+
+      <div class="detail-box">
+        <div class="detail-title">Uploaded Files</div>
+        <div class="detail-text">
+          ${Number(enquiry.upload_count || 0)}
+        </div>
+      </div>
+
+      <div class="detail-box full">
+        <div class="detail-title">Customer Message</div>
+        <div class="detail-text">
+          ${displayValue(enquiry.message)}
+        </div>
+      </div>
+
+      <div class="detail-box full">
+
+        <div class="detail-title">
+          Venue Photos & Uploads
+        </div>
+
+        <div
+          id="enquiryPhotoGallery"
+          style="
+            margin-top:14px;
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+            gap:14px;
+          "
+        >
+          <div style="color:#9292a3;">
+            Loading customer uploads...
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  modalBackdrop.style.display = "flex";
+
+
+  const gallery =
+    document.getElementById("enquiryPhotoGallery");
+
+
+  function pathArray(value) {
+
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+      return value.filter(item => typeof item === "string");
     }
 
+    if (typeof value === "string") {
 
+      try {
+        const parsed = JSON.parse(value);
+
+        if (Array.isArray(parsed)) {
+          return parsed.filter(item => typeof item === "string");
+        }
+      } catch (_) {}
+
+      return [value];
+    }
+
+    return [];
+  }
+
+
+  const filePaths = [
+    ...pathArray(enquiry.display_photo_paths),
+    ...pathArray(enquiry.attachment_paths),
+    ...pathArray(enquiry.upload_paths)
+  ];
+
+
+  const uniquePaths =
+    [...new Set(filePaths.filter(Boolean))];
+
+
+  if (!uniquePaths.length) {
+
+    gallery.innerHTML = `
+      <div style="color:#9292a3;">
+        No uploaded files are attached to this enquiry.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const { data, error } =
+    await supabaseClient
+      .storage
+      .from("event-uploads")
+      .createSignedUrls(
+        uniquePaths,
+        3600
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Could not create signed upload URLs:",
+      error
+    );
+
+    gallery.innerHTML = `
+      <div style="color:#ff9aaa;">
+        The uploaded files could not be loaded.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const files =
+    (data || []).filter(
+      file => file && file.signedUrl
+    );
+
+
+  if (!files.length) {
+
+    gallery.innerHTML = `
+      <div style="color:#9292a3;">
+        No viewable uploads were found.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  gallery.innerHTML =
+    files.map(file => {
+
+      const path =
+        file.path || "";
+
+      const fileName =
+        path.split("/").pop() || "Customer upload";
+
+      const extension =
+        fileName
+          .split(".")
+          .pop()
+          .toLowerCase();
+
+      const browserImage =
+        [
+          "jpg",
+          "jpeg",
+          "png",
+          "webp",
+          "gif"
+        ].includes(extension);
+
+
+      if (browserImage) {
+
+        return `
+          <a
+            href="${escapeHtml(file.signedUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="
+              display:block;
+              overflow:hidden;
+              border-radius:14px;
+              border:1px solid rgba(255,255,255,0.10);
+              background:#08080e;
+              color:#fff;
+              text-decoration:none;
+            "
+          >
+
+            <img
+              src="${escapeHtml(file.signedUrl)}"
+              alt="Customer venue upload"
+              loading="lazy"
+              style="
+                display:block;
+                width:100%;
+                height:180px;
+                object-fit:cover;
+                background:#08080e;
+              "
+            >
+
+            <div
+              style="
+                padding:10px 12px;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                white-space:nowrap;
+                font-size:12px;
+                color:#b8b8c5;
+              "
+            >
+              ${escapeHtml(fileName)}
+            </div>
+
+          </a>
+        `;
+      }
+
+
+      return `
+        <a
+          href="${escapeHtml(file.signedUrl)}"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="
+            display:flex;
+            min-height:120px;
+            padding:18px;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            border-radius:14px;
+            border:1px solid rgba(168,85,247,0.30);
+            background:rgba(168,85,247,0.08);
+            color:#d9b6ff;
+            text-decoration:none;
+            font-weight:700;
+            word-break:break-word;
+          "
+        >
+          Open ${escapeHtml(fileName)}
+        </a>
+      `;
+
+    })
+    .join("");
+}
     function hideModal() {
       modalBackdrop.style.display = "none";
     }
