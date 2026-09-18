@@ -879,7 +879,7 @@
         supabaseClient
           .from("quotes")
           .select(
-            "id,enquiry_id,version,status,subtotal,adjustment,total,customer_visible_comments,call_requested,sent_at,customer_responded_at,created_at,updated_at"
+            "id,enquiry_id,version,status,subtotal,adjustment,gst_rate,gst_amount,total,customer_visible_comments,call_requested,sent_at,customer_responded_at,created_at,updated_at"
           )
           .eq(
             "enquiry_id",
@@ -1080,6 +1080,9 @@
                           item.unit_price || 0
                         )
                       )}
+                      <small>
+                        ex GST
+                      </small>
                     </div>
 
                   </div>
@@ -1374,7 +1377,7 @@
           <div class="quote-summary">
 
             <div class="summary-row">
-              <span>Subtotal</span>
+              <span>Subtotal (ex GST)</span>
               <strong>
                 ${money(
                   quote.subtotal
@@ -1383,7 +1386,7 @@
             </div>
 
             <div class="summary-row">
-              <span>Adjustment</span>
+              <span>Adjustment (ex GST)</span>
               <strong>
                 ${money(
                   quote.adjustment
@@ -1391,8 +1394,17 @@
               </strong>
             </div>
 
+            <div class="summary-row">
+              <span>GST (10%)</span>
+              <strong>
+                ${money(
+                  quote.gst_amount
+                )}
+              </strong>
+            </div>
+
             <div class="summary-row total">
-              <span>Total</span>
+              <span>Total (incl. GST)</span>
               <strong>
                 ${money(
                   quote.total
