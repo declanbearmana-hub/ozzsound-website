@@ -25,9 +25,12 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targe
 if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('pointermove',e=>{document.documentElement.style.setProperty('--mx',`${e.clientX/window.innerWidth*100}%`);document.documentElement.style.setProperty('--my',`${e.clientY/window.innerHeight*100}%`);});document.querySelectorAll('.btn').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.035}px,${(e.clientY-r.top-r.height/2)*.055-3}px)`;});b.addEventListener('pointerleave',()=>b.style.transform='');});window.addEventListener('scroll',()=>{const y=window.scrollY;document.documentElement.style.setProperty('--scrollY',`${Math.min(y*.08,42)}px`);},{passive:true});}
 
 // Public availability calendar.
-// Confirmed DJ bookings come from Supabase in real time.
-// A quiet two-minute fallback check updates ONLY this calendar;
-// it never refreshes the page or clears anything a customer has typed.
+//
+// Confirmed DJ bookings always take priority.
+// Admin calendar overrides can mark a date unavailable, limited,
+// explicitly available, or available from a chosen time.
+// Both sources refresh live without reloading the page or clearing
+// anything a customer has typed into an enquiry form.
 (()=>{
   const grid=document.querySelector('#calendarGrid');
   if(!grid)return;
@@ -36,8 +39,9 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const result=document.querySelector('#dateResult');
   const enquire=document.querySelector('#dateEnquire');
   const manualBooked=new Set(cfg.bookedDates||[]);
-  const liveBooked=new Set();
-  const limited=new Set(cfg.limitedDates||[]);
+  const confirmedBooked=new Set();
+  const overrides=new Map();
+  const legacyLimited=new Set(cfg.limitedDates||[]);
   const today=new Date();
   today.setHours(0,0,0,0);
 
@@ -49,7 +53,70 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
   const pad=n=>String(n).padStart(2,'0');
   const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
-  const isBooked=k=>manualBooked.has(k)||liveBooked.has(k);
+  const isBooked=k=>manualBooked.has(k)||confirmedBooked.has(k);
+
+  const formatCalendarTime=value=>{
+    if(!value)return '';
+    const parts=String(value).split(':');
+    const hour24=Number(parts[0]);
+    const minute=Number(parts[1]||0);
+    if(!Number.isFinite(hour24))return '';
+    const period=hour24>=12?'PM':'AM';
+    const hour12=hour24%12||12;
+    return `${hour12}:${String(minute).padStart(2,'0')} ${period}`;
+  };
+
+  const statusFor=k=>{
+    if(isBooked(k)){
+      return {
+        status:'booked',
+        label:'Booked',
+        publicLabel:'',
+        time:''
+      };
+    }
+
+    const override=overrides.get(k);
+
+    if(override){
+      const status=override.status||'available';
+      const time=formatCalendarTime(
+        override.available_from_time
+      );
+
+      return {
+        status,
+        time,
+        publicLabel:String(
+          override.public_label||''
+        ).trim(),
+        label:
+          status==='unavailable'
+            ?'Unavailable'
+            :status==='limited'
+              ?'Enquire'
+              :status==='available_from'
+                ?(time?`From ${time}`:'Available later')
+                :'Available'
+      };
+    }
+
+    if(legacyLimited.has(k)){
+      return {
+        status:'limited',
+        label:'Enquire',
+        publicLabel:'',
+        time:''
+      };
+    }
+
+    return {
+      status:'available',
+      label:'Available',
+      publicLabel:'',
+      time:''
+    };
+  };
 
   function render(){
     grid.innerHTML='';
@@ -89,28 +156,46 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       b.className='calDay';
 
       const isPast=dt<today;
-      const status=isBooked(k)
-        ?'booked'
-        :limited.has(k)
-          ?'limited'
-          :'available';
+      const info=statusFor(k);
+      const status=info.status;
 
-      b.classList.add(isPast?'past':status);
-      b.disabled=isPast||status==='booked';
+      b.classList.add(
+        isPast
+          ?'past'
+          :status==='available_from'
+            ?'available-from'
+            :status
+      );
+
+      b.disabled=
+        isPast||
+        status==='booked'||
+        status==='unavailable';
 
       if(selectedKey===k&&!b.disabled){
         b.classList.add('selected');
       }
 
-      b.innerHTML=`<span>${d}</span><small>${
+      const timeLine=
+        !isPast&&
+        status==='available_from'&&
+        info.time
+          ?`<em class="calTime">From ${info.time}</em>`
+          :'';
+
+      b.innerHTML=
+        `<span>${d}</span><small>${
+          isPast?'Past':info.label
+        }</small>${timeLine}`;
+
+      const ariaStatus=
         isPast
-          ?'Past'
-          :status==='booked'
-            ?'Booked'
-            :status==='limited'
-              ?'Enquire'
-              :'Available'
-      }</small>`;
+          ?'past'
+          :(
+            info.publicLabel
+              ?`${info.label}. ${info.publicLabel}`
+              :info.label
+          );
 
       b.setAttribute(
         'aria-label',
@@ -118,13 +203,13 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
           day:'numeric',
           month:'long',
           year:'numeric'
-        })}: ${isPast?'past':status}`
+        })}: ${ariaStatus}`
       );
 
       if(!b.disabled){
         b.addEventListener(
           'click',
-          ()=>select(dt,k,status,b)
+          ()=>select(dt,k,info,b)
         );
       }
 
@@ -132,38 +217,51 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     }
 
     /*
-      If another booking is confirmed while this page is open,
-      change only the calendar message. Do not touch the enquiry
-      form or any customer-entered values.
+      If a date becomes booked/unavailable while this page is open,
+      update only the calendar message. Never touch the enquiry form.
     */
-    if(selectedKey&&isBooked(selectedKey)){
-      if(result){
-        result.classList.remove('actionable');
+    if(selectedKey){
+      const selectedInfo=statusFor(selectedKey);
 
-        const strong=result.querySelector('strong');
-        const paragraph=result.querySelector('p');
+      if(
+        selectedInfo.status==='booked'||
+        selectedInfo.status==='unavailable'
+      ){
+        if(result){
+          result.classList.remove('actionable');
 
-        if(strong){
-          strong.textContent=
-            `${selectedPretty||'That date'} — Now booked`;
+          const strong=result.querySelector('strong');
+          const paragraph=result.querySelector('p');
+
+          if(strong){
+            strong.textContent=
+              selectedInfo.status==='booked'
+                ?`${selectedPretty||'That date'} — Now booked`
+                :`${selectedPretty||'That date'} — Unavailable`;
+          }
+
+          if(paragraph){
+            paragraph.textContent=
+              selectedInfo.publicLabel||
+              (
+                selectedInfo.status==='booked'
+                  ?'Ozzsound has confirmed a booking for this date. Please choose another available date.'
+                  :'Ozzsound is not available on this date. Please choose another date.'
+              );
+          }
         }
 
-        if(paragraph){
-          paragraph.textContent=
-            'Ozzsound has just confirmed a booking for this date. Please choose another available date.';
+        if(enquire){
+          delete enquire.dataset.date;
         }
-      }
 
-      if(enquire){
-        delete enquire.dataset.date;
+        selectedKey='';
+        selectedPretty='';
       }
-
-      selectedKey='';
-      selectedPretty='';
     }
   }
 
-  function select(dt,k,status,b){
+  function select(dt,k,info,b){
     grid.querySelectorAll('.selected').forEach(
       x=>x.classList.remove('selected')
     );
@@ -185,46 +283,98 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
     result.classList.add('actionable');
 
+    let heading=`${pretty} — Available`;
+    let copy=
+      'This date is currently showing as available. Send an enquiry to confirm your booking.';
+
+    if(info.status==='limited'){
+      heading=`${pretty} — Limited availability`;
+      copy=
+        info.publicLabel||
+        'This date may still be possible. Send an enquiry to confirm.';
+    }
+
+    if(info.status==='available_from'){
+      heading=
+        `${pretty} — Available${info.time?` from ${info.time}`:''}`;
+
+      copy=
+        info.publicLabel||
+        (
+          info.time
+            ?`Ozzsound is currently available from ${info.time} on this date. Send an enquiry to confirm your event times.`
+            :'Ozzsound has availability later on this date. Send an enquiry to confirm your event times.'
+        );
+    }
+
+    if(
+      info.status==='available'&&
+      info.publicLabel
+    ){
+      copy=info.publicLabel;
+    }
+
     result.querySelector('strong').textContent=
-      status==='limited'
-        ?`${pretty} — Limited availability`
-        :`${pretty} — Available`;
+      heading;
 
     result.querySelector('p').textContent=
-      status==='limited'
-        ?'This date may still be possible. Send an enquiry to confirm.'
-        :'This date is currently showing as available. Send an enquiry to confirm your booking.';
+      copy;
 
     enquire.dataset.date=k;
     enquire.textContent='Enquire about this date →';
   }
 
-  async function loadConfirmedBookings(){
+  async function loadCalendarAvailability(){
     if(!availabilityClient)return;
 
-    const {
-      data,
-      error
-    }=await availabilityClient
-      .from('public_availability_dates')
-      .select('event_date,status')
-      .eq('status','booked');
+    const [
+      bookingResult,
+      overrideResult
+    ]=await Promise.all([
+      availabilityClient
+        .from('public_availability_dates')
+        .select('event_date,status')
+        .eq('status','booked'),
 
-    if(error){
+      availabilityClient
+        .from('calendar_overrides')
+        .select(
+          'event_date,status,available_from_time,public_label'
+        )
+    ]);
+
+    if(bookingResult.error){
       console.error(
-        'Ozzsound availability refresh failed:',
-        error
+        'Ozzsound confirmed-booking availability refresh failed:',
+        bookingResult.error
       );
-      return;
+    }else{
+      confirmedBooked.clear();
+
+      (bookingResult.data||[]).forEach(row=>{
+        if(row?.event_date){
+          confirmedBooked.add(row.event_date);
+        }
+      });
     }
 
-    liveBooked.clear();
+    if(overrideResult.error){
+      console.error(
+        'Ozzsound admin calendar refresh failed:',
+        overrideResult.error
+      );
+    }else{
+      overrides.clear();
 
-    (data||[]).forEach(row=>{
-      if(row?.event_date){
-        liveBooked.add(row.event_date);
-      }
-    });
+      (overrideResult.data||[]).forEach(row=>{
+        if(row?.event_date){
+          overrides.set(
+            row.event_date,
+            row
+          );
+        }
+      });
+    }
 
     render();
   }
@@ -250,10 +400,10 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       }
     );
 
-    loadConfirmedBookings();
+    loadCalendarAvailability();
 
     availabilityChannel=availabilityClient
-      .channel('ozzsound-public-availability')
+      .channel('ozzsound-public-calendar')
       .on(
         'postgres_changes',
         {
@@ -261,17 +411,36 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
           schema:'public',
           table:'public_availability_dates'
         },
-        ()=>loadConfirmedBookings()
+        ()=>loadCalendarAvailability()
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'calendar_overrides'
+        },
+        ()=>loadCalendarAvailability()
+      )
+      .subscribe(status=>{
+        if(
+          status==='CHANNEL_ERROR'||
+          status==='TIMED_OUT'
+        ){
+          console.warn(
+            'Ozzsound live calendar connection:',
+            status
+          );
+        }
+      });
 
     /*
-      Fallback only: every two minutes re-check booked dates.
-      This is NOT a page refresh and cannot wipe customer form data.
+      Fallback check in case a mobile browser pauses its live socket.
+      This updates only calendar state.
     */
     window.setInterval(
-      loadConfirmedBookings,
-      120000
+      loadCalendarAvailability,
+      60000
     );
   }
 
