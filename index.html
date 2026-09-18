@@ -1188,19 +1188,95 @@
         </label>
 
 
-        <label>
+
+        <div class="timeField">
 
           <span>
-            Event times
+            Start time *
           </span>
 
-          <input
-            type="text"
-            name="times"
-            placeholder="e.g. 6:00 pm – midnight"
-          >
+          <div class="timePicker" role="group" aria-label="Event start time">
 
-        </label>
+            <select name="startHour" required aria-label="Start hour">
+              <option value="">Hour</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+
+            <select name="startMinute" required aria-label="Start minutes">
+              <option value="">Min</option>
+              <option value="00">00</option>
+              <option value="15">15</option>
+              <option value="30">30</option>
+              <option value="45">45</option>
+            </select>
+
+            <select name="startPeriod" required aria-label="Start AM or PM">
+              <option value="">AM/PM</option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="timeField">
+
+          <span>
+            Finish time *
+          </span>
+
+          <div class="timePicker" role="group" aria-label="Event finish time">
+
+            <select name="finishHour" required aria-label="Finish hour">
+              <option value="">Hour</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+
+            <select name="finishMinute" required aria-label="Finish minutes">
+              <option value="">Min</option>
+              <option value="00">00</option>
+              <option value="15">15</option>
+              <option value="30">30</option>
+              <option value="45">45</option>
+            </select>
+
+            <select name="finishPeriod" required aria-label="Finish AM or PM">
+              <option value="">AM/PM</option>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+
+          </div>
+
+          <small class="timeHint">
+            Finishing after midnight is fine — choose the actual finish time.
+          </small>
+
+        </div>
 
 
         <label class="formWide">
