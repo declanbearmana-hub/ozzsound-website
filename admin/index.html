@@ -2303,20 +2303,80 @@
     }
 
 
-    async function openAdminNotification(
-      notificationId,
-      enquiryId
-    ) {
-
-      await dismissAdminNotification(
-        notificationId
-      );
-
-
-      await openEnquiry(
+    window.openAdminNotification =
+      async function(
+        notificationId,
         enquiryId
-      );
-    }
+      ) {
+
+        let enquiry =
+          allEnquiries.find(
+            item =>
+              String(item.id) ===
+              String(enquiryId)
+          );
+
+
+        /*
+          If the notification arrived before the enquiry list
+          refreshed, fetch that exact enquiry instead of silently
+          doing nothing.
+        */
+        if (!enquiry) {
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .from("enquiries")
+              .select("*")
+              .eq("id", enquiryId)
+              .maybeSingle();
+
+
+          if (error || !data) {
+
+            console.error(
+              "Could not open notification enquiry:",
+              error
+            );
+
+            alert(
+              "The enquiry could not be opened. Press Refresh and try again."
+            );
+
+            return;
+          }
+
+
+          enquiry = data;
+
+          allEnquiries =
+            [
+              enquiry,
+              ...allEnquiries.filter(
+                item =>
+                  String(item.id) !==
+                  String(enquiry.id)
+              )
+            ];
+        }
+
+
+        await window.openEnquiry(
+          enquiry.id
+        );
+
+
+        /*
+          Only remove the alert after the enquiry has actually
+          been opened.
+        */
+        await dismissAdminNotification(
+          notificationId
+        );
+      };
 
 
     function startAdminNotificationRealtime() {
@@ -2344,20 +2404,41 @@
               schema: "public",
               table: "admin_notifications"
             },
-            payload => {
+            async payload => {
 
-              const notification =
-                payload.new;
+              const notificationId =
+                payload?.new?.id;
+
+
+              if (!notificationId) {
+                return;
+              }
+
+
+              const {
+                data: notification,
+                error
+              } =
+                await supabaseClient
+                  .from("admin_notifications")
+                  .select(
+                    "id,enquiry_id,quote_id,notification_type,title,message,created_at,read_at"
+                  )
+                  .eq(
+                    "id",
+                    notificationId
+                  )
+                  .maybeSingle();
 
 
               if (
+                error ||
                 !notification ||
+                notification.read_at ||
                 adminNotifications.some(
                   item =>
                     String(item.id) ===
-                    String(
-                      notification.id
-                    )
+                    String(notification.id)
                 )
               ) {
                 return;
@@ -4323,6 +4404,184 @@ The automatic customer decline email will be added in the next customer-response
     }
 
 
+    async function confirmAcceptedBooking() {
+
+      if (
+        !currentEnquiry ||
+        !currentQuote
+      ) {
+        return;
+      }
+
+
+      if (
+        currentQuote.status !==
+        "customer_accepted"
+      ) {
+
+        alert(
+          "The customer must accept the quote before the booking can be confirmed."
+        );
+
+        return;
+      }
+
+
+      if (
+        !currentEnquiry.event_date
+      ) {
+
+        alert(
+          "This enquiry does not have an event date. Add an event date before confirming the booking."
+        );
+
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Confirm this Ozzsound booking for " +
+          formatDate(
+            currentEnquiry.event_date
+          ) +
+          "?\n\n" +
+          "This will create the confirmed booking and update the public website availability calendar."
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const button =
+        document.getElementById(
+          "confirmBookingButton"
+        );
+
+
+      if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+          "CONFIRMING BOOKING...";
+      }
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .rpc(
+              "admin_confirm_booking",
+              {
+                p_enquiry_id:
+                  currentEnquiry.id
+              }
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        currentEnquiry.status =
+          "booked";
+
+        currentQuote.status =
+          "confirmed";
+
+
+        const listItem =
+          allEnquiries.find(
+            item =>
+              String(item.id) ===
+              String(currentEnquiry.id)
+          );
+
+
+        if (listItem) {
+          listItem.status =
+            "booked";
+        }
+
+
+        currentBooking = {
+          id:
+            data?.booking_id ||
+            null,
+          enquiry_id:
+            currentEnquiry.id,
+          quote_id:
+            currentQuote.id,
+          event_date:
+            data?.event_date ||
+            currentEnquiry.event_date,
+          booking_type:
+            data?.booking_type ||
+            "dj",
+          status:
+            data?.status ||
+            "confirmed",
+          confirmed_at:
+            data?.confirmed_at ||
+            new Date().toISOString()
+        };
+
+
+        updateStats();
+
+        filterEnquiries();
+
+        renderModalContent();
+
+        await renderUploadSections();
+
+
+        alert(
+          "BOOKING CONFIRMED.\n\n" +
+          "The event is now an official Ozzsound booking and the public availability calendar has been updated."
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Booking confirmation failed:",
+          error
+        );
+
+
+        alert(
+          "The booking could not be confirmed.\n\n" +
+          "Error: " +
+          (
+            error?.message ||
+            "Unknown booking error."
+          )
+        );
+
+      } finally {
+
+        if (
+          button &&
+          document.body.contains(button)
+        ) {
+
+          button.disabled = false;
+
+          button.textContent =
+            "CONFIRM OZZSOUND BOOKING";
+        }
+      }
+    }
+
+
     async function addEnquiryNote() {
 
       if (
@@ -4720,6 +4979,67 @@ The automatic customer decline email will be added in the next customer-response
             </div>
 
           </div>
+
+
+          <!-- OZZSOUND BOOKING CONFIRMATION -->
+
+          ${
+
+            !currentBooking &&
+            currentQuote?.status ===
+              "customer_accepted"
+              ? `
+
+                <div class="section-card">
+
+                  <div class="section-head">
+
+                    <div>
+
+                      <h3>
+                        Customer Accepted — Confirm Booking
+                      </h3>
+
+                      <p>
+                        The customer has accepted the quote.
+                        Confirming here creates the official
+                        Ozzsound booking and immediately marks
+                        the event date as booked on the public
+                        availability calendar.
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="booking-box">
+
+                    <strong>
+                      Event date:
+                    </strong>
+
+                    ${formatDate(
+                      enquiry.event_date
+                    )}
+
+                    <br><br>
+
+                    <button
+                      type="button"
+                      class="action-button action-save"
+                      id="confirmBookingButton"
+                    >
+                      CONFIRM OZZSOUND BOOKING
+                    </button>
+
+                  </div>
+
+                </div>
+
+              `
+              : ""
+          }
 
 
           <!-- EXISTING BOOKING -->
@@ -5303,6 +5623,14 @@ The automatic customer decline email will be added in the next customer-response
       )?.addEventListener(
         "click",
         declineEnquiry
+      );
+
+
+      document.getElementById(
+        "confirmBookingButton"
+      )?.addEventListener(
+        "click",
+        confirmAcceptedBooking
       );
 
 
