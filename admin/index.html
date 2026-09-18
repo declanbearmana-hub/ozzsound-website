@@ -300,6 +300,116 @@
       font-weight: 900;
     }
 
+    /* CUSTOMER RESPONSE ALERTS */
+
+    .admin-notification-area {
+      display: none;
+      margin-bottom: 26px;
+    }
+
+    .admin-notification-area.has-notifications {
+      display: grid;
+      gap: 12px;
+    }
+
+    .admin-notification {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 22px;
+      border-radius: 16px;
+      background: #11151a;
+      border: 2px solid rgba(53,230,165,.72);
+      box-shadow:
+        0 0 0 1px rgba(53,230,165,.10),
+        0 0 34px rgba(53,230,165,.16);
+    }
+
+    .admin-notification.quote_accepted {
+      animation:
+        acceptedAlertPulse 1.8s ease-in-out 3;
+    }
+
+    .admin-notification.quote_changes {
+      border-color: rgba(255,180,84,.72);
+      box-shadow:
+        0 0 0 1px rgba(255,180,84,.10),
+        0 0 30px rgba(255,180,84,.12);
+    }
+
+    .admin-notification.quote_declined {
+      border-color: rgba(255,100,124,.68);
+      box-shadow:
+        0 0 0 1px rgba(255,100,124,.10),
+        0 0 30px rgba(255,100,124,.12);
+    }
+
+    @keyframes acceptedAlertPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(53,230,165,.10),
+          0 0 24px rgba(53,230,165,.12);
+      }
+
+      50% {
+        box-shadow:
+          0 0 0 3px rgba(53,230,165,.20),
+          0 0 48px rgba(53,230,165,.30);
+      }
+    }
+
+    .admin-notification-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .admin-notification-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .3px;
+    }
+
+    .admin-notification-message {
+      margin-top: 5px;
+      color: #d8d8e2;
+      line-height: 1.5;
+    }
+
+    .admin-notification-time {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .admin-notification-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .notification-open-button,
+    .notification-seen-button {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-weight: 900;
+    }
+
+    .notification-open-button {
+      border: 0;
+      color: #07100d;
+      background: var(--green);
+    }
+
+    .notification-seen-button {
+      color: #d8d8e2;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+    }
+
     /* TOOLBAR */
 
     .toolbar {
@@ -1099,6 +1209,13 @@
       </div>
 
 
+      <section
+        id="adminNotificationArea"
+        class="admin-notification-area"
+        aria-live="assertive"
+      ></section>
+
+
       <section class="stats">
 
         <div class="stat-card">
@@ -1296,6 +1413,8 @@
 
     let allEnquiries = [];
     let inventory = [];
+    let adminNotifications = [];
+    let notificationChannel = null;
 
     let currentEnquiry = null;
     let currentQuote = null;
@@ -1351,6 +1470,11 @@
     const enquiryList =
       document.getElementById(
         "enquiryList"
+      );
+
+    const adminNotificationArea =
+      document.getElementById(
+        "adminNotificationArea"
       );
 
     const searchInput =
@@ -1712,6 +1836,9 @@
       await loadEnquiries();
 
 
+      startAdminNotificationRealtime();
+
+
       return true;
     }
 
@@ -1728,7 +1855,8 @@
 
       const [
         enquiryResult,
-        inventoryResult
+        inventoryResult,
+        notificationResult
       ] =
         await Promise.all([
 
@@ -1786,7 +1914,27 @@
               {
                 ascending: true
               }
+            ),
+
+
+          supabaseClient
+            .from(
+              "admin_notifications"
             )
+            .select(
+              "id,enquiry_id,quote_id,notification_type,title,message,created_at,read_at"
+            )
+            .is(
+              "read_at",
+              null
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            )
+            .limit(20)
 
         ]);
 
@@ -1834,6 +1982,26 @@
         enquiryResult.data || [];
 
 
+      if (
+        notificationResult.error
+      ) {
+
+        console.error(
+          "Could not load admin notifications:",
+          notificationResult.error
+        );
+
+        adminNotifications = [];
+
+      } else {
+
+        adminNotifications =
+          notificationResult.data || [];
+      }
+
+
+      renderAdminNotifications();
+
       updateStats();
 
       filterEnquiries();
@@ -1874,6 +2042,319 @@
           );
         }
       }
+    }
+
+
+    function notificationIcon(
+      type
+    ) {
+
+      if (
+        type ===
+        "quote_accepted"
+      ) {
+        return "🚨";
+      }
+
+
+      if (
+        type ===
+        "quote_changes"
+      ) {
+        return "⚠️";
+      }
+
+
+      if (
+        type ===
+        "quote_declined"
+      ) {
+        return "✖";
+      }
+
+
+      return "🔔";
+    }
+
+
+    function renderAdminNotifications() {
+
+      if (
+        !adminNotificationArea
+      ) {
+        return;
+      }
+
+
+      if (
+        !adminNotifications.length
+      ) {
+
+        adminNotificationArea
+          .classList
+          .remove(
+            "has-notifications"
+          );
+
+        adminNotificationArea
+          .innerHTML =
+            "";
+
+        document.title =
+          "Ozzsound Admin";
+
+        return;
+      }
+
+
+      adminNotificationArea
+        .classList
+        .add(
+          "has-notifications"
+        );
+
+
+      const hasAccepted =
+        adminNotifications.some(
+          notification =>
+            notification
+              .notification_type ===
+              "quote_accepted"
+        );
+
+
+      document.title =
+        hasAccepted
+          ? "🚨 CUSTOMER ACCEPTED — Ozzsound Admin"
+          : "🔔 Customer Response — Ozzsound Admin";
+
+
+      adminNotificationArea
+        .innerHTML =
+          adminNotifications
+            .map(
+              notification => `
+
+                <div
+                  class="
+                    admin-notification
+                    ${escapeHtml(
+                      notification
+                        .notification_type
+                    )}
+                  "
+                >
+
+                  <div
+                    class="admin-notification-icon"
+                  >
+                    ${notificationIcon(
+                      notification
+                        .notification_type
+                    )}
+                  </div>
+
+                  <div>
+
+                    <div
+                      class="admin-notification-title"
+                    >
+                      ${escapeHtml(
+                        notification.title
+                      )}
+                    </div>
+
+                    <div
+                      class="admin-notification-message"
+                    >
+                      ${escapeHtml(
+                        notification.message ||
+                        ""
+                      )}
+                    </div>
+
+                    <div
+                      class="admin-notification-time"
+                    >
+                      ${formatDateTime(
+                        notification.created_at
+                      )}
+                    </div>
+
+                  </div>
+
+                  <div
+                    class="admin-notification-actions"
+                  >
+
+                    <button
+                      type="button"
+                      class="notification-open-button"
+                      onclick="openAdminNotification(
+                        '${notification.id}',
+                        '${notification.enquiry_id}'
+                      )"
+                    >
+                      OPEN ENQUIRY
+                    </button>
+
+                    <button
+                      type="button"
+                      class="notification-seen-button"
+                      onclick="dismissAdminNotification(
+                        '${notification.id}'
+                      )"
+                    >
+                      MARK SEEN
+                    </button>
+
+                  </div>
+
+                </div>
+
+              `
+            )
+            .join("");
+    }
+
+
+    async function dismissAdminNotification(
+      notificationId
+    ) {
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from(
+            "admin_notifications"
+          )
+          .update({
+            read_at:
+              new Date()
+                .toISOString()
+          })
+          .eq(
+            "id",
+            notificationId
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Could not mark notification as seen:",
+          error
+        );
+
+        return;
+      }
+
+
+      adminNotifications =
+        adminNotifications.filter(
+          notification =>
+            String(
+              notification.id
+            ) !==
+            String(
+              notificationId
+            )
+        );
+
+
+      renderAdminNotifications();
+    }
+
+
+    async function openAdminNotification(
+      notificationId,
+      enquiryId
+    ) {
+
+      await dismissAdminNotification(
+        notificationId
+      );
+
+
+      await openEnquiry(
+        enquiryId
+      );
+    }
+
+
+    function startAdminNotificationRealtime() {
+
+      if (
+        notificationChannel
+      ) {
+
+        supabaseClient
+          .removeChannel(
+            notificationChannel
+          );
+      }
+
+
+      notificationChannel =
+        supabaseClient
+          .channel(
+            "ozzsound-admin-notifications"
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "admin_notifications"
+            },
+            payload => {
+
+              const notification =
+                payload.new;
+
+
+              if (
+                !notification ||
+                adminNotifications.some(
+                  item =>
+                    String(item.id) ===
+                    String(
+                      notification.id
+                    )
+                )
+              ) {
+                return;
+              }
+
+
+              adminNotifications =
+                [
+                  notification,
+                  ...adminNotifications
+                ];
+
+
+              renderAdminNotifications();
+
+
+              if (
+                notification
+                  .notification_type ===
+                  "quote_accepted"
+              ) {
+
+                window.alert(
+                  "🚨 CUSTOMER ACCEPTED A QUOTE\n\n" +
+                  (
+                    notification.message ||
+                    "Open Ozzsound Admin for details."
+                  )
+                );
+              }
+            }
+          )
+          .subscribe();
     }
 
 
