@@ -1748,8 +1748,13 @@ return `
           );
 
 
-        const exportFolderName =
-          `Ozzsound - ${reference}`;
+      const clientName =
+  safeFileName(
+    enquiry.name || "Client"
+  );
+
+const exportFolderName =
+  `Ozzsound - ${clientName} - ${reference}`;
 
 
         const exportDirectory =
