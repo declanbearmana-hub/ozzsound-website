@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Ozzsound Event</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #07070c;
+      --panel: #101018;
+      --panel2: #15151f;
+      --panel3: #0b0b12;
+      --border: rgba(255,255,255,0.09);
+      --text: #ffffff;
+      --muted: #9a9aaa;
+      --purple: #a855f7;
+      --pink: #ff38d1;
+      --cyan: #22d3ee;
+      --green: #35e6a5;
+      --red: #ff647c;
+      --orange: #ffb454;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(174,0,255,0.16), transparent 30%),
+        radial-gradient(circle at 85% 75%, rgba(0,225,255,0.10), transparent 32%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1050px;
+      margin: auto;
+      padding: 28px 20px 70px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ghost-button {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .hero {
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: #d49cff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 10px;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 1.02;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .card {
+      padding: 24px;
+      margin-top: 18px;
+      border-radius: 18px;
+      background: rgba(16,16,24,0.96);
+      border: 1px solid var(--border);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.28);
+    }
+
+    .login-card {
+      max-width: 620px;
+    }
+
+    .card h2,
+    .card h3 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      color: #d7d7df;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 11px;
+      border: 1px solid #30303e;
+      outline: none;
+      background: #0a0a12;
+      color: #fff;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.12);
+    }
+
+    .primary-button {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 11px;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(90deg, #d629d7, #8b4dff, #00bfe8);
+    }
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .message.error {
+      display: block;
+      color: #ffabb8;
+      background: rgba(255,100,124,0.09);
+      border: 1px solid rgba(255,100,124,0.25);
+    }
+
+    .message.success {
+      display: block;
+      color: #b9f7e5;
+      background: rgba(53,230,165,0.08);
+      border: 1px solid rgba(53,230,165,0.22);
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .info-box {
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--panel3);
+      border: 1px solid var(--border);
+    }
+
+    .info-label {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .info-value {
+      color: #eeeeF4;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .status-sent {
+      color: #d2a3ff;
+      background: rgba(168,85,247,.12);
+      border: 1px solid rgba(168,85,247,.25);
+    }
+
+    .status-customer_accepted,
+    .status-confirmed {
+      color: #7debd0;
+      background: rgba(53,230,165,.12);
+      border: 1px solid rgba(53,230,165,.25);
+    }
+
+    .status-customer_changes {
+      color: #ffd092;
+      background: rgba(255,180,84,.10);
+      border: 1px solid rgba(255,180,84,.25);
+    }
+
+    .status-declined {
+      color: #ff9aaa;
+      background: rgba(255,100,124,.10);
+      border: 1px solid rgba(255,100,124,.25);
+    }
+
+    .quote-items {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .quote-item {
+      display: grid;
+      grid-template-columns: 1fr 70px 120px;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+    }
+
+    .quote-item strong {
+      display: block;
+    }
+
+    .quote-item small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .qty {
+      text-align: center;
+      color: #d9d9e3;
+    }
+
+    .money {
+      text-align: right;
+      font-weight: 800;
+    }
+
+    .quote-summary {
+      width: 100%;
+      max-width: 430px;
+      margin: 20px 0 0 auto;
+      display: grid;
+      gap: 9px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: #d8d8e2;
+    }
+
+    .summary-row.total {
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .comment-box {
+      padding: 17px;
+      margin-top: 18px;
+      border-radius: 12px;
+      background: rgba(168,85,247,.07);
+      border: 1px solid rgba(168,85,247,.18);
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .call-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 15px;
+      margin-top: 16px;
+      border-radius: 12px;
+      background: rgba(34,211,238,.07);
+      border: 1px solid rgba(34,211,238,.20);
+      cursor: pointer;
+    }
+
+    .call-option input {
+      width: 20px;
+      height: 20px;
+      margin: 1px 0 0;
+      padding: 0;
+      accent-color: var(--cyan);
+      flex: 0 0 auto;
+    }
+
+    .response-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 11px;
+      margin-top: 18px;
+    }
+
+    .response-button {
+      min-height: 50px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      font-weight: 900;
+    }
+
+    .accept-button {
+      color: #b9f7e5;
+      background: rgba(53,230,165,.10);
+      border: 1px solid rgba(53,230,165,.30);
+    }
+
+    .changes-button {
+      color: #ffd092;
+      background: rgba(255,180,84,.09);
+      border: 1px solid rgba(255,180,84,.28);
+    }
+
+    .decline-button {
+      color: #ff9aaa;
+      background: rgba(255,100,124,.08);
+      border: 1px solid rgba(255,100,124,.25);
+    }
+
+    .response-banner {
+      padding: 18px;
+      border-radius: 13px;
+      line-height: 1.6;
+    }
+
+    .response-banner.accepted {
+      color: #b9f7e5;
+      background: rgba(53,230,165,.08);
+      border: 1px solid rgba(53,230,165,.22);
+    }
+
+    .response-banner.changes {
+      color: #ffd092;
+      background: rgba(255,180,84,.08);
+      border: 1px solid rgba(255,180,84,.22);
+    }
+
+    .response-banner.declined {
+      color: #ffb0bd;
+      background: rgba(255,100,124,.08);
+      border: 1px solid rgba(255,100,124,.22);
+    }
+
+    .notes-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .note {
+      padding: 13px 14px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      line-height: 1.55;
+    }
+
+    .note-time {
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .loading {
+      padding: 45px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    #portalArea,
+    #logoutButton {
+      display: none;
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        padding: 20px 14px 55px;
+      }
+
+      .event-grid,
+      .response-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .quote-item {
+        grid-template-columns: 1fr 65px 100px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <div class="topbar">
+
+      <div class="brand">
+        OZZSOUND
+      </div>
+
+      <div class="top-actions">
+
+        <a
+          class="ghost-button"
+          href="./index.html"
+          style="text-decoration:none;"
+        >
+          Main Website
+        </a>
+
+        <button
+          id="logoutButton"
+          class="ghost-button"
+          type="button"
+        >
+          Sign Out
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <section class="hero">
+
+      <div class="eyebrow">
+        Secure Customer Portal
+      </div>
+
+      <h1>
+        My Ozzsound Event
+      </h1>
+
+      <p>
+        Review your event, see Ozzsound's proposed quote and equipment,
+        request changes, ask for a phone call or accept the quote.
+      </p>
+
+    </section>
+
+
+    <section
+      id="accessArea"
+      class="card login-card"
+    >
+
+      <h2>
+        Open Your Quote
+      </h2>
+
+      <p class="muted">
+        Enter the email address used for your enquiry and the secure access
+        code included in your Ozzsound quote email.
+      </p>
+
+      <form id="accessForm">
+
+        <label for="customerEmail">
+          Email address
+        </label>
+
+        <input
+          id="customerEmail"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+        <label for="accessCode">
+          Secure access code
+        </label>
+
+        <input
+          id="accessCode"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          maxlength="10"
+          placeholder="Enter your code"
+          required
+        >
+
+        <button
+          id="accessButton"
+          class="primary-button"
+          type="submit"
+        >
+          Open My Quote
+        </button>
+
+        <div
+          id="accessMessage"
+          class="message"
+        ></div>
+
+      </form>
+
+      <p class="muted small">
+        The access code is only sent to the email address attached to the
+        Ozzsound enquiry. If your code has expired, contact Ozzsound and a new
+        quote access code can be issued.
+      </p>
+
+    </section>
+
+
+    <section id="portalArea">
+
+      <div
+        id="portalContent"
+        class="loading"
+      >
+        Loading your Ozzsound event...
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL =
+      "https://lnritqkwejumknddyfzu.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx";
+
+    const { createClient } =
+      supabase;
+
+    const supabaseClient =
+      createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
+      );
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const enquiryId =
+      params.get("enquiry");
+
+    const requestedQuoteId =
+      params.get("quote");
+
+    const accessArea =
+      document.getElementById(
+        "accessArea"
+      );
+
+    const portalArea =
+      document.getElementById(
+        "portalArea"
+      );
+
+    const portalContent =
+      document.getElementById(
+        "portalContent"
+      );
+
+    const accessForm =
+      document.getElementById(
+        "accessForm"
+      );
+
+    const accessButton =
+      document.getElementById(
+        "accessButton"
+      );
+
+    const accessMessage =
+      document.getElementById(
+        "accessMessage"
+      );
+
+    const logoutButton =
+      document.getElementById(
+        "logoutButton"
+      );
+
+    let currentEnquiry = null;
+    let currentQuote = null;
+    let currentItems = [];
+    let currentNotes = [];
+    let currentBooking = null;
+
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+
+    function displayValue(value) {
+      if (
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+      ) {
+        return "Not supplied";
+      }
+
+      return escapeHtml(value);
+    }
+
+
+    function formatDate(value) {
+      if (!value) {
+        return "Not supplied";
+      }
+
+      const parts =
+        String(value).split("-");
+
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+
+      return escapeHtml(value);
+    }
+
+
+    function formatDateTime(value) {
+      if (!value) {
+        return "";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return escapeHtml(value);
+      }
+
+      return date.toLocaleString(
+        "en-AU",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+    }
+
+
+    function money(value) {
+      return new Intl.NumberFormat(
+        "en-AU",
+        {
+          style: "currency",
+          currency: "AUD"
+        }
+      ).format(
+        Number(value || 0)
+      );
+    }
+
+
+    function showAccessMessage(
+      text,
+      type
+    ) {
+      accessMessage.textContent =
+        text;
+
+      accessMessage.className =
+        "message " + type;
+    }
+
+
+    function clearAccessMessage() {
+      accessMessage.textContent =
+        "";
+
+      accessMessage.className =
+        "message";
+    }
+
+
+    function quoteStatusLabel(status) {
+      const labels = {
+        sent: "Awaiting Your Response",
+        customer_accepted: "Accepted by Customer",
+        customer_changes: "Changes Requested",
+        declined: "Declined",
+        confirmed: "Booking Confirmed"
+      };
+
+      return (
+        labels[status] ||
+        status ||
+        "Quote"
+      );
+    }
+
+
+    function showAccess() {
+      accessArea.style.display =
+        "block";
+
+      portalArea.style.display =
+        "none";
+
+      logoutButton.style.display =
+        "none";
+    }
+
+
+    function showPortal() {
+      accessArea.style.display =
+        "none";
+
+      portalArea.style.display =
+        "block";
+
+      logoutButton.style.display =
+        "inline-block";
+    }
+
+
+    async function loadPortal() {
+      if (!enquiryId) {
+        showAccess();
+
+        showAccessMessage(
+          "This quote link is missing its enquiry reference. Please use the link from your Ozzsound quote email.",
+          "error"
+        );
+
+        return;
+      }
+
+      showPortal();
+
+      portalContent.innerHTML = `
+        <div class="card loading">
+          Loading your Ozzsound event...
+        </div>
+      `;
+
+      const {
+        data: enquiry,
+        error: enquiryError
+      } =
+        await supabaseClient
+          .from("enquiries")
+          .select(
+            "id,enquiry_ref,enquiry_type,name,phone,email,event_type,event_date,venue_suburb,approx_guests,event_times,message,status"
+          )
+          .eq(
+            "id",
+            enquiryId
+          )
+          .maybeSingle();
+
+      if (
+        enquiryError ||
+        !enquiry
+      ) {
+        console.error(
+          enquiryError
+        );
+
+        portalContent.innerHTML = `
+          <div class="card">
+            <h2>Quote unavailable</h2>
+            <p class="muted">
+              We could not open this quote for the signed-in email address.
+              Please make sure you used the same email address as your Ozzsound enquiry.
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+      let quoteQuery =
+        supabaseClient
+          .from("quotes")
+          .select(
+            "id,enquiry_id,version,status,subtotal,adjustment,total,customer_visible_comments,call_requested,sent_at,customer_responded_at,created_at,updated_at"
+          )
+          .eq(
+            "enquiry_id",
+            enquiry.id
+          );
+
+      if (requestedQuoteId) {
+        quoteQuery =
+          quoteQuery.eq(
+            "id",
+            requestedQuoteId
+          );
+      }
+
+      const {
+        data: quoteRows,
+        error: quoteError
+      } =
+        await quoteQuery
+          .order(
+            "version",
+            {
+              ascending: false
+            }
+          )
+          .limit(1);
+
+      if (
+        quoteError ||
+        !quoteRows?.length
+      ) {
+        console.error(
+          quoteError
+        );
+
+        portalContent.innerHTML = `
+          <div class="card">
+            <h2>Quote unavailable</h2>
+            <p class="muted">
+              No customer quote is currently available for this enquiry.
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+      const quote =
+        quoteRows[0];
+
+      const [
+        itemsResult,
+        notesResult,
+        bookingResult
+      ] =
+        await Promise.all([
+
+          supabaseClient
+            .from("quote_items")
+            .select(
+              "id,item_name,item_type,quantity,unit_price,line_total,is_suggestion,notes,sort_order"
+            )
+            .eq(
+              "quote_id",
+              quote.id
+            )
+            .order(
+              "sort_order",
+              {
+                ascending: true
+              }
+            ),
+
+          supabaseClient
+            .from("enquiry_notes")
+            .select(
+              "id,body,created_at"
+            )
+            .eq(
+              "enquiry_id",
+              enquiry.id
+            )
+            .eq(
+              "note_type",
+              "customer"
+            )
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            ),
+
+          supabaseClient
+            .from("bookings")
+            .select(
+              "id,event_date,booking_type,status,confirmed_at"
+            )
+            .eq(
+              "enquiry_id",
+              enquiry.id
+            )
+            .maybeSingle()
+
+        ]);
+
+      if (itemsResult.error) {
+        console.error(
+          itemsResult.error
+        );
+      }
+
+      if (notesResult.error) {
+        console.error(
+          notesResult.error
+        );
+      }
+
+      if (bookingResult.error) {
+        console.error(
+          bookingResult.error
+        );
+      }
+
+      currentEnquiry =
+        enquiry;
+
+      currentQuote =
+        quote;
+
+      currentItems =
+        itemsResult.data || [];
+
+      currentNotes =
+        notesResult.data || [];
+
+      currentBooking =
+        bookingResult.data || null;
+
+      renderPortal();
+    }
+
+
+    function renderPortal() {
+      if (
+        !currentEnquiry ||
+        !currentQuote
+      ) {
+        return;
+      }
+
+      const enquiry =
+        currentEnquiry;
+
+      const quote =
+        currentQuote;
+
+      const eventType =
+        enquiry.event_type ||
+        enquiry.enquiry_type ||
+        "Event";
+
+      const itemsHtml =
+        currentItems.length
+          ? currentItems
+              .map(
+                item => `
+                  <div class="quote-item">
+
+                    <div>
+                      <strong>
+                        ${escapeHtml(
+                          item.item_name
+                        )}
+                      </strong>
+
+                      <small>
+                        ${
+                          item.is_suggestion
+                            ? "Ozzsound suggestion"
+                            : "Included in quote"
+                        }
+                      </small>
+                    </div>
+
+                    <div class="qty">
+                      Qty ${Number(
+                        item.quantity || 1
+                      )}
+                    </div>
+
+                    <div class="money">
+                      ${money(
+                        Number(
+                          item.quantity || 0
+                        ) *
+                        Number(
+                          item.unit_price || 0
+                        )
+                      )}
+                    </div>
+
+                  </div>
+                `
+              )
+              .join("")
+          : `
+              <div class="muted">
+                No individual quote items were listed.
+              </div>
+            `;
+
+      const notesHtml =
+        currentNotes.length
+          ? currentNotes
+              .map(
+                note => `
+                  <div class="note">
+
+                    <div class="note-time">
+                      ${formatDateTime(
+                        note.created_at
+                      )}
+                    </div>
+
+                    <div>
+                      ${escapeHtml(
+                        note.body
+                      )}
+                    </div>
+
+                  </div>
+                `
+              )
+              .join("")
+          : `
+              <div class="muted small">
+                No additional customer messages have been added yet.
+              </div>
+            `;
+
+      let responseArea = "";
+
+      if (
+        quote.status ===
+        "customer_accepted"
+      ) {
+        responseArea = `
+          <div class="response-banner accepted">
+            <strong>Quote accepted.</strong><br>
+            Thank you. Ozzsound has received your acceptance.
+            The booking is not shown as confirmed until Ozzsound completes
+            the final booking confirmation.
+            ${
+              quote.call_requested
+                ? "<br><br><strong>Phone call requested:</strong> Yes"
+                : ""
+            }
+          </div>
+        `;
+      } else if (
+        quote.status ===
+        "customer_changes"
+      ) {
+        responseArea = `
+          <div class="response-banner changes">
+            <strong>Changes requested.</strong><br>
+            Ozzsound has received your request and can revise the quote before
+            sending the next version.
+            ${
+              quote.call_requested
+                ? "<br><br><strong>Phone call requested:</strong> Yes"
+                : ""
+            }
+          </div>
+        `;
+      } else if (
+        quote.status ===
+        "declined"
+      ) {
+        responseArea = `
+          <div class="response-banner declined">
+            <strong>Quote declined.</strong><br>
+            Your response has been recorded.
+            ${
+              quote.call_requested
+                ? "<br><br><strong>Phone call requested:</strong> Yes"
+                : ""
+            }
+          </div>
+        `;
+      } else if (
+        quote.status ===
+        "confirmed" ||
+        currentBooking?.status ===
+          "confirmed"
+      ) {
+        responseArea = `
+          <div class="response-banner accepted">
+            <strong>Booking confirmed.</strong><br>
+            Your Ozzsound booking has been confirmed for
+            ${formatDate(
+              enquiry.event_date
+            )}.
+          </div>
+        `;
+      } else {
+        responseArea = `
+          <label for="responseMessage">
+            Message to Ozzsound
+          </label>
+
+          <textarea
+            id="responseMessage"
+            placeholder="Add any questions, changes or comments here..."
+          ></textarea>
+
+          <label class="call-option">
+
+            <input
+              id="callRequested"
+              type="checkbox"
+            >
+
+            <span>
+              <strong>
+                I would like Ozzsound to call me to discuss my event.
+              </strong>
+
+              <span
+                class="muted small"
+                style="display:block;margin-top:4px;"
+              >
+                Ozzsound will see this request in the admin portal.
+              </span>
+            </span>
+
+          </label>
+
+          <div class="response-actions">
+
+            <button
+              id="acceptQuoteButton"
+              class="response-button accept-button"
+              type="button"
+            >
+              Accept Quote
+            </button>
+
+            <button
+              id="requestChangesButton"
+              class="response-button changes-button"
+              type="button"
+            >
+              Request Changes
+            </button>
+
+            <button
+              id="declineQuoteButton"
+              class="response-button decline-button"
+              type="button"
+            >
+              Decline Quote
+            </button>
+
+          </div>
+
+          <div
+            id="responseMessageBox"
+            class="message"
+          ></div>
+        `;
+      }
+
+      portalContent.innerHTML = `
+
+        <div class="card">
+
+          <div
+            style="
+              display:flex;
+              align-items:flex-start;
+              justify-content:space-between;
+              gap:14px;
+              flex-wrap:wrap;
+            "
+          >
+
+            <div>
+
+              <div class="eyebrow">
+                ${displayValue(
+                  enquiry.enquiry_ref
+                )}
+              </div>
+
+              <h2
+                style="
+                  margin:7px 0 0;
+                  font-size:30px;
+                "
+              >
+                ${displayValue(
+                  eventType
+                )}
+              </h2>
+
+            </div>
+
+            <span
+              class="
+                status
+                status-${escapeHtml(
+                  quote.status
+                )}
+              "
+            >
+              ${escapeHtml(
+                quoteStatusLabel(
+                  quote.status
+                )
+              )}
+            </span>
+
+          </div>
+
+
+          <div
+            class="event-grid"
+            style="margin-top:20px;"
+          >
+
+            <div class="info-box">
+              <div class="info-label">
+                Customer
+              </div>
+              <div class="info-value">
+                ${displayValue(
+                  enquiry.name
+                )}
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                Event Date
+              </div>
+              <div class="info-value">
+                ${formatDate(
+                  enquiry.event_date
+                )}
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                Venue / Suburb
+              </div>
+              <div class="info-value">
+                ${displayValue(
+                  enquiry.venue_suburb
+                )}
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">
+                Event Times
+              </div>
+              <div class="info-value">
+                ${displayValue(
+                  enquiry.event_times
+                )}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            Your Quote
+          </h2>
+
+          <div class="quote-items">
+            ${itemsHtml}
+          </div>
+
+          <div class="quote-summary">
+
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <strong>
+                ${money(
+                  quote.subtotal
+                )}
+              </strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Adjustment</span>
+              <strong>
+                ${money(
+                  quote.adjustment
+                )}
+              </strong>
+            </div>
+
+            <div class="summary-row total">
+              <span>Total</span>
+              <strong>
+                ${money(
+                  quote.total
+                )}
+              </strong>
+            </div>
+
+          </div>
+
+          <div class="comment-box">
+            <strong>
+              Ozzsound comments / suggestions
+            </strong>
+
+            <div style="margin-top:8px;">
+              ${displayValue(
+                quote.customer_visible_comments ||
+                "No additional comments have been added to this quote."
+              )}
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            Your Response
+          </h2>
+
+          <p class="muted">
+            Accept the quote, request changes, decline it or ask Ozzsound
+            to call you before you decide.
+          </p>
+
+          ${responseArea}
+
+        </div>
+
+
+        <div class="card">
+
+          <h3>
+            Event Messages
+          </h3>
+
+          <div class="notes-list">
+            ${notesHtml}
+          </div>
+
+        </div>
+      `;
+
+      document.getElementById(
+        "acceptQuoteButton"
+      )?.addEventListener(
+        "click",
+        () =>
+          respondToQuote(
+            "accept"
+          )
+      );
+
+      document.getElementById(
+        "requestChangesButton"
+      )?.addEventListener(
+        "click",
+        () =>
+          respondToQuote(
+            "changes"
+          )
+      );
+
+      document.getElementById(
+        "declineQuoteButton"
+      )?.addEventListener(
+        "click",
+        () =>
+          respondToQuote(
+            "decline"
+          )
+      );
+    }
+
+
+    async function respondToQuote(
+      action
+    ) {
+      if (!currentQuote) {
+        return;
+      }
+
+      const message =
+        document.getElementById(
+          "responseMessage"
+        )?.value.trim() ||
+        "";
+
+      const callRequested =
+        Boolean(
+          document.getElementById(
+            "callRequested"
+          )?.checked
+        );
+
+      const messageBox =
+        document.getElementById(
+          "responseMessageBox"
+        );
+
+      if (
+        action === "changes" &&
+        !message
+      ) {
+        messageBox.textContent =
+          "Please tell Ozzsound what you would like changed.";
+
+        messageBox.className =
+          "message error";
+
+        return;
+      }
+
+      if (
+        action === "accept" &&
+        !confirm(
+          "Accept this Ozzsound quote?"
+        )
+      ) {
+        return;
+      }
+
+      if (
+        action === "decline" &&
+        !confirm(
+          "Decline this Ozzsound quote?"
+        )
+      ) {
+        return;
+      }
+
+      const buttons =
+        [
+          ...document.querySelectorAll(
+            ".response-button"
+          )
+        ];
+
+      buttons.forEach(
+        button => {
+          button.disabled = true;
+        }
+      );
+
+      if (messageBox) {
+        messageBox.textContent =
+          "Sending your response...";
+
+        messageBox.className =
+          "message success";
+      }
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.rpc(
+          "customer_respond_to_quote",
+          {
+            p_quote_id:
+              currentQuote.id,
+            p_action:
+              action,
+            p_call_requested:
+              callRequested,
+            p_message:
+              message || null
+          }
+        );
+
+      if (error) {
+        console.error(
+          error
+        );
+
+        if (messageBox) {
+          messageBox.textContent =
+            "Your response could not be sent. Please refresh and try again.";
+
+          messageBox.className =
+            "message error";
+        }
+
+        buttons.forEach(
+          button => {
+            button.disabled = false;
+          }
+        );
+
+        return;
+      }
+
+      currentQuote.status =
+        data?.quote_status ||
+        currentQuote.status;
+
+      currentQuote.call_requested =
+        Boolean(
+          data?.call_requested
+        );
+
+      await loadPortal();
+    }
+
+
+    accessForm.addEventListener(
+      "submit",
+      async event => {
+        event.preventDefault();
+
+        clearAccessMessage();
+
+        const email =
+          document.getElementById(
+            "customerEmail"
+          )
+            .value
+            .trim()
+            .toLowerCase();
+
+        const token =
+          document.getElementById(
+            "accessCode"
+          )
+            .value
+            .trim()
+            .replace(/\s+/g, "");
+
+        if (
+          !email ||
+          !token
+        ) {
+          showAccessMessage(
+            "Enter your email address and access code.",
+            "error"
+          );
+
+          return;
+        }
+
+        accessButton.disabled =
+          true;
+
+        accessButton.textContent =
+          "Checking Code...";
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .auth
+            .verifyOtp({
+              email,
+              token,
+              type: "email"
+            });
+
+        accessButton.disabled =
+          false;
+
+        accessButton.textContent =
+          "Open My Quote";
+
+        if (error) {
+          console.error(
+            error
+          );
+
+          showAccessMessage(
+            "That access code could not be verified. Check the email address and code, or ask Ozzsound for a new access code.",
+            "error"
+          );
+
+          return;
+        }
+
+        await loadPortal();
+      }
+    );
+
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        await supabaseClient
+          .auth
+          .signOut();
+
+        currentEnquiry =
+          null;
+
+        currentQuote =
+          null;
+
+        currentItems =
+          [];
+
+        currentNotes =
+          [];
+
+        currentBooking =
+          null;
+
+        document.getElementById(
+          "accessCode"
+        ).value =
+          "";
+
+        showAccess();
+      }
+    );
+
+
+    async function initialisePortal() {
+      const {
+        data: {
+          session
+        }
+      } =
+        await supabaseClient
+          .auth
+          .getSession();
+
+      if (
+        session?.user
+      ) {
+        await loadPortal();
+      } else {
+        showAccess();
+      }
+    }
+
+
+    initialisePortal();
+  </script>
+
+</body>
+</html>
