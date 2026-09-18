@@ -327,6 +327,33 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const eventMap={weddings:'Wedding',parties:'Birthday & Party',kids:'Kids & Teens',corporate:'Corporate Event',sporting:'Sporting Event',karaoke:'Karaoke',other:'Other Event'};
   const today=new Date(); dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
+  const selectedTime=(d,prefix)=>{
+    const hour=String(d.get(prefix+'Hour')||'').trim();
+    const minute=String(d.get(prefix+'Minute')||'').trim();
+    const period=String(d.get(prefix+'Period')||'').trim().toUpperCase();
+
+    if(!hour||!minute||!['AM','PM'].includes(period)){
+      return null;
+    }
+
+    const hour12=Number(hour);
+
+    if(!Number.isInteger(hour12)||hour12<1||hour12>12){
+      return null;
+    }
+
+    let hour24=hour12%12;
+
+    if(period==='PM'){
+      hour24+=12;
+    }
+
+    return {
+      display:`${hour12}:${minute} ${period}`,
+      database:`${String(hour24).padStart(2,'0')}:${minute}:00`
+    };
+  };
+
   document.querySelectorAll('.event').forEach(card=>card.addEventListener('click',()=>{eventSelect.value=eventMap[card.dataset.event]||'';}));
   document.querySelector('#dateEnquire')?.addEventListener('click',e=>{const k=e.currentTarget.dataset.date;if(k)dateInput.value=k;});
 
@@ -354,10 +381,24 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       try{weddingData=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null')}catch(e){}
       try{karaokeData=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null')}catch(e){}
       try{virtualSetupData=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null')}catch(e){}
+      const startTime=selectedTime(d,'start');
+      const finishTime=selectedTime(d,'finish');
+
+      if(!startTime||!finishTime){
+        throw new Error('Please choose both a start time and a finish time.');
+      }
+
+      const eventTimes=
+        `${startTime.display} – ${finishTime.display}`;
+
       const enquiryData={
         name:String(d.get('name')||''), phone:String(d.get('phone')||''), email:String(d.get('email')||''),
         eventType:String(d.get('eventType')||''), eventDate:String(d.get('eventDate')||''), venue:String(d.get('venue')||''),
-        guests:d.get('guests')?Number(d.get('guests')):null, times:String(d.get('times')||''), message:String(d.get('message')||''),
+        guests:d.get('guests')?Number(d.get('guests')):null,
+        times:eventTimes,
+        startTime:startTime.display,
+        finishTime:finishTime.display,
+        message:String(d.get('message')||''),
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
       };
       status.textContent='Saving your enquiry securely…';
@@ -365,7 +406,11 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         id:enquiryId, enquiry_ref:enquiryRef, enquiry_type:String(d.get('eventType')||''),
         name:enquiryData.name, phone:enquiryData.phone, email:enquiryData.email,
         event_type:enquiryData.eventType, event_date:enquiryData.eventDate, venue_suburb:enquiryData.venue,
-        approx_guests:enquiryData.guests, event_times:enquiryData.times, message:enquiryData.message,
+        approx_guests:enquiryData.guests,
+        event_times:enquiryData.times,
+        event_start_time:startTime.database,
+        event_finish_time:finishTime.database,
+        message:enquiryData.message,
         upload_folder:uploads.folder||null, upload_paths:uploads.paths||[], upload_count:uploads.count||0,
         attachment_paths:uploads.attachmentPaths||[], display_photo_paths:uploads.displayPhotoPaths||[], enquiry_data:enquiryData,
         source:'website'
