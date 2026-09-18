@@ -513,6 +513,24 @@
       border: 1px solid rgba(168,85,247,.25);
     }
 
+    .status-quote_sent {
+      color: #77dcff;
+      background: rgba(40,180,230,.12);
+      border: 1px solid rgba(40,180,230,.30);
+    }
+
+    .status-customer_accepted {
+      color: #74f0bc;
+      background: rgba(53,230,165,.14);
+      border: 1px solid rgba(53,230,165,.35);
+    }
+
+    .status-changes_requested {
+      color: #ffd08b;
+      background: rgba(255,180,84,.12);
+      border: 1px solid rgba(255,180,84,.32);
+    }
+
     .status-booked {
       color: #ff9ee8;
       background: rgba(255,56,209,.12);
@@ -1295,6 +1313,18 @@
             Quote Ready
           </option>
 
+          <option value="quote_sent">
+            Quote Sent
+          </option>
+
+          <option value="customer_accepted">
+            Customer Accepted
+          </option>
+
+          <option value="changes_requested">
+            Changes Requested
+          </option>
+
           <option value="booked">
             Booked
           </option>
@@ -1626,6 +1656,9 @@
         "new",
         "reviewing",
         "quoted",
+        "quote_sent",
+        "customer_accepted",
+        "changes_requested",
         "booked",
         "completed",
         "declined",
@@ -1649,6 +1682,9 @@
         new: "New",
         reviewing: "Reviewing",
         quoted: "Quote Ready",
+        quote_sent: "Quote Sent",
+        customer_accepted: "Customer Accepted",
+        changes_requested: "Changes Requested",
         booked: "Booked",
         completed: "Completed",
         declined: "Declined",
@@ -4204,7 +4240,7 @@ The automatic customer decline email will be added in the next customer-response
           new Date().toISOString();
 
         currentEnquiry.status =
-          "quoted";
+          "quote_sent";
 
         const listItem =
           allEnquiries.find(
@@ -4215,14 +4251,14 @@ The automatic customer decline email will be added in the next customer-response
 
         if (listItem) {
           listItem.status =
-            "quoted";
+            "quote_sent";
         }
 
         updateStats();
         filterEnquiries();
 
         alert(
-          "Quote sent to the customer successfully."
+          "Quote sent to the customer successfully. Status changed to Quote Sent."
         );
 
         renderModalContent();
