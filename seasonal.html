@@ -98,20 +98,24 @@ body.theme-christmas .christmasSleigh{display:block}
     if(mobile){
       const direction=Math.random()<.5?1:-1;
       const santaWidth=santa.getBoundingClientRect().width || 220;
-      const edge=santaWidth+50;
+      const edge=santaWidth+55;
       const startX=direction===1?-edge:w+edge;
       const endX=direction===1?w+edge:-edge;
-      const centerY=Math.max(120,Math.min(h*.52, h-220));
-      const y=centerY+rand(-45,45);
+      const centerY=Math.max(130,Math.min(h*.50,h-210));
+      const y1=centerY+rand(-70,70);
+      const y2=centerY+rand(-55,55);
+      const y3=centerY+rand(-70,70);
       santa.classList.add('is-flying');
       const anim=santa.animate([
-        {transform:`translate3d(${startX}px,${y}px,0) rotate(0deg) scaleX(${direction})`},
-        {transform:`translate3d(${endX}px,${y}px,0) rotate(0deg) scaleX(${direction})`}
-      ],{duration:rand(9500,12500),easing:'linear',fill:'forwards'});
+        {transform:`translate3d(${startX}px,${y1}px,0) rotate(0deg) scaleX(${direction})`},
+        {transform:`translate3d(${w*.30}px,${y2}px,0) rotate(${rand(-7,7)}deg) scaleX(${direction})`,offset:.34},
+        {transform:`translate3d(${w*.68}px,${y3}px,0) rotate(${rand(-7,7)}deg) scaleX(${direction})`,offset:.68},
+        {transform:`translate3d(${endX}px,${centerY+rand(-70,70)}px,0) rotate(0deg) scaleX(${direction})`}
+      ],{duration:rand(10500,14500),easing:'ease-in-out',fill:'forwards'});
       anim.onfinish=()=>{
         santa.classList.remove('is-flying');
         anim.cancel();
-        setTimeout(fly,rand(12000,24000));
+        setTimeout(fly,rand(8000,18000));
       };
       return;
     }
