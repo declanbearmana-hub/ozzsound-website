@@ -1,0 +1,373 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="assets/logos/ozzsound-logo-transparent.png">
+<title>Seasonal Events | Ozzsound Mobile Music</title>
+<meta name="description" content="Build a seasonal Ozzsound event for Halloween, Christmas, New Year, Easter and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+:root{--seasonA:#ef37ff;--seasonB:#46ddff;--seasonGlow:rgba(70,221,255,.13)}body{transition:background .35s ease}.seasonMain{padding:140px 0 90px;position:relative;overflow:hidden}.seasonMain:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 10% 30%,var(--seasonGlow),transparent 28%),radial-gradient(circle at 90% 70%,rgba(239,55,255,.07),transparent 30%)}.seasonBack{display:inline-flex;margin-bottom:26px;color:#9aa8c0;text-decoration:none;font-weight:800}.seasonHero,.seasonStep{position:relative;z-index:2;border:1px solid #283142;background:rgba(8,11,17,.94);border-radius:26px}.seasonHero{padding:clamp(27px,5vw,54px);overflow:hidden}.seasonHero h1{font:700 clamp(44px,7vw,80px) "Space Grotesk";letter-spacing:-.055em;line-height:.98;margin:9px 0 17px}.seasonHero p{max-width:700px;color:#a8b3c4;font-size:18px;line-height:1.6}.seasonProgress{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:24px 0}.seasonProgress i{height:5px;background:#202634;border-radius:99px}.seasonProgress i.on{background:linear-gradient(90deg,var(--seasonA),var(--seasonB));box-shadow:0 0 14px var(--seasonGlow)}.seasonStep{display:none;padding:clamp(23px,4vw,40px)}.seasonStep.active{display:block}.stepNo{color:var(--seasonB);font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.seasonStep h2{font:700 clamp(31px,4.5vw,49px) "Space Grotesk";letter-spacing:-.045em;margin:8px 0}.lead{color:#929fb2;line-height:1.55;margin:0 0 22px}.seasonChoices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.seasonChoice,.seasonChip{border:1px solid color-mix(in srgb,var(--seasonB) 42%,#303848);background:linear-gradient(145deg,color-mix(in srgb,var(--seasonB) 8%,transparent),color-mix(in srgb,var(--seasonA) 7%,transparent));color:#f2f7ff;cursor:pointer;transition:.18s;font:inherit}.seasonChoice{padding:17px;border-radius:17px;text-align:left}.seasonChoice strong{display:block;font:800 17px "Space Grotesk";margin-bottom:4px}.seasonChoice small{color:#8d99ab;line-height:1.4}.seasonChips{display:flex;flex-wrap:wrap;gap:8px}.seasonChip{border-radius:999px;padding:10px 14px;font-weight:800}.seasonChoice:hover,.seasonChip:hover,.seasonChoice.selected,.seasonChip.selected{border-color:var(--seasonB);box-shadow:0 0 20px var(--seasonGlow);transform:translateY(-1px)}.seasonChoice.selected,.seasonChip.selected{background:linear-gradient(135deg,color-mix(in srgb,var(--seasonA) 28%,transparent),color-mix(in srgb,var(--seasonB) 22%,transparent))}.sub{margin-top:21px;padding-top:19px;border-top:1px solid #252e3d}.sub h3{font:700 19px "Space Grotesk";margin:0 0 11px}.seasonGrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.seasonField{display:grid;gap:7px}.seasonField span{font-size:12px;font-weight:800;color:#c4d0df}.seasonField input,.seasonField select,.seasonField textarea{width:100%;box-sizing:border-box;background:#070a0f;border:1px solid #303a4c;color:#eef5ff;border-radius:13px;padding:13px;font:inherit}.wide{grid-column:1/-1}.seasonNav{display:flex;justify-content:space-between;gap:12px;margin-top:20px}.seasonNav .secondary{border:1px solid var(--seasonB)!important;background:rgba(70,221,255,.08)!important;color:#fff!important}.seasonSummary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.summaryCard{padding:15px;border:1px solid #293345;border-radius:15px;background:#070a0f}.summaryCard small{display:block;color:#7f8da1;margin-bottom:4px}.themeOptions[hidden]{display:none}.seasonDecor{position:fixed;inset:0;pointer-events:none;z-index:1;display:none;overflow:hidden}.seasonDecor span{position:absolute;filter:drop-shadow(0 0 16px rgba(255,92,20,.35));animation:floaty 5s ease-in-out infinite;font-size:clamp(48px,6vw,88px);opacity:.88}.seasonDecor .d1{left:.5%;top:20%}.seasonDecor .d2{right:.5%;top:27%;animation-delay:-1s}.seasonDecor .d3{left:1%;bottom:8%;animation-delay:-2s}.seasonDecor .d4{right:1%;bottom:10%;animation-delay:-3s}.seasonDecor .d5{right:8%;top:11%;font-size:38px;animation-delay:-.5s}.seasonDecor .d6{left:8%;top:10%;font-size:38px;animation-delay:-2.5s}.halloweenScene{display:none;position:absolute;inset:0;pointer-events:none;overflow:hidden;background-image:url('assets/seasonal/halloween-banner-new.webp?v=20260919-2');background-size:cover;background-position:center;background-repeat:no-repeat;transition:opacity .3s ease}.halloweenScene:before{content:"";position:absolute;inset:0;background:none}body.theme-halloween{--seasonA:#ff4d00;--seasonB:#b75cff;--seasonGlow:rgba(255,89,0,.24);background:linear-gradient(180deg,#09000f,#02040a 68%)}body.theme-halloween .halloweenScene{display:block}body.theme-halloween .seasonDecor{display:none}body.theme-halloween .seasonHero{min-height:clamp(390px,38.7vw,680px);padding:0;border-color:rgba(255,91,0,.58);background:#120019;box-shadow:0 0 42px rgba(183,92,255,.18);aspect-ratio:2014/780}body.theme-halloween .seasonHero>.eyebrow,body.theme-halloween .seasonHero>h1,body.theme-halloween .seasonHero>p{display:none}body.theme-halloween .seasonHero>.eyebrow{align-self:flex-start;background:rgba(12,0,18,.72);padding:7px 11px;border-radius:999px}body.theme-halloween .seasonHero>h1{background:linear-gradient(90deg,rgba(8,0,14,.90),rgba(8,0,14,.58),transparent);padding:10px 18px 10px 0;margin:8px 0 8px;max-width:610px}body.theme-halloween .seasonHero>p{background:rgba(8,0,14,.62);padding:10px 13px;border-radius:12px;backdrop-filter:blur(2px)}body.theme-halloween .seasonHero>p{color:#f0d9ff}body.theme-halloween .seasonHero h1{color:#ff6b1a;text-shadow:0 0 22px rgba(255,75,0,.25)}body.theme-halloween .seasonHero .gradientText{background:linear-gradient(90deg,#ff7b16,#ff2d91,#b75cff);-webkit-background-clip:text;background-clip:text;color:transparent}body.theme-halloween .seasonStep{border-color:rgba(183,92,255,.32);box-shadow:0 0 32px rgba(96,20,130,.09)}body.theme-halloween .seasonMain:after{content:"";position:fixed;left:0;right:0;bottom:0;height:105px;pointer-events:none;z-index:0;background:linear-gradient(0deg,rgba(39,0,54,.9),transparent);clip-path:polygon(0 65%,4% 54%,7% 69%,10% 44%,13% 70%,18% 57%,22% 73%,27% 48%,31% 69%,37% 55%,42% 75%,47% 51%,52% 69%,57% 47%,62% 72%,67% 53%,72% 70%,78% 45%,83% 67%,88% 52%,93% 70%,97% 48%,100% 61%,100% 100%,0 100%)}body.theme-halloween .halloweenRail{display:none}body.theme-halloween .seasonMain{background:radial-gradient(circle at 50% 8%,rgba(112,13,145,.22),transparent 28%),linear-gradient(180deg,#08000d,#020307)}body.theme-halloween .seasonStep{background:linear-gradient(145deg,rgba(11,8,19,.96),rgba(20,5,29,.96));border-color:rgba(220,48,255,.28)}body.theme-halloween .seasonChoice,body.theme-halloween .seasonChip{background:linear-gradient(145deg,rgba(17,11,28,.98),rgba(32,8,39,.92));border-color:rgba(184,60,255,.34)}body.theme-halloween .seasonChoice:hover,body.theme-halloween .seasonChip:hover{border-color:#ff6a16;box-shadow:0 0 24px rgba(255,75,10,.18),0 0 34px rgba(182,35,255,.12)}body.theme-halloween .seasonChoice.selected,body.theme-halloween .seasonChip.selected{border-color:#ff6a16;background:linear-gradient(135deg,rgba(255,84,12,.18),rgba(177,36,255,.18));box-shadow:0 0 26px rgba(255,74,10,.22)}.halloweenMummy{display:none;position:fixed;right:-135px;top:52%;width:min(650px,44vw);height:auto;z-index:1;pointer-events:none;user-select:none;filter:drop-shadow(0 18px 34px rgba(0,0,0,.62)) drop-shadow(0 0 24px rgba(183,92,255,.18));transform:translateY(-42%) rotate(-2deg);transform-origin:70% 50%}.halloweenVampire{display:none;position:fixed;left:-80px;top:52%;width:min(610px,41vw);height:auto;z-index:1;pointer-events:none;user-select:none;filter:drop-shadow(0 18px 34px rgba(0,0,0,.68)) drop-shadow(0 0 24px rgba(255,35,65,.18));transform:translateY(-45%) rotate(1deg);transform-origin:30% 50%}body.theme-halloween .halloweenVampire{display:block}body.theme-halloween footer{position:relative;z-index:20;background:#08030e!important;border-top:1px solid rgba(183,92,255,.22);box-shadow:0 -14px 34px rgba(0,0,0,.72)}body.theme-halloween footer .wrap{position:relative;z-index:5}body.theme-halloween footer,body.theme-halloween footer *{text-shadow:0 1px 3px rgba(0,0,0,.9);color:rgba(255,255,255,.72)!important}body.theme-halloween footer{isolation:isolate;min-height:92px;background:#08030e!important;padding-top:0;position:relative;z-index:20}body.theme-halloween footer:before{content:"";position:absolute;z-index:-1;inset:-28px 0 0;background:linear-gradient(180deg,rgba(8,3,14,0),#08030e 28px,#08030e 100%);pointer-events:none}body.theme-halloween footer .wrap{background:#08030e;padding-top:22px;padding-bottom:22px;position:relative;z-index:21}body.theme-halloween .halloweenMummy{display:block}body.theme-halloween .seasonMain>.wrap{position:relative}body.theme-halloween .seasonMain{overflow:hidden}body.theme-halloween .seasonMain>section{position:relative;z-index:3}body.theme-halloween .seasonProgress,body.theme-halloween #seasonBuilder{position:relative;z-index:3}@media(max-width:1180px){.halloweenMummy{right:-120px;top:53%;width:470px}.halloweenVampire{left:-70px;top:53%;width:465px}}@media(max-width:900px){.halloweenMummy{right:-105px;top:54%;width:380px;opacity:.82}.halloweenVampire{left:-60px;top:54%;width:365px;opacity:.80}}@media(max-width:720px){.halloweenMummy{right:-85px;top:42%;width:285px;opacity:.55}.halloweenVampire{left:-55px;top:42%;width:285px;opacity:.52}}@media(max-width:520px){body.theme-halloween .halloweenVampire{display:block!important;left:-72px;top:48%;width:205px;opacity:.48;transform:translateY(-45%) rotate(1deg)}body.theme-halloween .halloweenMummy{display:block!important;right:-82px;top:48%;width:220px;opacity:.48;transform:translateY(-42%) rotate(-2deg)}}.halloweenRail{display:none;position:fixed;top:88px;bottom:0;width:150px;z-index:2;pointer-events:none;background:url('assets/seasonal/halloween-side-characters.svg?v=1') center top/145px auto repeat-y;filter:drop-shadow(0 0 12px rgba(176,34,255,.28));opacity:.9}.halloweenRail.left{left:0}.halloweenRail.right{right:0;transform:scaleX(-1)}body.theme-halloween .seasonMain>section{position:relative;z-index:3}body.theme-halloween .seasonProgress{position:relative;z-index:3}body.theme-christmas{--seasonA:#ff3d67;--seasonB:#55e6c1;--seasonGlow:rgba(85,230,193,.14)}body.theme-newyear{--seasonA:#ffd66b;--seasonB:#b78cff;--seasonGlow:rgba(255,214,107,.13)}body.theme-easter{--seasonA:#ff8ad8;--seasonB:#7ee7ff;--seasonGlow:rgba(255,138,216,.13)}@keyframes floaty{50%{transform:translateY(-9px) rotate(2deg)}}@media(max-width:1180px){.halloweenRail{width:92px;background-size:90px auto;opacity:.62}body.theme-halloween .seasonMain{padding-left:74px;padding-right:74px}}@media(max-width:900px){.halloweenRail{display:none!important}body.theme-halloween .seasonMain{padding-left:18px;padding-right:18px}body.theme-halloween .seasonHero{min-height:0;aspect-ratio:2014/780}.halloweenScene{background-position:center}.seasonDecor span{opacity:.48}.seasonDecor .d5,.seasonDecor .d6{display:none}}@media(max-width:720px){.seasonChoices{grid-template-columns:1fr 1fr}.seasonGrid,.seasonSummary{grid-template-columns:1fr}}@media(max-width:520px){.seasonMain{padding-top:112px}body.theme-halloween .seasonProgress,body.theme-halloween #seasonBuilder{position:relative;z-index:5}body.theme-halloween .seasonHero{min-height:0;padding:0;aspect-ratio:2014/780}.halloweenScene{background-position:center;background-size:cover}body.theme-halloween .seasonHero>h1{font-size:42px}body.theme-halloween .seasonHero>p{font-size:15px}.seasonChoices{grid-template-columns:1fr}.seasonNav{flex-direction:column-reverse}.seasonNav .btn{justify-content:center}.seasonDecor span{font-size:44px;opacity:.34}.seasonDecor .d1{top:25%}.seasonDecor .d2{top:40%}}
+/* Final Halloween hero sizing — keep desktop compact, landscape wide, portrait readable */
+@media(min-width:901px){
+  body.theme-halloween .seasonHero{min-height:0;height:clamp(390px,29vw,520px);aspect-ratio:auto}
+  body.theme-halloween .halloweenScene{background-size:cover;background-position:center center}
+}
+@media(max-width:520px) and (orientation:portrait){
+  body.theme-halloween .seasonHero{min-height:0;height:auto;aspect-ratio:2014/780}
+  body.theme-halloween .halloweenScene{background-size:100% 100%;background-position:center center;background-repeat:no-repeat}
+}
+/* Christmas snowfall */
+.christmasSnow{display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+body.theme-christmas .christmasSnow{display:block}
+.christmasSnow .snowflake{position:absolute;top:-12vh;left:var(--x);width:var(--size);height:var(--size);border-radius:50%;background:rgba(255,255,255,var(--alpha));filter:blur(var(--blur));box-shadow:0 0 8px rgba(255,255,255,.22);animation:christmasSnowFall var(--duration) linear var(--delay) infinite;will-change:transform}
+@keyframes christmasSnowFall{
+  0%{transform:translate3d(0,-12vh,0)}
+  50%{transform:translate3d(var(--drift),52vh,0)}
+  100%{transform:translate3d(calc(var(--drift) * -.35),112vh,0)}
+}
+@media(max-width:720px){.christmasSnow .snowflake:nth-child(3n){display:none}}
+@media(prefers-reduced-motion:reduce){.christmasSnow{display:none!important}}
+/* Christmas snow-hills scenery */
+body.theme-christmas .seasonMain{
+  position:relative;
+  isolation:isolate;
+  background:
+    linear-gradient(180deg,rgba(5,10,30,.10) 0%,rgba(5,10,30,.22) 52%,rgba(5,10,30,.38) 100%),
+    url('assets/seasonal/ozzsound-christmas-snow-hills.webp?v=20260919-1') center bottom/cover fixed no-repeat;
+}
+body.theme-christmas .seasonMain>.wrap{position:relative;z-index:3}
+body.theme-christmas .christmasSnow{z-index:2}
+@media(max-width:720px){
+  body.theme-christmas .seasonMain{background-position:center bottom;background-size:auto 100%;background-attachment:scroll}
+}
+/* Christmas flying Santa artwork */
+.christmasSleigh{display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+body.theme-christmas .christmasSleigh{display:block}
+.christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
+.christmasSantaFlyby.is-flying{opacity:1}
+.christmasStardust{position:fixed;width:5px;height:5px;border-radius:50%;background:#ffe89a;box-shadow:0 0 8px #ffd75e,0 0 16px rgba(255,210,80,.8);pointer-events:none;z-index:3;animation:stardustFade 1.35s ease-out forwards}
+to{transform:rotate(30deg)}}
+to{transform:translateY(3px) rotate(1deg)}}
+to{transform:translate(12px,39px) rotate(1deg)}}
+78%{transform:rotate(-38deg)}84%{transform:rotate(16deg)}90%{transform:rotate(-8deg)}}
+}
+to{transform:translateY(2px)}}
+@keyframes stardustFade{0%{opacity:1;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(.15) translateY(20px)}}
+@media(max-width:720px){.christmasSantaFlyby{top:0;width:220px}}
+@media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
+</style></head><body class="subPage">
+<div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
+<nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
+<div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div>
+<div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
+  <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
+</div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
+<section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
+<div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
+<section class="seasonStep active"><div class="stepNo">01 · Pick the season</div><h2>What's the occasion?</h2><p class="lead">Choose one and we'll tailor the rest.</p><div class="seasonChoices">
+<button type="button" class="seasonChoice" data-single="season" data-value="Halloween"><strong>🎃 Halloween</strong><small>Costumes, spooky atmosphere and party energy.</small></button>
+<button type="button" class="seasonChoice" data-single="season" data-value="Christmas"><strong>🎄 Christmas</strong><small>Christmas functions and festive celebrations.</small></button>
+<button type="button" class="seasonChoice" data-single="season" data-value="New Year's Eve"><strong>🎆 New Year's Eve</strong><small>Build toward midnight and start the year properly.</small></button>
+<button type="button" class="seasonChoice" data-single="season" data-value="Easter"><strong>🐰 Easter</strong><small>Family, community and themed events.</small></button>
+<button type="button" class="seasonChoice" data-single="season" data-value="Other Seasonal Event"><strong>✨ Something seasonal</strong><small>Tell Dazz what you're planning.</small></button></div>
+<div class="seasonGrid sub"><label class="seasonField"><span>Date <small>(if known)</small></span><input type="date" name="date"></label><label class="seasonField"><span>Venue / suburb <small>(if known)</small></span><input name="venue" placeholder="Venue or suburb"></label><label class="seasonField"><span>Approx. guests <small>(optional)</small></span><input type="number" min="1" name="guests" placeholder="e.g. 100"></label><label class="seasonField"><span>Crowd</span><select name="crowd"><option value="">Not sure yet</option><option>Mostly kids</option><option>Mostly adults</option><option>Mixed ages / families</option><option>Work / corporate crowd</option><option>Community event</option></select></label></div></section>
+<section class="seasonStep"><div class="stepNo">02 · The feel</div><h2>What should it feel like?</h2><p class="lead">Choose the closest fit.</p><div class="seasonChoices"><button type="button" class="seasonChoice" data-single="vibe" data-value="Relaxed"><strong>Relaxed</strong><small>Music and atmosphere.</small></button><button type="button" class="seasonChoice" data-single="vibe" data-value="Dance party"><strong>Dance party</strong><small>Get the crowd moving.</small></button><button type="button" class="seasonChoice" data-single="vibe" data-value="Interactive & fun"><strong>Interactive & fun</strong><small>More Dazz and crowd involvement.</small></button><button type="button" class="seasonChoice" data-single="vibe" data-value="Big celebration"><strong>Big celebration</strong><small>High energy for the occasion.</small></button><button type="button" class="seasonChoice" data-single="vibe" data-value="Not sure"><strong>Not sure</strong><small>Dazz can help.</small></button></div>
+<div class="themeOptions sub" id="halloweenOptions" hidden><h3>🎃 What Halloween fun would you like included?</h3><p class="lead" style="font-size:14px;margin-bottom:12px">These are part of your Halloween experience — choose as many as you like. For Halloween events, DJ Dazz gets into the spirit too and dresses up for the occasion.</p><div class="seasonChips"><button type="button" class="seasonChip" data-multi="extras" data-value="Best costume competition">🏆 Best costume competition</button><button type="button" class="seasonChip" data-multi="extras" data-value="Best impression competition">🎭 Best impression competition</button><button type="button" class="seasonChip" data-multi="extras" data-value="Crowd interaction">🙌 Crowd interaction</button><button type="button" class="seasonChip" data-multi="extras" data-value="Halloween music / spooky favourites">👻 Halloween music / spooky favourites</button></div></div>
+<div class="themeOptions sub" id="newyearOptions" hidden><h3>New Year's moment</h3><div class="seasonChips"><button type="button" class="seasonChip" data-multi="extras" data-value="Midnight countdown">Midnight countdown</button><button type="button" class="seasonChip" data-multi="extras" data-value="New Year announcement">New Year announcement</button></div></div></section>
+<section class="seasonStep"><div class="stepNo">03 · Music</div><h2>Give Dazz the direction.</h2><p class="lead">A few favourites is plenty.</p><div class="seasonChips"><button type="button" class="seasonChip" data-multi="music" data-value="Current Hits">Current Hits</button><button type="button" class="seasonChip" data-multi="music" data-value="Party Anthems">Party Anthems</button><button type="button" class="seasonChip" data-multi="music" data-value="80s">80s</button><button type="button" class="seasonChip" data-multi="music" data-value="90s">90s</button><button type="button" class="seasonChip" data-multi="music" data-value="2000s">2000s</button><button type="button" class="seasonChip" data-multi="music" data-value="Rock">Rock</button><button type="button" class="seasonChip" data-multi="music" data-value="Pop">Pop</button><button type="button" class="seasonChip" data-multi="music" data-value="Dance">Dance</button><button type="button" class="seasonChip" data-multi="music" data-value="Mixed Generations">Mixed Generations</button><button type="button" class="seasonChip" data-multi="music" data-value="Seasonal favourites">Seasonal favourites</button></div><div class="sub"><h3>Music approach</h3><div class="seasonChips"><button type="button" class="seasonChip" data-single="musicControl" data-value="Let Dazz read the room">Let Dazz read the room</button><button type="button" class="seasonChip" data-single="musicControl" data-value="A bit of both">A bit of both</button><button type="button" class="seasonChip" data-single="musicControl" data-value="Stick fairly close to our choices">Stick close to our choices</button></div></div></section>
+<section class="seasonStep"><div class="stepNo">04 · Finish up</div><h2>Anything important?</h2><p class="lead">Last few taps, then you're done.</p><div class="seasonChips"><button type="button" class="seasonChip" data-multi="moments" data-value="Announcements">Announcements</button><button type="button" class="seasonChip" data-multi="moments" data-value="Speeches / microphone">Speeches / microphone</button><button type="button" class="seasonChip" data-multi="moments" data-value="Competition / prize moment">Competition / prizes</button><button type="button" class="seasonChip" data-multi="moments" data-value="Special entrance">Special entrance</button><button type="button" class="seasonChip" data-multi="moments" data-value="Final song">Final song</button></div>
+<div class="sub"><h3>Strobe lighting?</h3><div class="seasonChips"><button type="button" class="seasonChip" data-single="strobe" data-value="No">No strobe</button><button type="button" class="seasonChip" data-single="strobe" data-value="Yes">Strobe is okay</button><button type="button" class="seasonChip" data-single="strobe" data-value="Not sure">Not sure</button></div><div id="strobeApproval" hidden style="margin-top:12px"><p class="lead" style="font-size:13px;margin-bottom:10px">Has the organiser approved strobe effects? We don't need anyone's medical details.</p><div class="seasonChips"><button type="button" class="seasonChip" data-single="strobeApproval" data-value="Yes">Approved</button><button type="button" class="seasonChip" data-single="strobeApproval" data-value="No">Not approved</button><button type="button" class="seasonChip" data-single="strobeApproval" data-value="Not sure">Not sure</button></div></div></div>
+<div class="seasonGrid sub"><label class="seasonField wide"><span>Anything else? <small>(optional)</small></span><textarea name="notes" rows="3" placeholder="Only if there's something Dazz should know..."></textarea></label></div><div class="sub"><h3>Your event so far</h3><div class="seasonSummary" id="seasonSummary"></div></div></section>
+<div class="seasonNav"><button class="btn secondary" id="seasonPrev" type="button">← Back</button><button class="btn primary large" id="seasonNext" type="button">Next <span>→</span></button></div></form></div></main>
+<footer><div class="wrap foot"><div>© 2026 Ozzsound Mobile Music · ABN 33 235 488 201</div><div>Tasmania · Professional DJ &amp; Event Entertainment</div></div></footer>
+<script src="js/seasonal.js?v=20260919-2"></script><script src="js/i18n.js?v=20260919-3"></script><script>
+(function(){
+  const santa=document.querySelector('.christmasSantaFlyby');
+  if(!santa || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const rand=(min,max)=>min+Math.random()*(max-min);
+  let dustTimer=null;
+  function startStardust(){
+    if(dustTimer) return;
+    dustTimer=setInterval(()=>{
+      if(!santa.classList.contains('is-flying')) return;
+      const box=santa.getBoundingClientRect();
+      if(box.right<0||box.left>innerWidth||box.bottom<0||box.top>innerHeight) return;
+      for(let i=0;i<2;i++){
+        const p=document.createElement('i');
+        p.className='christmasStardust';
+        p.style.left=(box.left+box.width*.18+rand(-18,18))+'px';
+        p.style.top=(box.top+box.height*.58+rand(-12,12))+'px';
+        p.style.width=p.style.height=rand(2,6)+'px';
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),1400);
+      }
+    },95);
+  }
+  startStardust();
+  let lastSide='';
+
+  function edgePoint(side,w,h,pad){
+    if(side==='left') return {x:-pad,y:rand(90,h-120)};
+    if(side==='right') return {x:w+pad,y:rand(90,h-120)};
+    if(side==='top') return {x:rand(80,w-80),y:-pad};
+    return {x:rand(80,w-80),y:h+pad};
+  }
+
+  function fly(){
+    if(!document.body.classList.contains('theme-christmas')){setTimeout(fly,2500);return;}
+
+    const mobile=window.matchMedia('(max-width:720px)').matches;
+    const w=window.innerWidth,h=window.innerHeight;
+    const pad=mobile?260:390;
+
+    if(mobile){
+      const direction=Math.random()<.5?1:-1;
+      const santaWidth=santa.getBoundingClientRect().width || 220;
+      const edge=santaWidth+55;
+      const startX=direction===1?-edge:w+edge;
+      const endX=direction===1?w+edge:-edge;
+      const centerY=Math.max(130,Math.min(h*.50,h-210));
+      const y1=centerY+rand(-70,70);
+      const y2=centerY+rand(-55,55);
+      const y3=centerY+rand(-70,70);
+      santa.classList.add('is-flying');
+      const anim=santa.animate([
+        {transform:`translate3d(${startX}px,${y1}px,0) rotate(0deg) scaleX(${direction})`},
+        {transform:`translate3d(${w*.30}px,${y2}px,0) rotate(${rand(-7,7)}deg) scaleX(${direction})`,offset:.34},
+        {transform:`translate3d(${w*.68}px,${y3}px,0) rotate(${rand(-7,7)}deg) scaleX(${direction})`,offset:.68},
+        {transform:`translate3d(${endX}px,${centerY+rand(-70,70)}px,0) rotate(0deg) scaleX(${direction})`}
+      ],{duration:rand(10500,14500),easing:'ease-in-out',fill:'forwards'});
+      anim.onfinish=()=>{
+        santa.classList.remove('is-flying');
+        anim.cancel();
+        setTimeout(fly,rand(8000,18000));
+      };
+      return;
+    }
+    const direction=Math.random()<.5?1:-1;
+    const santaWidth=santa.getBoundingClientRect().width || 320;
+    const edge=santaWidth+80;
+    const startX=direction===1?-edge:w+edge;
+    const endX=direction===1?w+edge:-edge;
+
+    // Keep desktop flights cinematic: broad sweeps through the middle/upper-middle,
+    // with gentle altitude changes instead of darting randomly around the viewport.
+    const centerY=Math.max(145,Math.min(h*.42,h-280));
+    const startY=centerY+rand(-110,90);
+    const midY=centerY+rand(-75,75);
+    const endY=centerY+rand(-110,90);
+    const tilt1=Math.max(-10,Math.min(10,(midY-startY)*.055));
+    const tilt2=Math.max(-10,Math.min(10,(endY-midY)*.055));
+    const facing=direction;
+
+    const frames=[
+      {transform:`translate3d(${startX}px,${startY}px,0) rotate(0deg) scaleX(${facing})`,offset:0},
+      {transform:`translate3d(${w*.24}px,${startY+(midY-startY)*.45}px,0) rotate(${tilt1}deg) scaleX(${facing})`,offset:.25},
+      {transform:`translate3d(${w*.52}px,${midY}px,0) rotate(${Math.max(-7,Math.min(7,tilt2))}deg) scaleX(${facing})`,offset:.52}
+    ];
+
+    // A loop is now a rare little Easter egg, not part of normal flight.
+    if(Math.random()<.06){
+      const loopX=w*.66;
+      const loopY=midY+(endY-midY)*.35;
+      const radius=72;
+      for(let s=1;s<=8;s++){
+        const t=s/8*Math.PI*2;
+        const lx=loopX+Math.sin(t)*radius;
+        const ly=loopY-Math.cos(t)*radius+radius;
+        const spin=(t*180/Math.PI)*direction;
+        frames.push({
+          transform:`translate3d(${lx}px,${ly}px,0) rotate(${spin}deg) scaleX(${facing})`,
+          offset:.55+(s/8)*.20
+        });
+      }
+    }
+
+    frames.push(
+      {transform:`translate3d(${w*.78}px,${midY+(endY-midY)*.58}px,0) rotate(${tilt2}deg) scaleX(${facing})`,offset:.80},
+      {transform:`translate3d(${endX}px,${endY}px,0) rotate(0deg) scaleX(${facing})`,offset:1}
+    );
+
+    santa.classList.add('is-flying');
+    const duration=rand(13500,18000);
+    const anim=santa.animate(frames,{duration,easing:'linear',fill:'forwards'});
+    anim.onfinish=()=>{
+      santa.classList.remove('is-flying');
+      anim.cancel();
+      setTimeout(fly,rand(10000,22000));
+    };
+  }
+  setTimeout(fly,1400);
+})();
+</script>
+<script>
+(function(){
+  const layer=document.getElementById('christmasSnow');
+  if(!layer || layer.children.length) return;
+  const mobile=window.matchMedia('(max-width:720px)').matches;
+  const count=mobile?34:64;
+  for(let i=0;i<count;i++){
+    const f=document.createElement('i');
+    f.className='snowflake';
+    const depth=(i%3)+1;
+    const size=depth===1?2+(i%3):depth===2?4+(i%4):7+(i%6);
+    f.style.setProperty('--x',((i*37)%101)+'vw');
+    f.style.setProperty('--size',size+'px');
+    f.style.setProperty('--alpha',depth===1?'.42':depth===2?'.68':'.88');
+    f.style.setProperty('--blur',depth===3?'1.2px':depth===2?'.35px':'0px');
+    f.style.setProperty('--duration',(depth===1?15+(i%8):depth===2?10+(i%6):7+(i%5))+'s');
+    f.style.setProperty('--delay',(-((i*1.73)%18))+'s');
+    f.style.setProperty('--drift',(((i%2)?1:-1)*(12+(i%7)*5))+'px');
+    layer.appendChild(f);
+  }
+})();
+</script><div id="reindeerMotionTest" aria-hidden="true">
+  <div class="rigStardust" aria-hidden="true"></div>
+  <div class="santaRig">
+    <img class="sleighArtwork" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
+    <span class="santaArm"><i class="santaHand"></i><i class="whipHandle"></i></span>
+    <span class="whipLine"></span>
+  </div>
+  <svg class="santaToTeamReins" viewBox="0 0 1020 180" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 104 C118 100 224 96 340 99 S598 94 780 84 S930 79 1010 76"/>
+    <path d="M0 111 C120 108 228 105 344 108 S602 104 784 95 S932 91 1010 88"/>
+  </svg>
+  <svg class="teamReins" viewBox="0 0 940 180" preserveAspectRatio="none" aria-hidden="true">
+    <path class="rein rein1" d="M12 104 C92 101 151 95 218 87 S350 92 449 99 S575 91 651 82 S786 80 874 72"/>
+    <path class="rein rein2" d="M12 111 C96 108 156 104 222 98 S354 103 453 109 S579 102 656 94 S790 92 879 85"/>
+    <path class="teamTrace" d="M172 101 L222 91 M374 91 L449 101 M601 99 L655 86 M818 82 L877 75"/>
+  </svg>
+  <div class="reindeerTeam">
+  <div class="motionDeer deerOne">
+    <span class="deerTail"></span><span class="deerBody"><i class="belly"></i><i class="shoulder"></i></span><span class="deerNeck"><i class="chestFur"></i></span><span class="deerHead"><i class="muzzle"></i><i class="eye"></i><i class="nose"></i></span>
+    <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
+    <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
+    <span class="deerHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
+    <span class="leg lf"><em></em><b></b></span><span class="leg rf"><em></em><b></b></span><span class="leg lr"><em></em><b></b></span><span class="leg rr"><em></em><b></b></span>
+  </div>
+  </div>
+</div>
+<style>
+#reindeerMotionTest{display:none}
+body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
+.rigStardust{position:absolute;left:-345px;top:39%;width:90px;height:180px;animation:testTeamFly 13.5s linear infinite;z-index:3;pointer-events:none}
+.rigStardust i{position:absolute;border-radius:50%;background:#ffd76a;box-shadow:0 0 7px #ffd76a,0 0 13px rgba(255,190,55,.85);animation:dustFade 1.35s ease-out forwards}
+@keyframes dustFade{0%{opacity:0;transform:translate(0,0) scale(.35)}15%{opacity:1}100%{opacity:0;transform:translate(-105px,18px) scale(.05)}}
+.santaRig{position:absolute;left:-300px;top:39%;width:360px;height:180px;animation:testTeamFly 13.5s linear infinite;transform-origin:right center;will-change:transform;z-index:5}
+.sleighArtwork{position:absolute;right:-8px;top:-10px;width:360px;height:auto;object-fit:contain;filter:drop-shadow(0 7px 6px rgba(0,0,0,.28));animation:sleighFloat 2.7s ease-in-out infinite}
+.santaArm{position:absolute;right:80px;top:31px;width:18px;height:52px;border-radius:12px;background:linear-gradient(90deg,#a50f1d,#e42b36 58%,#8f0b17);transform-origin:50% 8px;animation:santaWhipArm 3.8s ease-in-out infinite;z-index:8}
+.santaHand{position:absolute;left:2px;bottom:-5px;width:15px;height:15px;border-radius:50%;background:#f0c49d;box-shadow:0 0 0 2px rgba(92,43,26,.18)}
+.whipHandle{position:absolute;left:8px;bottom:-17px;width:4px;height:25px;border-radius:3px;background:#6c3d21;transform:rotate(-34deg);transform-origin:top center}
+.whipLine{position:absolute;right:54px;top:78px;width:112px;height:64px;border-top:2px solid #56331f;border-radius:50%;transform-origin:right top;transform:rotate(-18deg);animation:whipCrack 3.8s cubic-bezier(.4,0,.2,1) infinite;z-index:7;opacity:.9}
+.whipLine:after{content:"";position:absolute;left:-53px;top:-18px;width:67px;height:44px;border-top:2px solid #56331f;border-radius:50%;transform:rotate(16deg)}
+.reindeerTeam{position:absolute;left:0;top:39%;width:900px;height:180px;animation:testTeamFly 13.5s linear infinite;will-change:transform}
+.motionDeer.deerOne,.motionDeer.deerThree{transform-origin:center;filter:drop-shadow(0 4px 4px rgba(0,0,0,.2))}
+.motionDeer.deerTwo,.motionDeer.deerFour{transform-origin:center;filter:drop-shadow(0 6px 6px rgba(0,0,0,.24))}
+.motionDeer{--cycle:820ms;position:absolute;left:0;top:0;width:245px;height:145px;transform-origin:50% 50%;animation:deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
+.motionDeer.deerOne{left:18px;top:25px;scale:.89;z-index:1}
+.motionDeer.deerTwo{left:205px;top:8px;scale:.93;--cycle:845ms;z-index:2}
+.motionDeer.deerThree{left:423px;top:23px;scale:.97;--cycle:800ms;z-index:3}
+.motionDeer.deerFour{left:625px;top:3px;scale:1.01;--cycle:865ms;z-index:4}
+.motionDeer.deerOne .leg,.motionDeer.deerOne .leg b{animation-delay:-.04s}
+.motionDeer.deerTwo .leg,.motionDeer.deerTwo .leg b{animation-delay:-.23s}
+.motionDeer.deerThree .leg,.motionDeer.deerThree .leg b{animation-delay:-.41s}
+.motionDeer.deerFour .leg,.motionDeer.deerFour .leg b{animation-delay:-.12s}
+.teamReins{position:absolute;left:0;top:39%;width:900px;height:180px;overflow:visible;animation:testTeamFly 13.5s linear infinite;will-change:transform}
+.teamReins .rein{fill:none;stroke:#9b6334;stroke-width:2.2;stroke-linecap:round;opacity:.9;stroke-dasharray:3 2;animation:reinWave .72s ease-in-out infinite alternate}
+.teamReins .rein2{animation-delay:-.31s;opacity:.72}
+.teamReins .teamTrace{fill:none;stroke:#b77b3d;stroke-width:1.7;stroke-linecap:round;opacity:.76}
+.santaToTeamReins{position:absolute;left:-60px;top:39%;width:1020px;height:180px;animation:testTeamFly 13.5s linear infinite;overflow:visible;z-index:4}
+.santaToTeamReins path{fill:none;stroke:#8b572f;stroke-width:2;stroke-linecap:round;opacity:.82;animation:reinWave .72s ease-in-out infinite alternate}
+.deerBody{position:absolute;left:58px;top:43px;width:128px;height:67px;border-radius:58% 48% 46% 55%;background:radial-gradient(ellipse at 70% 28%,#d99a64 0 9%,transparent 10%),linear-gradient(165deg,#d39a68 0%,#b66d3d 38%,#8a4727 78%,#6d351f 100%);box-shadow:inset 0 8px 12px rgba(255,224,188,.16),inset 0 -13px 18px rgba(70,28,13,.2),0 3px 5px rgba(0,0,0,.18)}
+.deerBody:before{content:"";position:absolute;inset:7px 10px 14px 12px;border-radius:50%;background:repeating-linear-gradient(168deg,rgba(255,235,210,.08) 0 2px,transparent 2px 7px);opacity:.8}
+.deerBody .belly{position:absolute;left:25px;bottom:2px;width:77px;height:19px;border-radius:50%;background:linear-gradient(180deg,transparent,#d9a77b 85%);opacity:.8}
+.deerBody .shoulder{position:absolute;right:7px;top:11px;width:39px;height:46px;border-radius:50%;box-shadow:inset 8px 0 12px rgba(82,37,19,.2)}
+.deerNeck{position:absolute;left:162px;top:24px;width:42px;height:80px;border-radius:55% 58% 38% 45%;background:linear-gradient(100deg,#9b542f,#c98550 62%,#e0ad7b);transform:rotate(23deg);box-shadow:inset -6px 0 9px rgba(75,32,16,.16)}
+.deerNeck .chestFur{position:absolute;right:-4px;top:30px;width:23px;height:44px;border-radius:50% 50% 65% 30%;background:linear-gradient(100deg,#f0d1ad,#d7a070);clip-path:polygon(0 0,100% 0,82% 18%,100% 30%,77% 44%,100% 57%,72% 72%,91% 85%,40% 100%,0 82%)}
+.deerHead{position:absolute;left:184px;top:18px;width:61px;height:40px;border-radius:62% 54% 48% 58%;background:linear-gradient(160deg,#dba06d,#b96d3c 68%,#8a4829);transform:rotate(-4deg);animation:headBob var(--cycle) ease-in-out infinite;box-shadow:inset 0 5px 7px rgba(255,230,200,.15)}
+.deerHead .muzzle{position:absolute;right:-10px;top:18px;width:30px;height:17px;border-radius:60% 70% 55% 60%;background:#d8ad88}
+.deerHead .eye{position:absolute;right:20px;top:10px;width:6px;height:6px;border-radius:50%;background:#15100c;box-shadow:0 0 0 2px #e8b783,0 0 5px rgba(255,210,120,.5)}
+.deerHead .eye:after{content:"";position:absolute;left:2px;top:1px;width:2px;height:2px;border-radius:50%;background:#fff}
+.deerHead .nose{position:absolute;right:-11px;top:20px;width:9px;height:8px;border-radius:60%;background:#2b1b16;box-shadow:0 0 5px rgba(255,210,130,.2)}
+.deerEar{position:absolute;top:13px;width:26px;height:12px;border-radius:90% 10% 90% 10%;background:linear-gradient(90deg,#9a522e,#d69a69);box-shadow:inset 5px 0 0 #e8b994}.ear1{left:190px;transform:rotate(-30deg)}.ear2{left:211px;transform:rotate(18deg) scale(.88)}
+.deerAntler{position:absolute;top:-13px;width:42px;height:49px;border-left:4px solid #684024;border-top:4px solid #684024;border-radius:75% 0 0 0;transform-origin:bottom left;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}.a1{left:194px;transform:rotate(-12deg)}.a2{left:212px;transform:rotate(3deg) scale(.86)}
+.deerAntler:before,.deerAntler:after{content:"";position:absolute;border-left:3px solid #684024;border-top:3px solid #684024;border-radius:80% 0 0 0}.deerAntler:before{left:5px;top:7px;width:26px;height:22px;transform:rotate(19deg)}.deerAntler:after{left:15px;top:-2px;width:18px;height:18px;transform:rotate(35deg)}
+.deerTail{position:absolute;left:39px;top:48px;width:38px;height:22px;border-radius:90% 15% 90% 15%;background:linear-gradient(120deg,#8d4b2b,#e7c19b 72%,#f2dbc3);transform-origin:right center;animation:tailFlick calc(var(--cycle)*2) ease-in-out infinite alternate;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.deerHarness{position:absolute;left:165px;top:42px;width:16px;height:66px;border-radius:8px;border:4px solid #a70f20;transform:rotate(-15deg);box-shadow:0 0 0 2px #e4aa2e inset,0 1px 2px rgba(0,0,0,.4)}
+.deerHarness .strap{position:absolute;left:-57px;top:28px;width:62px;height:6px;border-radius:4px;background:linear-gradient(#d42131,#8f0c18);box-shadow:0 0 0 1px #e4aa2e}
+.deerHarness .bell{position:absolute;width:10px;height:10px;border-radius:50% 50% 55% 55%;background:radial-gradient(circle at 35% 30%,#fff3a1,#f4b72c 40%,#9a6109 80%);box-shadow:0 0 5px rgba(255,198,54,.6)}.deerHarness .b1{left:5px;top:42px}.deerHarness .b2{left:-2px;top:50px}
+.deerHarness:after{content:"";position:absolute;right:-8px;top:26px;width:8px;height:8px;border:2px solid #e4aa2e;border-radius:50%;background:#6e321c}
+.leg{position:absolute;top:91px;width:19px;height:58px;border-radius:12px;background:linear-gradient(90deg,#7f3f22,#b66e3e 58%,#8a4828);box-shadow:inset -3px 0 4px rgba(65,27,14,.18);transform-origin:50% 4px;animation-duration:var(--cycle);animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite}
+.leg em{position:absolute;left:3px;top:39px;width:13px;height:13px;border-radius:50%;background:#a76037;box-shadow:inset -2px -2px 3px rgba(58,24,12,.25);z-index:2}
+.leg b{position:absolute;left:4px;top:43px;width:12px;height:39px;border-radius:8px;background:linear-gradient(90deg,#74391f,#a75e34);transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.42,0,.58,1) infinite;will-change:transform}
+.leg b:after{content:"";position:absolute;left:-2px;bottom:-8px;width:16px;height:12px;border-radius:72% 28% 68% 32%;background:linear-gradient(120deg,#35231b,#17100d);transform:rotate(18deg)}
+.lf{left:166px;animation-name:frontReach}.rf{left:146px;animation-name:frontReach;animation-delay:calc(var(--cycle)*-.5)}
+.lr{left:82px;animation-name:rearKick;animation-delay:calc(var(--cycle)*-.5)}.rr{left:63px;animation-name:rearKick}
+.rf,.lr{opacity:.82}
+@keyframes frontReach{
+  0%{transform:rotate(-62deg) translateY(-1px)}
+  18%{transform:rotate(-78deg) translateY(-3px)}
+  42%{transform:rotate(-18deg) translateY(0)}
+  58%{transform:rotate(38deg) translateY(-7px)}
+  76%{transform:rotate(63deg) translateY(-10px)}
+  100%{transform:rotate(-62deg) translateY(-1px)}
+}
+@keyframes rearKick{
+  0%{transform:rotate(58deg) translateY(-7px)}
+  18%{transform:rotate(74deg) translateY(-10px)}
+  42%{transform:rotate(18deg) translateY(-2px)}
+  58%{transform:rotate(-42deg) translateY(-3px)}
+  76%{transform:rotate(-68deg) translateY(-5px)}
+  100%{transform:rotate(58deg) translateY(-7px)}
+}
+@keyframes lowerLeg{
+  0%{transform:rotate(18deg) scaleY(1)}
+  18%{transform:rotate(5deg) scaleY(1.04)}
+  42%{transform:rotate(-58deg) scaleY(.86)}
+  58%{transform:rotate(-92deg) scaleY(.72)}
+  76%{transform:rotate(-36deg) scaleY(.84)}
+  100%{transform:rotate(18deg) scaleY(1)}
+}
+@keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-5px}42%{margin-top:-1px}58%{margin-top:3px}76%{margin-top:-3px}}
+@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-2deg) translateY(-1px)}58%{transform:rotate(1deg) translateY(1px)}76%{transform:rotate(-3deg) translateY(-1px)}}
+@keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
+@keyframes testTeamFly{0%{transform:translateX(-980px) translateY(0) rotate(-.35deg)}48%{transform:translateX(calc(50vw - 450px)) translateY(-9px) rotate(.25deg)}100%{transform:translateX(calc(100vw + 980px)) translateY(1px) rotate(-.25deg)}}
+@keyframes reinWave{from{transform:translateY(-1px)}to{transform:translateY(2px)}}
+@keyframes sleighFloat{0%,100%{transform:translateY(0) rotate(-.25deg)}50%{transform:translateY(-3px) rotate(.25deg)}}
+@keyframes santaWhipArm{0%,68%,100%{transform:rotate(-16deg)}74%{transform:rotate(-48deg)}79%{transform:rotate(24deg)}86%{transform:rotate(-10deg)}}
+@keyframes whipCrack{0%,68%,100%{transform:rotate(-18deg) scaleX(.92)}74%{transform:rotate(-42deg) scaleX(1.08)}79%{transform:rotate(16deg) scaleX(.78)}86%{transform:rotate(-10deg) scaleX(.96)}}
+@media(max-width:720px){.reindeerTeam,.teamReins,.santaRig,.santaToTeamReins{top:43%;transform-origin:left center;scale:.62}.motionDeer{--cycle:860ms}.santaRig{left:-300px}}
+@media(prefers-reduced-motion:reduce){#reindeerMotionTest{display:none!important}}
+</style>
+<script>
+(function(){
+  const q=new URLSearchParams(location.search);
+  document.body.classList.add('reindeer-preview-page','reindeer-motion-test');
+  const team=document.querySelector('.reindeerTeam');
+  const deer=document.querySelector('.motionDeer');
+  if(!deer || !team) return;
+  const dust=document.querySelector('.rigStardust');
+  if(dust && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(()=>{
+      if(document.hidden) return;
+      const p=document.createElement('i'), s=2+Math.random()*5;
+      p.style.width=s+'px'; p.style.height=s+'px';
+      p.style.left=(48+Math.random()*34)+'px'; p.style.top=(62+Math.random()*58)+'px';
+      p.style.animationDuration=(.9+Math.random()*.8)+'s';
+      dust.appendChild(p); setTimeout(()=>p.remove(),1800);
+    },75);
+  }
+  ['deerTwo','deerThree','deerFour'].forEach(cls=>{
+    const clone=deer.cloneNode(true);
+    clone.classList.remove('deerOne');
+    clone.classList.add(cls);
+    team.appendChild(clone);
+  });
+  if(q.get('deerSlow')==='1') team.querySelectorAll('.motionDeer').forEach(d=>d.style.setProperty('--cycle','1600ms'));
+  if(q.get('deerPause')==='1'){
+    document.querySelectorAll('#reindeerMotionTest *').forEach(el=>el.style.animationPlayState='paused');
+  }
+})();
+</script></body></html>
