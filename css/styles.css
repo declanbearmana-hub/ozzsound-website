@@ -654,3 +654,15 @@
 @media (max-width:900px){.homeToolGrid{grid-template-columns:1fr}.homeStatementInner,.homeFinalCtaBox{align-items:flex-start;flex-direction:column}.flowCard{width:290px;height:200px}}
 @media (max-width:620px){.homeEvents,.homeStatement,.homeTools,.homeFinalCta{padding:64px 0}.eventFlow{mask-image:none;-webkit-mask-image:none}.flowCard{width:260px;height:185px;padding:22px}.eventFlowTrack{animation-duration:46s}.homeToolGrid a{min-height:165px}}
 @media (prefers-reduced-motion:reduce){.eventFlowTrack{animation:none;overflow-x:auto}}
+
+/* Interactive event carousel controls */
+.eventFlowShell{position:relative}
+.eventFlow{cursor:grab;touch-action:pan-y;user-select:none}
+.eventFlow.isDragging{cursor:grabbing}
+.eventFlow.isUserControlled .eventFlowTrack{animation-play-state:paused}
+.eventFlowArrow{position:absolute;z-index:8;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(7,9,14,.88);backdrop-filter:blur(12px);color:#fff;font-size:34px;line-height:1;cursor:pointer;box-shadow:0 12px 35px rgba(0,0,0,.28);transition:.25s ease}
+.eventFlowArrow:hover{border-color:var(--cyan);box-shadow:0 0 28px rgba(40,230,255,.13)}
+.eventFlowPrev{left:clamp(8px,2vw,30px)}
+.eventFlowNext{right:clamp(8px,2vw,30px)}
+.eventFlowHint{text-align:center;margin-top:8px;color:#737d8d;font-size:12px;text-transform:uppercase;letter-spacing:.14em}
+@media(max-width:620px){.eventFlowArrow{width:44px;height:44px;font-size:28px}.eventFlowPrev{left:6px}.eventFlowNext{right:6px}}
