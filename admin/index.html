@@ -883,6 +883,12 @@
       line-height: 1.55;
     }
 
+    .school-quick-panel{grid-column:1/-1;padding:22px;border-radius:18px;background:linear-gradient(135deg,rgba(34,211,238,.07),rgba(168,85,247,.07));border:1px solid rgba(34,211,238,.22)}
+    .school-quick-panel h3{margin:0 0 6px;font-size:21px}.school-quick-panel .quick-intro{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.5}
+    .quick-group{margin-top:17px}.quick-label{display:block;margin-bottom:8px;color:#d7d7df;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+    .quick-tiles{display:flex;flex-wrap:wrap;gap:8px}.quick-tile{padding:10px 13px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:#11111b;color:#d9d9e4;cursor:pointer;font-weight:800;font-size:13px}.quick-tile.active{color:#071014;background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 20px rgba(34,211,238,.18)}
+    .quick-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:17px}.quick-fields label{margin-top:0}.quick-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}.quick-save-status{color:var(--muted);font-size:13px}.quick-save-status.ok{color:var(--green)}
+    @media(max-width:700px){.quick-fields{grid-template-columns:1fr}.quick-tile{padding:12px 14px}}
     .call-box {
       display: flex;
       align-items: center;
@@ -6769,6 +6775,22 @@ The automatic customer decline email will be added in the next customer-response
     }
 
 
+    function schoolQuickData(){return (currentEnquiry&&currentEnquiry.enquiry_data&&currentEnquiry.enquiry_data.school_call_plan)||{};}
+    function schoolQuickGroup(id,label,...options){const saved=schoolQuickData()[id];const selected=Array.isArray(saved)?saved:(saved?[saved]:[]);return `<div class="quick-group" data-quick-group="${id}"><span class="quick-label">${label}</span><div class="quick-tiles">${options.map(v=>`<button type="button" class="quick-tile ${selected.includes(v)?"active":""}" data-value="${escapeHtml(v)}">${escapeHtml(v)}</button>`).join("")}</div></div>`;}
+    function bindSchoolQuickPanel(){
+      document.querySelectorAll("[data-quick-group]").forEach(group=>{group.querySelectorAll(".quick-tile").forEach(btn=>btn.addEventListener("click",()=>{const multi=["schoolActivities","schoolLighting"].includes(group.dataset.quickGroup);if(!multi)group.querySelectorAll(".quick-tile").forEach(x=>x.classList.remove("active"));btn.classList.toggle("active");}));});
+      document.getElementById("saveSchoolCallNotes")?.addEventListener("click",saveSchoolCallNotes);
+    }
+    async function saveSchoolCallNotes(){
+      if(!currentEnquiry)return;const button=document.getElementById("saveSchoolCallNotes"),status=document.getElementById("schoolQuickStatus");button.disabled=true;button.textContent="Saving...";
+      const plan={};document.querySelectorAll("[data-quick-group]").forEach(group=>{const vals=[...group.querySelectorAll(".quick-tile.active")].map(x=>x.dataset.value);if(vals.length)plan[group.dataset.quickGroup]=["schoolActivities","schoolLighting"].includes(group.dataset.quickGroup)?vals:vals[0];});
+      const event_date=document.getElementById("schoolEventDate")?.value||null,event_start_time=document.getElementById("schoolStartTime")?.value||null,event_finish_time=document.getElementById("schoolFinishTime")?.value||null,approx_guests=document.getElementById("schoolNumbers")?.value.trim()||null,venue_suburb=document.getElementById("schoolVenue")?.value.trim()||currentEnquiry.venue_suburb||null,school_call_notes=document.getElementById("schoolExtraNotes")?.value.trim()||"";
+      const enquiry_data={...(currentEnquiry.enquiry_data||{}),school_call_plan:plan,school_call_notes,school_call_updated_at:new Date().toISOString()};
+      const {data,error}=await supabaseClient.from("enquiries").update({event_date,event_start_time,event_finish_time,approx_guests,venue_suburb,enquiry_data,status:currentEnquiry.status==="new"?"contacted":currentEnquiry.status}).eq("id",currentEnquiry.id).select().single();
+      if(error){console.error(error);status.textContent="Could not save — try again.";status.className="quick-save-status";button.disabled=false;button.textContent="Save School Call Notes";return;}
+      currentEnquiry=data;const idx=allEnquiries.findIndex(x=>String(x.id)===String(data.id));if(idx>=0)allEnquiries[idx]=data;status.textContent="Saved to this OZZ reference ✓";status.className="quick-save-status ok";button.disabled=false;button.textContent="Save School Call Notes";updateStats();filterEnquiries();
+    }
+
     function renderModalContent() {
 
       if (
@@ -7010,6 +7032,29 @@ The automatic customer decline email will be added in the next customer-response
 
           </div>
 
+
+          ${String(eventType).toLowerCase().includes("school") ? `
+          <div class="school-quick-panel">
+            <h3>School Call Notes — Quick Tap</h3>
+            <p class="quick-intro">After speaking with the school, tap what was discussed. Leave anything you didn't cover blank. No need to type it all out.</p>
+            ${schoolQuickGroup("schoolEventKind","Event","School Disco",["School Disco","Formal / Social","Graduation / Leavers","Presentation / Awards","Fundraiser / Family Event","End-of-Year Celebration","Other"])}
+            ${schoolQuickGroup("schoolAgeGroup","Age group","Primary","Secondary","Senior","Mixed")}
+            ${schoolQuickGroup("schoolStyle","Atmosphere","Keep it formal","A bit of both","Bring the fun")}
+            ${schoolQuickGroup("schoolMusic","Music direction","Current Hits","Dance","Classics","Mixed Generations","School Appropriate")}
+            ${schoolQuickGroup("schoolRequests","Student requests","Allow requests","Approved requests only","No requests")}
+            ${schoolQuickGroup("schoolActivities","Activities","Air Guitar","Limbo","Dance Challenge / Macarena","Dress-up / Character DJ","Props / Gags","Announcements")}
+            ${schoolQuickGroup("schoolLighting","Lighting / effects","Dance lighting","Moving lights","No strobe","Strobe approved","Discuss later")}
+            <div class="quick-fields">
+              <div><label for="schoolEventDate">Event date</label><input id="schoolEventDate" type="date" value="${escapeHtml(enquiry.event_date||"")}"></div>
+              <div><label for="schoolStartTime">Start time</label><input id="schoolStartTime" type="time" value="${escapeHtml(enquiry.event_start_time||"")}"></div>
+              <div><label for="schoolFinishTime">Finish time</label><input id="schoolFinishTime" type="time" value="${escapeHtml(enquiry.event_finish_time||"")}"></div>
+              <div><label for="schoolNumbers">Approx. students / guests</label><input id="schoolNumbers" type="text" maxlength="80" value="${escapeHtml(enquiry.approx_guests||"")}" placeholder="e.g. 180"></div>
+              <div style="grid-column:span 2"><label for="schoolVenue">School / venue</label><input id="schoolVenue" type="text" maxlength="200" value="${escapeHtml(enquiry.venue_suburb||"")}" placeholder="School or venue"></div>
+            </div>
+            <label for="schoolExtraNotes">Anything else? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea id="schoolExtraNotes" placeholder="Only type the things that don't fit the tiles.">${escapeHtml((enquiry.enquiry_data||{}).school_call_notes||"")}</textarea>
+            <div class="quick-actions"><button type="button" class="action-button action-save" id="saveSchoolCallNotes">Save School Call Notes</button><span class="quick-save-status" id="schoolQuickStatus"></span></div>
+          </div>` : ""}
 
           <!-- OZZSOUND BOOKING CONFIRMATION -->
 
@@ -7765,6 +7810,8 @@ The automatic customer decline email will be added in the next customer-response
         updateQuoteTotals
       );
 
+
+      bindSchoolQuickPanel();
 
       renderQuoteItems();
 
