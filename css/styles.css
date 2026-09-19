@@ -804,3 +804,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:950px){.footerMainExpanded{grid-template-columns:1.3fr 1fr 1fr}.footerIdentity{grid-column:1/-1}.footerColumn:last-child{grid-column:auto}}
 @media(max-width:650px){.footerMainExpanded{grid-template-columns:1fr 1fr;gap:32px 24px}.footerIdentity{grid-column:1/-1}.footerColumn:last-child{grid-column:1/-1}.footerBottom{align-items:flex-start}.footerBottom .adminLoginLink{margin-left:0}}
 @media(max-width:430px){.footerMainExpanded{grid-template-columns:1fr}.footerColumn:last-child{grid-column:auto}}
+
+/* Mobile footer / floating CTA correction — 2026-09-19 */
+@media(max-width:900px){
+  .siteFooter{padding-bottom:calc(118px + env(safe-area-inset-bottom));}
+  .mobileDateCta{bottom:calc(18px + env(safe-area-inset-bottom));left:16px;right:16px;width:auto;max-width:none;transform:none;justify-content:center;box-sizing:border-box;}
+}
