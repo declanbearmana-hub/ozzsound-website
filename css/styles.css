@@ -790,3 +790,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .languageMenu button:hover,.languageMenu button[aria-current="true"]{background:rgba(40,230,255,.07);color:#fff}.languageMenu small{color:#667181;font-size:9px;letter-spacing:.12em}
 .languagePickerMobile{display:none}
 @media(max-width:900px){.navlinks .languagePicker{display:none}.languagePickerMobile{display:block;margin-top:18px}.languagePickerMobile .languageButton{width:100%;justify-content:center;padding:13px}.languagePickerMobile .languageMenu{position:static;width:100%;display:none;margin-top:8px;opacity:1;visibility:visible;transform:none}.languagePickerMobile.open .languageMenu{display:block}}
+
+/* Legal and trust pages */
+.legalPage{padding:145px 0 90px}.legalWrap{max-width:940px}.legalBack{display:inline-flex;margin-bottom:28px;color:#8f9bad;text-decoration:none;font-weight:750}.legalHero{padding:clamp(25px,4vw,40px);border:1px solid #283142;border-radius:25px;background:radial-gradient(circle at 90% 0,rgba(40,230,255,.08),transparent 35%),#090c12}.legalHero h1{font:700 clamp(40px,6vw,68px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 14px}.legalHero p{max-width:760px;color:#9aa6b8;line-height:1.7}.legalHero small{color:#687588}.legalBody{padding:26px 8px}.legalBody section{padding:22px 0;border-bottom:1px solid #202735}.legalBody h2{font:700 23px "Space Grotesk";margin:0 0 10px}.legalBody p,.legalBody li{color:#929eaf;line-height:1.75}.legalBody a{color:#79e7ff}
+.legalFooterLinks{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:12px}.legalFooterLinks a{color:#7f8a9a;text-decoration:none}.legalFooterLinks a:hover{color:#fff}
+@media(max-width:600px){.legalPage{padding-top:105px}.legalHero{padding:24px}}
