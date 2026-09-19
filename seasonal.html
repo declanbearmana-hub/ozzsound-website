@@ -104,13 +104,13 @@ body.theme-christmas .christmasSleigh{display:block}
     const a=edgePoint(startSide,w,h,pad);
     const b=edgePoint(endSide,w,h,pad);
     const points=[a];
-    const bends=2+Math.floor(Math.random()*3);
+    const bends=Math.random()<.72?1:2;
     for(let i=0;i<bends;i++) points.push({x:rand(w*.08,w*.92),y:rand(h*.12,h*.82)});
     points.push(b);
 
-    const doLoops=Math.random()<.48;
+    const doLoops=Math.random()<.12;
     const loopIndex=doLoops?1+Math.floor(Math.random()*Math.max(1,points.length-2)):-1;
-    const loopCount=doLoops?(Math.random()<.35?2:1):0;
+    const loopCount=doLoops?1:0;
     const frames=[];
     let previous=points[0];
 
@@ -140,12 +140,12 @@ body.theme-christmas .christmasSleigh{display:block}
     });
 
     santa.classList.add('is-flying');
-    const duration=mobile?rand(9000,13500):rand(11000,16500);
+    const duration=mobile?rand(10500,14500):rand(12500,17500);
     const anim=santa.animate(frames,{duration,easing:'linear',fill:'forwards'});
     anim.onfinish=()=>{
       santa.classList.remove('is-flying');
       anim.cancel();
-      setTimeout(fly,rand(4500,12000));
+      setTimeout(fly,rand(7500,16000));
     };
   }
   setTimeout(fly,1400);
