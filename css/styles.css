@@ -666,3 +666,14 @@
 .eventFlowNext{right:clamp(8px,2vw,30px)}
 .eventFlowHint{text-align:center;margin-top:8px;color:#737d8d;font-size:12px;text-transform:uppercase;letter-spacing:.14em}
 @media(max-width:620px){.eventFlowArrow{width:44px;height:44px;font-size:28px}.eventFlowPrev{left:6px}.eventFlowNext{right:6px}}
+
+/* Cleaner premium navigation */
+.navDrop{position:relative;display:flex;align-items:center}
+.navDropButton{appearance:none;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;cursor:pointer;padding:12px 0}
+.navDropButton span{display:inline-block;margin-left:4px;color:var(--cyan);transition:transform .2s ease}
+.navDropMenu{position:absolute;top:calc(100% + 10px);left:50%;transform:translate(-50%,8px);min-width:190px;padding:9px;border:1px solid #293140;border-radius:16px;background:rgba(8,10,15,.96);backdrop-filter:blur(18px);box-shadow:0 20px 55px rgba(0,0,0,.34);opacity:0;visibility:hidden;pointer-events:none;transition:.2s ease}
+.navDropMenu a{display:block;padding:11px 13px;border-radius:10px;white-space:nowrap}
+.navDropMenu a:hover{background:rgba(255,255,255,.055);color:#fff}
+.navDrop:hover .navDropMenu,.navDrop:focus-within .navDropMenu{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
+.navDrop:hover .navDropButton span,.navDrop:focus-within .navDropButton span{transform:rotate(180deg)}
+@media(max-width:900px){.navDrop{display:none}}
