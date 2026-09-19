@@ -47,12 +47,12 @@ body.theme-christmas .christmasSleigh{display:block}
 .christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
 .christmasSantaFlyby.is-flying{opacity:1}
 .christmasStardust{position:fixed;width:5px;height:5px;border-radius:50%;background:#ffe89a;box-shadow:0 0 8px #ffd75e,0 0 16px rgba(255,210,80,.8);pointer-events:none;z-index:3;animation:stardustFade 1.35s ease-out forwards}
-@keyframes deerGallop{from{transform:rotate(-28deg)}to{transform:rotate(30deg)}}
-@keyframes deerBob{from{transform:translateY(-2px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
-@keyframes sleighBob{from{transform:translate(12px,34px) rotate(-1deg)}to{transform:translate(12px,39px) rotate(1deg)}}
-@keyframes santaWhip{0%,72%,100%{transform:rotate(0deg)}78%{transform:rotate(-38deg)}84%{transform:rotate(16deg)}90%{transform:rotate(-8deg)}}
-@keyframes whipSpark{to{stroke-dashoffset:-16}}
-@keyframes reinPulse{from{transform:translateY(-1px)}to{transform:translateY(2px)}}
+to{transform:rotate(30deg)}}
+to{transform:translateY(3px) rotate(1deg)}}
+to{transform:translate(12px,39px) rotate(1deg)}}
+78%{transform:rotate(-38deg)}84%{transform:rotate(16deg)}90%{transform:rotate(-8deg)}}
+}
+to{transform:translateY(2px)}}
 @keyframes stardustFade{0%{opacity:1;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(.15) translateY(20px)}}
 @media(max-width:720px){.christmasSantaFlyby{top:0;width:220px}}
 @media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
