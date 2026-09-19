@@ -223,4 +223,19 @@ to{transform:translateY(2px)}}
     layer.appendChild(f);
   }
 })();
-</script></body></html>
+</script><div id="reindeerMotionTest" aria-hidden="true">
+  <div class="motionDeer d1"><span class="antlers">♜</span><span class="head"></span><span class="body"></span><i class="leg lf"></i><i class="leg rf"></i><i class="leg lr"></i><i class="leg rr"></i></div>
+</div>
+<style>
+#reindeerMotionTest{display:none}
+body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none}
+.motionDeer{position:absolute;left:20%;top:42%;width:220px;height:110px;animation:testDeerFly 8s linear infinite}
+.motionDeer .body{position:absolute;left:50px;top:35px;width:110px;height:55px;border-radius:55% 48% 45% 50%;background:#a85d2b}
+.motionDeer .head{position:absolute;left:150px;top:17px;width:48px;height:38px;border-radius:55%;background:#b96a32;transform:rotate(-8deg)}
+.motionDeer .antlers{position:absolute;left:158px;top:-17px;font-size:45px;transform:rotate(90deg);color:#57301e}
+.motionDeer .leg{position:absolute;top:76px;width:10px;height:55px;background:#7a421f;border-radius:8px;transform-origin:50% 0;animation:gallopLeg .52s cubic-bezier(.45,0,.55,1) infinite alternate}
+.motionDeer .lf{left:139px}.motionDeer .rf{left:119px;animation-direction:alternate-reverse}.motionDeer .lr{left:73px;animation-direction:alternate-reverse}.motionDeer .rr{left:55px}
+@keyframes gallopLeg{from{transform:rotate(-42deg)}to{transform:rotate(48deg)}}
+@keyframes testDeerFly{0%{transform:translateX(-35vw) translateY(0)}50%{transform:translateX(45vw) translateY(-15px)}100%{transform:translateX(105vw) translateY(0)}}
+</style>
+<script>if(new URLSearchParams(location.search).get('reindeerTest')==='1')document.body.classList.add('reindeer-motion-test');</script></body></html>
