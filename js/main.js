@@ -889,28 +889,30 @@ document.addEventListener('DOMContentLoaded',()=>{
   prev?.addEventListener('click',()=>move(1));
   next?.addEventListener('click',()=>move(-1));
 
+  // Keep normal taps/clicks on cards as real link clicks.
+  // Dragging is handled at window level instead of pointer-capturing the
+  // carousel, because pointer capture changes the click target to the
+  // carousel and prevents its <a> cards from navigating.
   flow.addEventListener('pointerdown',e=>{
     if(e.button!==undefined&&e.button!==0)return;
     takeControl();
     dragging=true;moved=false;startX=e.clientX;startOffset=offset;
     flow.classList.add('isDragging');
-    flow.setPointerCapture?.(e.pointerId);
   });
-  flow.addEventListener('pointermove',e=>{
+  window.addEventListener('pointermove',e=>{
     if(!dragging)return;
     const dx=e.clientX-startX;
-    if(Math.abs(dx)>5)moved=true;
+    if(Math.abs(dx)>7)moved=true;
     offset=startOffset+dx;
     render();
   });
-  const end=e=>{
+  const end=()=>{
     if(!dragging)return;
     dragging=false;
     flow.classList.remove('isDragging');
-    try{flow.releasePointerCapture?.(e.pointerId)}catch(_){}
   };
-  flow.addEventListener('pointerup',end);
-  flow.addEventListener('pointercancel',end);
+  window.addEventListener('pointerup',end);
+  window.addEventListener('pointercancel',end);
   flow.addEventListener('click',e=>{
     if(moved){e.preventDefault();e.stopPropagation();moved=false;}
   },true);
