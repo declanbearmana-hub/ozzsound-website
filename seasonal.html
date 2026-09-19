@@ -17,10 +17,21 @@
   body.theme-halloween .seasonHero{min-height:0;height:auto;aspect-ratio:2014/780}
   body.theme-halloween .halloweenScene{background-size:100% 100%;background-position:center center;background-repeat:no-repeat}
 }
+/* Christmas snowfall */
+.christmasSnow{display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+body.theme-christmas .christmasSnow{display:block}
+.christmasSnow .snowflake{position:absolute;top:-12vh;left:var(--x);width:var(--size);height:var(--size);border-radius:50%;background:rgba(255,255,255,var(--alpha));filter:blur(var(--blur));box-shadow:0 0 8px rgba(255,255,255,.22);animation:christmasSnowFall var(--duration) linear var(--delay) infinite;will-change:transform}
+@keyframes christmasSnowFall{
+  0%{transform:translate3d(0,-12vh,0)}
+  50%{transform:translate3d(var(--drift),52vh,0)}
+  100%{transform:translate3d(calc(var(--drift) * -.35),112vh,0)}
+}
+@media(max-width:720px){.christmasSnow .snowflake:nth-child(3n){display:none}}
+@media(prefers-reduced-motion:reduce){.christmasSnow{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
-<main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
+<div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
 <section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
 <div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
 <section class="seasonStep active"><div class="stepNo">01 · Pick the season</div><h2>What's the occasion?</h2><p class="lead">Choose one and we'll tailor the rest.</p><div class="seasonChoices">
@@ -39,4 +50,25 @@
 <div class="seasonGrid sub"><label class="seasonField wide"><span>Anything else? <small>(optional)</small></span><textarea name="notes" rows="3" placeholder="Only if there's something Dazz should know..."></textarea></label></div><div class="sub"><h3>Your event so far</h3><div class="seasonSummary" id="seasonSummary"></div></div></section>
 <div class="seasonNav"><button class="btn secondary" id="seasonPrev" type="button">← Back</button><button class="btn primary large" id="seasonNext" type="button">Next <span>→</span></button></div></form></div></main>
 <footer><div class="wrap foot"><div>© 2026 Ozzsound Mobile Music · ABN 33 235 488 201</div><div>Tasmania · Professional DJ &amp; Event Entertainment</div></div></footer>
-<script src="js/seasonal.js?v=20260919-2"></script><script src="js/i18n.js?v=20260919-3"></script></body></html>
+<script src="js/seasonal.js?v=20260919-2"></script><script src="js/i18n.js?v=20260919-3"></script><script>
+(function(){
+  const layer=document.getElementById('christmasSnow');
+  if(!layer || layer.children.length) return;
+  const mobile=window.matchMedia('(max-width:720px)').matches;
+  const count=mobile?34:64;
+  for(let i=0;i<count;i++){
+    const f=document.createElement('i');
+    f.className='snowflake';
+    const depth=(i%3)+1;
+    const size=depth===1?2+(i%3):depth===2?4+(i%4):7+(i%6);
+    f.style.setProperty('--x',((i*37)%101)+'vw');
+    f.style.setProperty('--size',size+'px');
+    f.style.setProperty('--alpha',depth===1?'.42':depth===2?'.68':'.88');
+    f.style.setProperty('--blur',depth===3?'1.2px':depth===2?'.35px':'0px');
+    f.style.setProperty('--duration',(depth===1?15+(i%8):depth===2?10+(i%6):7+(i%5))+'s');
+    f.style.setProperty('--delay',(-((i*1.73)%18))+'s');
+    f.style.setProperty('--drift',(((i%2)?1:-1)*(12+(i%7)*5))+'px');
+    layer.appendChild(f);
+  }
+})();
+</script></body></html>
