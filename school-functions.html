@@ -90,6 +90,18 @@
     .callbackForm{display:none;margin-top:18px}.callbackForm.open{display:block}.callbackGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.callbackField{display:grid;gap:6px}.callbackField.full{grid-column:1/-1}.callbackField label{font-size:12px;font-weight:800;color:#b8c5d8}.callbackField input,.callbackField select,.callbackField textarea{width:100%;box-sizing:border-box;border:1px solid #303a4c;border-radius:12px;background:#080b11;color:#eef5ff;padding:12px 13px;font:inherit}.callbackField textarea{min-height:72px;resize:vertical}.callbackPrivacy{display:flex;gap:9px;align-items:flex-start;margin:13px 0;color:#8795a8;font-size:12px;line-height:1.5}.callbackPrivacy input{margin-top:2px}.callbackPrivacy a{color:#6fe4ff}.callbackStatus{min-height:20px;margin-top:10px;font-size:13px;color:#8fa0b5}.callbackStatus.ok{color:#78efbd}.callbackStatus.err{color:#ff9ba9}
     @media(max-width:900px){.schoolHero,.schoolSafety,.schoolSectionHead{grid-template-columns:1fr}.schoolHeroVisual{min-height:320px}.schoolGrid{grid-template-columns:1fr 1fr}.schoolPlan,.schoolStrip{grid-template-columns:1fr 1fr}.schoolCta{align-items:flex-start;flex-direction:column}.schoolCtaActions{justify-content:flex-start}.schoolChoiceRow{grid-template-columns:1fr}.strobeLine,.strobeConfirm{align-items:flex-start;flex-direction:column}}
     @media(max-width:600px){.callbackGrid{grid-template-columns:1fr}.callbackField.full{grid-column:auto}.schoolMain{padding-top:115px}.schoolHero{padding:24px}.schoolHeroVisual{min-height:270px}.schoolDisc{width:230px}.schoolGrid,.schoolPlan,.schoolStrip{grid-template-columns:1fr}.schoolStrip{gap:1px}.schoolSection{padding:55px 0}.schoolSafety{grid-template-columns:1fr}.schoolHeroActions .btn,.schoolCtaActions .btn{width:100%;justify-content:center}.schoolCtaActions{width:100%;min-width:0}}
+  
+    /* School controls: make every interactive choice obvious on the dark UI. */
+    .schoolChoice,.schoolChip,.miniChoices button,.callbackToggle,.schoolHeroActions .btn,.schoolCtaActions .btn{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease}
+    .schoolChoice,.schoolChip{border-color:rgba(94,223,255,.38);background:linear-gradient(135deg,rgba(70,221,255,.09),rgba(239,55,255,.07));color:#f2f8ff}
+    .schoolChoice:hover,.schoolChip:hover,.miniChoices button:hover{transform:translateY(-1px);border-color:#5edfff;box-shadow:0 0 20px rgba(70,221,255,.14)}
+    .schoolChoice.selected,.schoolChip.selected{border-color:#5edfff;background:linear-gradient(135deg,rgba(239,55,255,.27),rgba(70,221,255,.22));box-shadow:0 0 24px rgba(70,221,255,.17);color:#fff}
+    .miniChoices button{border-color:rgba(94,223,255,.40);background:linear-gradient(135deg,rgba(70,221,255,.10),rgba(239,55,255,.08));color:#f0f7ff}
+    .miniChoices button.selected{border-color:#5edfff;background:linear-gradient(90deg,rgba(239,55,255,.28),rgba(70,221,255,.25));box-shadow:0 0 18px rgba(70,221,255,.16)}
+    .schoolHeroActions .btn.secondary,.schoolCtaActions .btn.secondary,.callbackToggle{border:1px solid rgba(94,223,255,.62)!important;background:linear-gradient(135deg,rgba(70,221,255,.16),rgba(239,55,255,.13))!important;color:#fff!important;box-shadow:0 0 18px rgba(70,221,255,.10)}
+    .schoolHeroActions .btn:hover,.schoolCtaActions .btn:hover,.callbackToggle:hover{transform:translateY(-2px);box-shadow:0 0 26px rgba(70,221,255,.18)}
+    .schoolChoice:focus-visible,.schoolChip:focus-visible,.miniChoices button:focus-visible,.schoolHeroActions a:focus-visible,.schoolCtaActions a:focus-visible,.callbackToggle:focus-visible,.callbackForm button:focus-visible,.callbackForm input:focus-visible,.callbackForm select:focus-visible,.callbackForm textarea:focus-visible{outline:2px solid #5edfff;outline-offset:3px}
+
   </style>
 </head>
 
@@ -300,6 +312,15 @@
   <script>
   (() => {
     const state={vibe:'',extras:new Set(),strobe:'',strobeApproval:''};
+    try{
+      const saved=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
+      if(saved){
+        state.vibe=saved.vibe&&saved.vibe!=='Not selected'?saved.vibe:'';
+        state.extras=new Set(Array.isArray(saved.extras)?saved.extras:[]);
+        state.strobe=saved.strobe&&saved.strobe!=='Not selected'?saved.strobe:'';
+        state.strobeApproval=saved.strobeApproval&& !['Not confirmed','Not applicable'].includes(saved.strobeApproval)?saved.strobeApproval:'';
+      }
+    }catch(e){}
     const summary=document.querySelector('#schoolPlanSummary');
     const strobeConfirm=document.querySelector('#schoolStrobeConfirm');
     const strobeWarning=document.querySelector('#schoolStrobeWarning');
@@ -323,7 +344,15 @@
       });
     };
 
-    selectOne(document.querySelector('#schoolVibeChoices'),'vibe');
+    const restoreSchoolSelections=()=>{
+      document.querySelectorAll('#schoolVibeChoices [data-vibe]').forEach(b=>b.classList.toggle('selected',b.dataset.vibe===state.vibe));
+      document.querySelectorAll('#schoolFunExtras [data-extra]').forEach(b=>b.classList.toggle('selected',state.extras.has(b.dataset.extra)));
+      document.querySelectorAll('#schoolStrobe [data-value]').forEach(b=>b.classList.toggle('selected',b.dataset.value===state.strobe));
+      document.querySelectorAll('#schoolStrobeApproval [data-value]').forEach(b=>b.classList.toggle('selected',b.dataset.value===state.strobeApproval));
+      const yes=state.strobe==='Yes';strobeConfirm?.classList.toggle('show',yes);strobeWarning.hidden=!yes;
+    };
+
+        selectOne(document.querySelector('#schoolVibeChoices'),'vibe');
     selectOne(document.querySelector('#schoolStrobe'),'strobe');
     selectOne(document.querySelector('#schoolStrobeApproval'),'strobeApproval');
 
@@ -341,7 +370,11 @@
       if(state.extras.size)bits.push(state.extras.size+' fun extra'+(state.extras.size===1?'':'s'));
       if(state.strobe)bits.push('Strobe: '+state.strobe);
       summary.textContent=bits.length?bits.join(' · '):'Choose what suits your event — nothing here is locked in.';
+      try{localStorage.setItem('ozzsoundSchoolPlan',JSON.stringify({vibe:state.vibe||'Not selected',extras:[...state.extras],strobe:state.strobe||'Not selected',strobeApproval:state.strobe==='Yes'?(state.strobeApproval||'Not confirmed'):'Not applicable'}));}catch(e){}
     }
+
+    restoreSchoolSelections();
+    update();
 
     document.querySelectorAll('[data-school-handoff]').forEach(a=>a.addEventListener('click',()=>{
       const payload={
