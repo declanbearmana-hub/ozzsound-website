@@ -44,9 +44,9 @@ body.theme-christmas .christmasSnow{z-index:2}
 /* Christmas flying Santa artwork */
 .christmasSleigh{display:none;position:fixed;left:0;top:88px;width:100%;height:150px;overflow:hidden;pointer-events:none;z-index:4}
 body.theme-christmas .christmasSleigh{display:block}
-.christmasSantaFlyby{position:absolute;left:-390px;top:12px;width:320px;height:auto;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));animation:christmasSantaFly 22s linear infinite;will-change:transform}
-@keyframes christmasSantaFly{0%{transform:translate3d(0,18px,0) rotate(-1.5deg)}25%{transform:translate3d(calc(25vw + 190px),0,0) rotate(.5deg)}55%{transform:translate3d(calc(55vw + 390px),12px,0) rotate(-.5deg)}100%{transform:translate3d(calc(100vw + 760px),-3px,0) rotate(1deg)}}
-@media(max-width:720px){.christmasSleigh{top:70px;height:105px}.christmasSantaFlyby{left:-260px;top:8px;width:220px;animation-duration:18s}}
+.christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
+.christmasSantaFlyby.is-flying{opacity:1}
+@media(max-width:720px){.christmasSleigh{top:70px;height:105px}.christmasSantaFlyby{top:8px;width:220px}}
 @media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
@@ -74,6 +74,39 @@ body.theme-christmas .christmasSleigh{display:block}
 <div class="seasonNav"><button class="btn secondary" id="seasonPrev" type="button">← Back</button><button class="btn primary large" id="seasonNext" type="button">Next <span>→</span></button></div></form></div></main>
 <footer><div class="wrap foot"><div>© 2026 Ozzsound Mobile Music · ABN 33 235 488 201</div><div>Tasmania · Professional DJ &amp; Event Entertainment</div></div></footer>
 <script src="js/seasonal.js?v=20260919-2"></script><script src="js/i18n.js?v=20260919-3"></script><script>
+(function(){
+  const santa=document.querySelector('.christmasSantaFlyby');
+  if(!santa || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let lastDirection='';
+  function fly(){
+    if(!document.body.classList.contains('theme-christmas')){setTimeout(fly,3000);return;}
+    let direction=Math.random()<.5?'ltr':'rtl';
+    if(direction===lastDirection && Math.random()<.65) direction=direction==='ltr'?'rtl':'ltr';
+    lastDirection=direction;
+    const mobile=window.matchMedia('(max-width:720px)').matches;
+    const width=santa.getBoundingClientRect().width || (mobile?220:320);
+    const edge=width+80;
+    const start=direction==='ltr'?-edge:window.innerWidth+edge;
+    const finish=direction==='ltr'?window.innerWidth+edge:-edge;
+    const y=Math.round(4+Math.random()*(mobile?22:34));
+    const duration=Math.round(10500+Math.random()*4500);
+    santa.style.transition='none';
+    santa.style.transform=`translate3d(${start}px,${y}px,0) scaleX(${direction==='ltr'?1:-1})`;
+    santa.classList.add('is-flying');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      santa.style.transition=`transform ${duration}ms linear`;
+      santa.style.transform=`translate3d(${finish}px,${y}px,0) scaleX(${direction==='ltr'?1:-1})`;
+    }));
+    setTimeout(()=>{
+      santa.classList.remove('is-flying');
+      santa.style.transition='none';
+      setTimeout(fly,6500+Math.random()*12000);
+    },duration+150);
+  }
+  setTimeout(fly,1800);
+})();
+</script>
+<script>
 (function(){
   const layer=document.getElementById('christmasSnow');
   if(!layer || layer.children.length) return;
