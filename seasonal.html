@@ -224,18 +224,41 @@ to{transform:translateY(2px)}}
   }
 })();
 </script><div id="reindeerMotionTest" aria-hidden="true">
-  <div class="motionDeer d1"><span class="antlers">♜</span><span class="head"></span><span class="body"></span><i class="leg lf"></i><i class="leg rf"></i><i class="leg lr"></i><i class="leg rr"></i></div>
+  <div class="motionDeer">
+    <span class="deerTail"></span><span class="deerBody"></span><span class="deerNeck"></span><span class="deerHead"></span>
+    <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
+    <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
+    <span class="deerHarness"></span>
+    <span class="leg lf"><b></b></span><span class="leg rf"><b></b></span><span class="leg lr"><b></b></span><span class="leg rr"><b></b></span>
+  </div>
 </div>
 <style>
 #reindeerMotionTest{display:none}
-body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none}
-.motionDeer{position:absolute;left:20%;top:42%;width:220px;height:110px;animation:testDeerFly 8s linear infinite}
-.motionDeer .body{position:absolute;left:50px;top:35px;width:110px;height:55px;border-radius:55% 48% 45% 50%;background:#a85d2b}
-.motionDeer .head{position:absolute;left:150px;top:17px;width:48px;height:38px;border-radius:55%;background:#b96a32;transform:rotate(-8deg)}
-.motionDeer .antlers{position:absolute;left:158px;top:-17px;font-size:45px;transform:rotate(90deg);color:#57301e}
-.motionDeer .leg{position:absolute;top:76px;width:10px;height:55px;background:#7a421f;border-radius:8px;transform-origin:50% 0;animation:gallopLeg .52s cubic-bezier(.45,0,.55,1) infinite alternate}
-.motionDeer .lf{left:139px}.motionDeer .rf{left:119px;animation-direction:alternate-reverse}.motionDeer .lr{left:73px;animation-direction:alternate-reverse}.motionDeer .rr{left:55px}
-@keyframes gallopLeg{from{transform:rotate(-42deg)}to{transform:rotate(48deg)}}
-@keyframes testDeerFly{0%{transform:translateX(-35vw) translateY(0)}50%{transform:translateX(45vw) translateY(-15px)}100%{transform:translateX(105vw) translateY(0)}}
+body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
+.motionDeer{--cycle:680ms;position:absolute;left:0;top:38%;width:260px;height:150px;transform-origin:50% 50%;animation:testDeerFly 9s linear infinite,deerFloat var(--cycle) ease-in-out infinite}
+.deerBody{position:absolute;left:62px;top:47px;width:120px;height:62px;border-radius:58% 50% 48% 55%;background:linear-gradient(180deg,#bc7540,#8b4927);box-shadow:inset 0 -9px 0 rgba(70,31,16,.12)}
+.deerNeck{position:absolute;left:163px;top:28px;width:37px;height:73px;border-radius:55% 55% 35% 40%;background:#a95f34;transform:rotate(24deg)}
+.deerHead{position:absolute;left:185px;top:22px;width:58px;height:36px;border-radius:60% 55% 48% 55%;background:#bd7540;transform:rotate(-4deg);animation:headBob var(--cycle) ease-in-out infinite}
+.deerHead:after{content:"";position:absolute;right:8px;top:10px;width:5px;height:5px;border-radius:50%;background:#17100c;box-shadow:17px 8px 0 2px #382016}
+.deerEar{position:absolute;top:17px;width:24px;height:10px;border-radius:90% 10% 90% 10%;background:#9a522e}.ear1{left:190px;transform:rotate(-28deg)}.ear2{left:208px;transform:rotate(20deg)}
+.deerAntler{position:absolute;top:-7px;width:38px;height:42px;border-left:4px solid #5b321e;border-top:3px solid #5b321e;border-radius:70% 0 0 0;transform-origin:bottom left}.a1{left:194px;transform:rotate(-12deg)}.a2{left:210px;transform:rotate(4deg) scale(.85)}
+.deerAntler:after{content:"";position:absolute;left:7px;top:6px;width:25px;height:20px;border-left:3px solid #5b321e;border-top:3px solid #5b321e;transform:rotate(22deg)}
+.deerTail{position:absolute;left:45px;top:51px;width:31px;height:19px;border-radius:80% 15% 80% 15%;background:#d7a477;transform-origin:right center;animation:tailFlick calc(var(--cycle)*2) ease-in-out infinite alternate}
+.deerHarness{position:absolute;left:165px;top:47px;width:13px;height:61px;border-radius:7px;border:4px solid #b51625;transform:rotate(-15deg);box-shadow:0 0 0 2px #e3a72e inset}
+.leg{position:absolute;top:91px;width:18px;height:58px;border-radius:12px;background:#92502b;transform-origin:50% 4px;animation-duration:var(--cycle);animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite}
+.leg b{position:absolute;left:4px;top:43px;width:12px;height:38px;border-radius:8px;background:#8b4927;transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.45,0,.55,1) infinite}
+.leg b:after{content:"";position:absolute;left:-1px;bottom:-7px;width:15px;height:12px;border-radius:70% 25%;background:#241712;transform:rotate(20deg)}
+.lf{left:166px;animation-name:frontReach}.rf{left:146px;animation-name:frontReach;animation-delay:calc(var(--cycle)*-.5)}
+.lr{left:82px;animation-name:rearKick;animation-delay:calc(var(--cycle)*-.5)}.rr{left:63px;animation-name:rearKick}
+.rf,.lr{opacity:.82}
+@keyframes frontReach{0%{transform:rotate(58deg)}25%{transform:rotate(20deg)}50%{transform:rotate(-68deg)}75%{transform:rotate(-18deg)}100%{transform:rotate(58deg)}}
+@keyframes rearKick{0%{transform:rotate(-60deg)}25%{transform:rotate(-12deg)}50%{transform:rotate(62deg)}75%{transform:rotate(16deg)}100%{transform:rotate(-60deg)}}
+@keyframes lowerLeg{0%,100%{transform:rotate(25deg)}25%{transform:rotate(-42deg)}50%{transform:rotate(18deg)}75%{transform:rotate(52deg)}}
+@keyframes deerFloat{0%,100%{margin-top:0}25%{margin-top:-7px}50%{margin-top:2px}75%{margin-top:-4px}}
+@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(2deg) translateY(2px)}}
+@keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
+@keyframes testDeerFly{0%{transform:translateX(-320px) rotate(-2deg)}48%{transform:translateX(calc(50vw - 130px)) rotate(1deg)}100%{transform:translateX(calc(100vw + 320px)) rotate(-1deg)}}
+@media(max-width:720px){.motionDeer{top:42%;scale:.72}}
+@media(prefers-reduced-motion:reduce){#reindeerMotionTest{display:none!important}}
 </style>
 <script>if(new URLSearchParams(location.search).get('reindeerTest')==='1')document.body.classList.add('reindeer-motion-test');</script></body></html>
