@@ -46,17 +46,6 @@ body.theme-christmas .christmasSnow{z-index:2}
 body.theme-christmas .christmasSleigh{display:block}
 .christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
 .christmasSantaFlyby.is-flying{opacity:1}
-.christmasSantaFlyby .deerBody,.christmasSantaFlyby .deerNeck,.christmasSantaFlyby .deerHead{fill:#a85d2b;stroke:#6d351b;stroke-width:2}
-.christmasSantaFlyby .deerNeck{fill:#b86b34}.christmasSantaFlyby .deerHead{fill:#c47a42}
-.christmasSantaFlyby .antler{fill:none;stroke:#5c321d;stroke-width:3;stroke-linecap:round}
-.christmasSantaFlyby .leg{fill:none;stroke:#7b401f;stroke-width:7;stroke-linecap:round;transform-box:fill-box;transform-origin:top center;animation:deerGallop .62s ease-in-out infinite alternate;animation-delay:var(--phase)}
-.christmasSantaFlyby .front2,.christmasSantaFlyby .rear{animation-direction:alternate-reverse}
-.christmasSantaFlyby .rigDeer{animation:deerBob .62s ease-in-out infinite alternate;animation-delay:var(--phase)}
-.christmasSantaFlyby .harness{fill:none;stroke:#c71925;stroke-width:6}
-.christmasSantaFlyby .sleighBody{animation:sleighBob 1.25s ease-in-out infinite alternate}
-.christmasSantaFlyby .santaArm{transform-box:fill-box;transform-origin:15% 55%;animation:santaWhip 7.8s ease-in-out infinite}
-.christmasSantaFlyby .whip{stroke-dasharray:5 3;animation:whipSpark .42s linear infinite}
-.christmasSantaFlyby .reins{animation:reinPulse .8s ease-in-out infinite alternate}
 .christmasStardust{position:fixed;width:5px;height:5px;border-radius:50%;background:#ffe89a;box-shadow:0 0 8px #ffd75e,0 0 16px rgba(255,210,80,.8);pointer-events:none;z-index:3;animation:stardustFade 1.35s ease-out forwards}
 @keyframes deerGallop{from{transform:rotate(-28deg)}to{transform:rotate(30deg)}}
 @keyframes deerBob{from{transform:translateY(-2px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
@@ -72,72 +61,7 @@ body.theme-christmas .christmasSleigh{display:block}
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div>
 <div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
-<svg class="christmasSantaFlyby" viewBox="0 0 760 150" role="presentation">
-  <defs>
-    <linearGradient id="sleighRed" x1="0" x2="1"><stop stop-color="#8e0d18"/><stop offset=".55" stop-color="#e1282f"/><stop offset="1" stop-color="#8d0915"/></linearGradient>
-    <linearGradient id="gold" x1="0" x2="1"><stop stop-color="#ffec91"/><stop offset=".5" stop-color="#f5b82e"/><stop offset="1" stop-color="#a86b08"/></linearGradient>
-  </defs>
-  <g class="sleighBody" transform="translate(12 36)">
-    <path d="M20 35 Q35 80 155 82 Q193 82 214 55 L196 48 Q180 65 157 66 L70 66 Q43 64 36 35Z" fill="url(#sleighRed)" stroke="#f5c451" stroke-width="4"/>
-    <path d="M27 82 Q60 103 177 98 Q210 96 223 79" fill="none" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
-    <path d="M55 83 L45 100 M171 84 L180 99" stroke="#e8ad2a" stroke-width="5"/>
-    <g class="gifts"><rect x="42" y="8" width="30" height="28" rx="3" fill="#168c54"/><path d="M57 8V36M42 20H72" stroke="#ffd54b" stroke-width="4"/><rect x="70" y="1" width="31" height="35" rx="3" fill="#b8172a"/><path d="M85 1V36M70 16H101" stroke="#f7c640" stroke-width="4"/></g>
-    <g class="santaBody">
-      <ellipse cx="130" cy="34" rx="30" ry="34" fill="#d91f2b"/>
-      <circle cx="137" cy="1" r="17" fill="#f1c7a5"/>
-      <path d="M119 -2 Q133 -28 157 -9 L151 -2 Q135 -10 119 7Z" fill="#d91f2b"/><circle cx="157" cy="-9" r="6" fill="#fff"/>
-      <path d="M125 9 Q139 30 153 9 Q151 32 138 35 Q124 29 125 9Z" fill="#fff"/>
-      <path d="M108 43 Q132 50 157 43" stroke="#fff" stroke-width="8"/>
-      <g class="santaArm"><path d="M144 25 Q174 14 191 29" fill="none" stroke="#d91f2b" stroke-width="12" stroke-linecap="round"/><circle cx="191" cy="29" r="7" fill="#2c211c"/><path class="whip" d="M194 28 Q222 1 244 18 Q259 29 271 7" fill="none" stroke="#f7c74d" stroke-width="2.5" stroke-linecap="round"/></g>
-    </g>
-  </g>
-  <g class="reins" fill="none" stroke="#b77731" stroke-width="2"><path d="M204 68 Q310 45 410 68 T735 58"/><path d="M205 72 Q330 60 450 78 T735 65"/></g>
-  <g class="rigDeer" style="--phase:0s" transform="translate(250 34)">
-  <path class="deerBody" d="M18 35 C30 18 66 18 82 34 C70 49 34 52 18 35Z"/>
-  <path class="deerNeck" d="M72 32 C78 8 91 4 98 15 L91 39Z"/>
-  <ellipse class="deerHead" cx="101" cy="13" rx="14" ry="9"/>
-  <circle cx="110" cy="11" r="2.2" fill="#16110d"/>
-  <path class="antler" d="M96 7 Q90 -4 92 -13 M93 -5 L85 -12 M99 6 Q100 -5 106 -12 M102 -5 L111 -10"/>
-  <path class="leg front" d="M69 43 Q75 59 87 70"/>
-  <path class="leg front2" d="M61 44 Q59 59 52 72"/>
-  <path class="leg rear" d="M31 44 Q25 59 14 69"/>
-  <path class="leg rear2" d="M39 45 Q43 61 48 72"/>
-  <path class="harness" d="M77 24 Q84 31 91 35"/>
-</g><g class="rigDeer" style="--phase:-.11s" transform="translate(370 34)">
-  <path class="deerBody" d="M18 35 C30 18 66 18 82 34 C70 49 34 52 18 35Z"/>
-  <path class="deerNeck" d="M72 32 C78 8 91 4 98 15 L91 39Z"/>
-  <ellipse class="deerHead" cx="101" cy="13" rx="14" ry="9"/>
-  <circle cx="110" cy="11" r="2.2" fill="#16110d"/>
-  <path class="antler" d="M96 7 Q90 -4 92 -13 M93 -5 L85 -12 M99 6 Q100 -5 106 -12 M102 -5 L111 -10"/>
-  <path class="leg front" d="M69 43 Q75 59 87 70"/>
-  <path class="leg front2" d="M61 44 Q59 59 52 72"/>
-  <path class="leg rear" d="M31 44 Q25 59 14 69"/>
-  <path class="leg rear2" d="M39 45 Q43 61 48 72"/>
-  <path class="harness" d="M77 24 Q84 31 91 35"/>
-</g><g class="rigDeer" style="--phase:-.22s" transform="translate(490 34)">
-  <path class="deerBody" d="M18 35 C30 18 66 18 82 34 C70 49 34 52 18 35Z"/>
-  <path class="deerNeck" d="M72 32 C78 8 91 4 98 15 L91 39Z"/>
-  <ellipse class="deerHead" cx="101" cy="13" rx="14" ry="9"/>
-  <circle cx="110" cy="11" r="2.2" fill="#16110d"/>
-  <path class="antler" d="M96 7 Q90 -4 92 -13 M93 -5 L85 -12 M99 6 Q100 -5 106 -12 M102 -5 L111 -10"/>
-  <path class="leg front" d="M69 43 Q75 59 87 70"/>
-  <path class="leg front2" d="M61 44 Q59 59 52 72"/>
-  <path class="leg rear" d="M31 44 Q25 59 14 69"/>
-  <path class="leg rear2" d="M39 45 Q43 61 48 72"/>
-  <path class="harness" d="M77 24 Q84 31 91 35"/>
-</g><g class="rigDeer" style="--phase:-.33s" transform="translate(610 34)">
-  <path class="deerBody" d="M18 35 C30 18 66 18 82 34 C70 49 34 52 18 35Z"/>
-  <path class="deerNeck" d="M72 32 C78 8 91 4 98 15 L91 39Z"/>
-  <ellipse class="deerHead" cx="101" cy="13" rx="14" ry="9"/>
-  <circle cx="110" cy="11" r="2.2" fill="#16110d"/>
-  <path class="antler" d="M96 7 Q90 -4 92 -13 M93 -5 L85 -12 M99 6 Q100 -5 106 -12 M102 -5 L111 -10"/>
-  <path class="leg front" d="M69 43 Q75 59 87 70"/>
-  <path class="leg front2" d="M61 44 Q59 59 52 72"/>
-  <path class="leg rear" d="M31 44 Q25 59 14 69"/>
-  <path class="leg rear2" d="M39 45 Q43 61 48 72"/>
-  <path class="harness" d="M77 24 Q84 31 91 35"/>
-</g>
-</svg>
+  <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
 </div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
 <section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
 <div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
