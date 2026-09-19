@@ -225,10 +225,10 @@ to{transform:translateY(2px)}}
 })();
 </script><div id="reindeerMotionTest" aria-hidden="true">
   <div class="motionDeer">
-    <span class="deerTail"></span><span class="deerBody"></span><span class="deerNeck"></span><span class="deerHead"></span>
+    <span class="deerTail"></span><span class="deerBody"><i class="belly"></i><i class="shoulder"></i></span><span class="deerNeck"><i class="chestFur"></i></span><span class="deerHead"><i class="muzzle"></i><i class="eye"></i><i class="nose"></i></span>
     <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
     <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
-    <span class="deerHarness"></span>
+    <span class="deerHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
     <span class="leg lf"><b></b></span><span class="leg rf"><b></b></span><span class="leg lr"><b></b></span><span class="leg rr"><b></b></span>
   </div>
 </div>
@@ -236,17 +236,26 @@ to{transform:translateY(2px)}}
 #reindeerMotionTest{display:none}
 body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
 .motionDeer{--cycle:680ms;position:absolute;left:0;top:38%;width:260px;height:150px;transform-origin:50% 50%;animation:testDeerFly 9s linear infinite,deerFloat var(--cycle) ease-in-out infinite}
-.deerBody{position:absolute;left:62px;top:47px;width:120px;height:62px;border-radius:58% 50% 48% 55%;background:linear-gradient(180deg,#bc7540,#8b4927);box-shadow:inset 0 -9px 0 rgba(70,31,16,.12)}
-.deerNeck{position:absolute;left:163px;top:28px;width:37px;height:73px;border-radius:55% 55% 35% 40%;background:#a95f34;transform:rotate(24deg)}
-.deerHead{position:absolute;left:185px;top:22px;width:58px;height:36px;border-radius:60% 55% 48% 55%;background:#bd7540;transform:rotate(-4deg);animation:headBob var(--cycle) ease-in-out infinite}
-.deerHead:after{content:"";position:absolute;right:8px;top:10px;width:5px;height:5px;border-radius:50%;background:#17100c;box-shadow:17px 8px 0 2px #382016}
-.deerEar{position:absolute;top:17px;width:24px;height:10px;border-radius:90% 10% 90% 10%;background:#9a522e}.ear1{left:190px;transform:rotate(-28deg)}.ear2{left:208px;transform:rotate(20deg)}
-.deerAntler{position:absolute;top:-7px;width:38px;height:42px;border-left:4px solid #5b321e;border-top:3px solid #5b321e;border-radius:70% 0 0 0;transform-origin:bottom left}.a1{left:194px;transform:rotate(-12deg)}.a2{left:210px;transform:rotate(4deg) scale(.85)}
-.deerAntler:after{content:"";position:absolute;left:7px;top:6px;width:25px;height:20px;border-left:3px solid #5b321e;border-top:3px solid #5b321e;transform:rotate(22deg)}
-.deerTail{position:absolute;left:45px;top:51px;width:31px;height:19px;border-radius:80% 15% 80% 15%;background:#d7a477;transform-origin:right center;animation:tailFlick calc(var(--cycle)*2) ease-in-out infinite alternate}
-.deerHarness{position:absolute;left:165px;top:47px;width:13px;height:61px;border-radius:7px;border:4px solid #b51625;transform:rotate(-15deg);box-shadow:0 0 0 2px #e3a72e inset}
-.leg{position:absolute;top:91px;width:18px;height:58px;border-radius:12px;background:#92502b;transform-origin:50% 4px;animation-duration:var(--cycle);animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite}
-.leg b{position:absolute;left:4px;top:43px;width:12px;height:38px;border-radius:8px;background:#8b4927;transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.45,0,.55,1) infinite}
+.deerBody{position:absolute;left:58px;top:43px;width:128px;height:67px;border-radius:58% 48% 46% 55%;background:radial-gradient(ellipse at 70% 28%,#d99a64 0 9%,transparent 10%),linear-gradient(165deg,#d39a68 0%,#b66d3d 38%,#8a4727 78%,#6d351f 100%);box-shadow:inset 0 8px 12px rgba(255,224,188,.16),inset 0 -13px 18px rgba(70,28,13,.2),0 3px 5px rgba(0,0,0,.18)}
+.deerBody:before{content:"";position:absolute;inset:7px 10px 14px 12px;border-radius:50%;background:repeating-linear-gradient(168deg,rgba(255,235,210,.08) 0 2px,transparent 2px 7px);opacity:.8}
+.deerBody .belly{position:absolute;left:25px;bottom:2px;width:77px;height:19px;border-radius:50%;background:linear-gradient(180deg,transparent,#d9a77b 85%);opacity:.8}
+.deerBody .shoulder{position:absolute;right:7px;top:11px;width:39px;height:46px;border-radius:50%;box-shadow:inset 8px 0 12px rgba(82,37,19,.2)}
+.deerNeck{position:absolute;left:162px;top:24px;width:42px;height:80px;border-radius:55% 58% 38% 45%;background:linear-gradient(100deg,#9b542f,#c98550 62%,#e0ad7b);transform:rotate(23deg);box-shadow:inset -6px 0 9px rgba(75,32,16,.16)}
+.deerNeck .chestFur{position:absolute;right:-4px;top:30px;width:23px;height:44px;border-radius:50% 50% 65% 30%;background:linear-gradient(100deg,#f0d1ad,#d7a070);clip-path:polygon(0 0,100% 0,82% 18%,100% 30%,77% 44%,100% 57%,72% 72%,91% 85%,40% 100%,0 82%)}
+.deerHead{position:absolute;left:184px;top:18px;width:61px;height:40px;border-radius:62% 54% 48% 58%;background:linear-gradient(160deg,#dba06d,#b96d3c 68%,#8a4829);transform:rotate(-4deg);animation:headBob var(--cycle) ease-in-out infinite;box-shadow:inset 0 5px 7px rgba(255,230,200,.15)}
+.deerHead .muzzle{position:absolute;right:-10px;top:18px;width:30px;height:17px;border-radius:60% 70% 55% 60%;background:#d8ad88}
+.deerHead .eye{position:absolute;right:20px;top:10px;width:6px;height:6px;border-radius:50%;background:#15100c;box-shadow:0 0 0 2px #e8b783,0 0 5px rgba(255,210,120,.5)}
+.deerHead .eye:after{content:"";position:absolute;left:2px;top:1px;width:2px;height:2px;border-radius:50%;background:#fff}
+.deerHead .nose{position:absolute;right:-11px;top:20px;width:9px;height:8px;border-radius:60%;background:#2b1b16;box-shadow:0 0 5px rgba(255,210,130,.2)}
+.deerEar{position:absolute;top:13px;width:26px;height:12px;border-radius:90% 10% 90% 10%;background:linear-gradient(90deg,#9a522e,#d69a69);box-shadow:inset 5px 0 0 #e8b994}.ear1{left:190px;transform:rotate(-30deg)}.ear2{left:211px;transform:rotate(18deg) scale(.88)}
+.deerAntler{position:absolute;top:-13px;width:42px;height:49px;border-left:4px solid #684024;border-top:4px solid #684024;border-radius:75% 0 0 0;transform-origin:bottom left;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}.a1{left:194px;transform:rotate(-12deg)}.a2{left:212px;transform:rotate(3deg) scale(.86)}
+.deerAntler:before,.deerAntler:after{content:"";position:absolute;border-left:3px solid #684024;border-top:3px solid #684024;border-radius:80% 0 0 0}.deerAntler:before{left:5px;top:7px;width:26px;height:22px;transform:rotate(19deg)}.deerAntler:after{left:15px;top:-2px;width:18px;height:18px;transform:rotate(35deg)}
+.deerTail{position:absolute;left:39px;top:48px;width:38px;height:22px;border-radius:90% 15% 90% 15%;background:linear-gradient(120deg,#8d4b2b,#e7c19b 72%,#f2dbc3);transform-origin:right center;animation:tailFlick calc(var(--cycle)*2) ease-in-out infinite alternate;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+.deerHarness{position:absolute;left:165px;top:42px;width:16px;height:66px;border-radius:8px;border:4px solid #a70f20;transform:rotate(-15deg);box-shadow:0 0 0 2px #e4aa2e inset,0 1px 2px rgba(0,0,0,.4)}
+.deerHarness .strap{position:absolute;left:-57px;top:28px;width:62px;height:6px;border-radius:4px;background:linear-gradient(#d42131,#8f0c18);box-shadow:0 0 0 1px #e4aa2e}
+.deerHarness .bell{position:absolute;width:10px;height:10px;border-radius:50% 50% 55% 55%;background:radial-gradient(circle at 35% 30%,#fff3a1,#f4b72c 40%,#9a6109 80%);box-shadow:0 0 5px rgba(255,198,54,.6)}.deerHarness .b1{left:5px;top:42px}.deerHarness .b2{left:-2px;top:50px}
+.leg{position:absolute;top:91px;width:19px;height:58px;border-radius:12px;background:linear-gradient(90deg,#7f3f22,#b66e3e 58%,#8a4828);box-shadow:inset -3px 0 4px rgba(65,27,14,.18);transform-origin:50% 4px;animation-duration:var(--cycle);animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite}
+.leg b{position:absolute;left:4px;top:43px;width:12px;height:38px;border-radius:8px;background:linear-gradient(90deg,#74391f,#a75e34);transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.45,0,.55,1) infinite}
 .leg b:after{content:"";position:absolute;left:-1px;bottom:-7px;width:15px;height:12px;border-radius:70% 25%;background:#241712;transform:rotate(20deg)}
 .lf{left:166px;animation-name:frontReach}.rf{left:146px;animation-name:frontReach;animation-delay:calc(var(--cycle)*-.5)}
 .lr{left:82px;animation-name:rearKick;animation-delay:calc(var(--cycle)*-.5)}.rr{left:63px;animation-name:rearKick}
