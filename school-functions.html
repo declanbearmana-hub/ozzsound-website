@@ -364,10 +364,11 @@
       const name=String(data.get('name')||'').trim(),school=String(data.get('school')||'').trim(),phone=String(data.get('phone')||'').trim(),email=String(data.get('email')||'').trim(),bestTime=String(data.get('bestTime')||'').trim(),note=String(data.get('note')||'').trim();
       if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){status.className='callbackStatus err';status.textContent='The callback form is temporarily unavailable. Please use the school enquiry instead.';submit.disabled=false;return;}
       try{
-        const payload={enquiry_type:'callback_request',name,phone,email,event_type:'School Function',venue_suburb:school,message:['School callback request',`Best time to call: ${bestTime}`,note?`Note: ${note}`:''].filter(Boolean).join('\n'),source:'school_callback',upload_count:0,enquiry_data:{school,best_time_to_call:bestTime,callback_requested:true}};
+        const bytes=new Uint8Array(4);crypto.getRandomValues(bytes);const enquiryRef='OZZ-'+[...bytes].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+        const payload={enquiry_ref:enquiryRef,enquiry_type:'callback_request',name,phone,email,event_type:'School Function',venue_suburb:school,message:['School callback request',`Best time to call: ${bestTime}`,note?`Note: ${note}`:''].filter(Boolean).join('\n'),source:'school_callback',upload_count:0,enquiry_data:{school,best_time_to_call:bestTime,callback_requested:true}};
         const res=await fetch(cfg.supabaseUrl+'/rest/v1/enquiries',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
         if(!res.ok)throw new Error('Request failed');
-        form.reset();status.className='callbackStatus ok';status.textContent='Thanks — your callback request has been sent to Ozzsound. Dazz can call you at the time you selected.';submit.textContent='Request sent ✓';
+        form.reset();status.className='callbackStatus ok';status.innerHTML='Thanks — your callback request has been sent. <strong>Your reference is '+enquiryRef+'</strong>. Dazz can call you at the time you selected. You do not need to complete another enquiry form.';submit.textContent='Request sent ✓';
       }catch(err){status.className='callbackStatus err';status.textContent='That did not send. Please try again, or use the school enquiry button above.';submit.disabled=false;}
     });
   })();
