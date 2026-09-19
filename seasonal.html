@@ -94,6 +94,27 @@ body.theme-christmas .christmasSleigh{display:block}
     const mobile=window.matchMedia('(max-width:720px)').matches;
     const w=window.innerWidth,h=window.innerHeight;
     const pad=mobile?260:390;
+
+    if(mobile){
+      const direction=Math.random()<.5?1:-1;
+      const santaWidth=santa.getBoundingClientRect().width || 220;
+      const edge=santaWidth+50;
+      const startX=direction===1?-edge:w+edge;
+      const endX=direction===1?w+edge:-edge;
+      const centerY=Math.max(120,Math.min(h*.52, h-220));
+      const y=centerY+rand(-45,45);
+      santa.classList.add('is-flying');
+      const anim=santa.animate([
+        {transform:`translate3d(${startX}px,${y}px,0) rotate(0deg) scaleX(${direction})`},
+        {transform:`translate3d(${endX}px,${y}px,0) rotate(0deg) scaleX(${direction})`}
+      ],{duration:rand(9500,12500),easing:'linear',fill:'forwards'});
+      anim.onfinish=()=>{
+        santa.classList.remove('is-flying');
+        anim.cancel();
+        setTimeout(fly,rand(12000,24000));
+      };
+      return;
+    }
     const sides=['left','right','top','bottom'];
     let startSide=sides[Math.floor(Math.random()*sides.length)];
     if(startSide===lastSide && Math.random()<.65) startSide=sides[(sides.indexOf(startSide)+1+Math.floor(Math.random()*3))%4];
