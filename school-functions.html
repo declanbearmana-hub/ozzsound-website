@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <link rel="icon" type="image/png" href="assets/logos/ozzsound-logo-transparent.png?v=20260919-2">
+  <link rel="apple-touch-icon" href="assets/logos/ozzsound-logo-transparent.png?v=20260919-2">
+
+  <title>School Functions & School Discos Tasmania | Ozzsound Mobile Music</title>
+  <meta name="description" content="Ozzsound school entertainment for discos, formals, graduations, presentation nights, end-of-year celebrations and school functions across Tasmania.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .schoolMain{padding:145px 0 90px;overflow:hidden}
+    .schoolBack{display:inline-flex;margin:0 0 34px;color:#9aa8c0;text-decoration:none;font-weight:800}
+    .schoolHero{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:34px;align-items:center;padding:clamp(28px,5vw,64px);border:1px solid #252d3c;border-radius:30px;background:radial-gradient(circle at 88% 8%,rgba(39,230,255,.13),transparent 32%),radial-gradient(circle at 10% 90%,rgba(255,43,214,.11),transparent 35%),#090c12}
+    .schoolHero:after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px rgba(255,255,255,.03)}
+    .schoolHero h1{font:700 clamp(48px,7vw,92px) "Space Grotesk";letter-spacing:-.065em;line-height:.94;margin:12px 0 22px;max-width:850px}
+    .schoolHero p{font-size:clamp(17px,2vw,21px);line-height:1.65;color:#aeb8c9;max-width:760px}
+    .schoolHeroActions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+    .schoolHeroVisual{min-height:390px;display:grid;place-items:center;position:relative}
+    .schoolDisc{width:min(330px,80vw);aspect-ratio:1;border-radius:50%;position:relative;background:radial-gradient(circle at center,#0b1018 0 18%,#121827 19% 24%,#07090e 25% 54%,#151c2b 55% 57%,#080a10 58% 100%);border:1px solid #31394a;box-shadow:0 0 80px rgba(80,220,255,.09)}
+    .schoolDisc:before{content:"SCHOOL NIGHT";position:absolute;inset:28%;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#ef37ff,#7b5cff 48%,#46ddff);color:white;font:800 clamp(14px,2vw,20px) "Space Grotesk";letter-spacing:.08em;text-align:center;box-shadow:0 0 30px rgba(239,55,255,.24)}
+    .schoolDisc:after{content:"";position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(70,221,255,.13)}
+    .schoolEqualiser{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);display:flex;gap:7px;align-items:end;height:100px}
+    .schoolEqualiser i{display:block;width:9px;border-radius:99px;background:linear-gradient(#46ddff,#ef37ff);box-shadow:0 0 12px rgba(70,221,255,.25)}
+    .schoolEqualiser i:nth-child(1){height:35%}.schoolEqualiser i:nth-child(2){height:68%}.schoolEqualiser i:nth-child(3){height:94%}.schoolEqualiser i:nth-child(4){height:55%}.schoolEqualiser i:nth-child(5){height:82%}.schoolEqualiser i:nth-child(6){height:44%}.schoolEqualiser i:nth-child(7){height:72%}
+    .schoolStrip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:22px 0 78px;border:1px solid #252d3c;border-radius:18px;overflow:hidden;background:#252d3c}
+    .schoolStrip div{padding:18px;background:#090c12;text-align:center;font-weight:800;color:#dce6f5}
+    .schoolSection{padding:76px 0}
+    .schoolSectionHead{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:36px;align-items:end;margin-bottom:30px}
+    .schoolSectionHead h2{font:700 clamp(36px,5vw,62px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 0}
+    .schoolSectionHead p{color:#96a3b6;line-height:1.7;margin:0;max-width:720px}
+    .schoolGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .schoolCard{padding:25px;border:1px solid #283142;border-radius:19px;background:linear-gradient(145deg,rgba(255,255,255,.018),rgba(255,255,255,0)),#090c12;min-height:190px}
+    .schoolCard small{display:block;color:#61dcff;text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:900;margin-bottom:22px}
+    .schoolCard h3{font:700 22px "Space Grotesk";margin:0 0 9px}
+    .schoolCard p{margin:0;color:#8996a9;line-height:1.6;font-size:14px}
+    .schoolPlan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:plan}
+    .schoolPlan article{counter-increment:plan;padding:25px;border:1px solid #283142;border-radius:19px;background:#090c12}
+    .schoolPlan article:before{content:"0" counter(plan);display:block;color:#ef58ff;font:800 12px "Space Grotesk";letter-spacing:.12em;margin-bottom:28px}
+    .schoolPlan h3{font:700 20px "Space Grotesk";margin:0 0 8px}
+    .schoolPlan p{color:#8996a9;line-height:1.6;font-size:14px;margin:0}
+    .schoolSafety{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.8fr);gap:18px}
+    .schoolSafetyMain,.schoolSafetySide{padding:clamp(25px,4vw,42px);border-radius:24px;border:1px solid #293243;background:#090c12}
+    .schoolSafetyMain{background:radial-gradient(circle at 0 0,rgba(239,55,255,.08),transparent 40%),#090c12}
+    .schoolSafety h2{font:700 clamp(34px,4vw,54px) "Space Grotesk";letter-spacing:-.045em;line-height:1.02;margin:8px 0 18px}
+    .schoolSafety p{color:#98a5b7;line-height:1.7}
+    .schoolChecks{display:grid;gap:10px;margin-top:24px}
+    .schoolCheck{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:14px;border:1px solid #252e3d;border-radius:14px;background:#080b10}
+    .schoolCheck b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(239,55,255,.16),rgba(70,221,255,.16));color:#67e2ff}
+    .schoolCheck strong{display:block;margin-bottom:4px}
+    .schoolCheck span{display:block;color:#8592a5;font-size:13px;line-height:1.5}
+    .credentialNote{padding:17px;border:1px solid rgba(70,221,255,.22);border-radius:15px;background:rgba(70,221,255,.045);margin-top:20px;color:#aab7c8!important;font-size:13px}
+    .schoolCta{margin-top:72px;padding:clamp(28px,5vw,58px);border-radius:28px;border:1px solid rgba(239,55,255,.28);background:radial-gradient(circle at 90% 0,rgba(70,221,255,.12),transparent 36%),linear-gradient(135deg,rgba(239,55,255,.08),rgba(70,221,255,.04));display:flex;align-items:center;justify-content:space-between;gap:30px}
+    .schoolCta h2{font:700 clamp(34px,5vw,58px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 12px}
+    .schoolCta p{color:#94a1b4;line-height:1.65;max-width:700px;margin:0}
+    .schoolCtaActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;min-width:250px}
+    @media(max-width:900px){.schoolHero,.schoolSafety,.schoolSectionHead{grid-template-columns:1fr}.schoolHeroVisual{min-height:320px}.schoolGrid{grid-template-columns:1fr 1fr}.schoolPlan,.schoolStrip{grid-template-columns:1fr 1fr}.schoolCta{align-items:flex-start;flex-direction:column}.schoolCtaActions{justify-content:flex-start}}
+    @media(max-width:600px){.schoolMain{padding-top:115px}.schoolHero{padding:24px}.schoolHeroVisual{min-height:270px}.schoolDisc{width:230px}.schoolGrid,.schoolPlan,.schoolStrip{grid-template-columns:1fr}.schoolStrip{gap:1px}.schoolSection{padding:55px 0}.schoolSafety{grid-template-columns:1fr}.schoolHeroActions .btn,.schoolCtaActions .btn{width:100%;justify-content:center}.schoolCtaActions{width:100%;min-width:0}}
+  </style>
+</head>
+
+<body class="subPage">
+  <nav class="nav wrap">
+    <a class="brand" href="index.html" aria-label="Ozzsound home">
+      <img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music">
+    </a>
+
+    <div class="navlinks">
+      <a href="index.html#events">Events</a>
+      <a href="index.html#gallery">Gallery</a>
+      <a href="karaoke.html">Karaoke</a>
+      <a href="gear-hire.html">Gear Hire</a>
+      <a href="index.html#why">Why Ozzsound</a>
+      <a class="pill navCta" href="index.html?event=schools#availability">Check availability</a>
+    </div>
+  </nav>
+
+  <main class="schoolMain">
+    <div class="wrap">
+      <a class="schoolBack" href="index.html#events">← Back to Ozzsound</a>
+
+      <section class="schoolHero">
+        <div>
+          <div class="eyebrow">Ozzsound · School Functions</div>
+          <h1>Big energy.<br><span class="gradientText">School-ready planning.</span></h1>
+          <p>
+            From school discos and formals to graduations, presentation nights and end-of-year celebrations,
+            Ozzsound can shape the music, sound and atmosphere around your students, venue and event plan.
+          </p>
+
+          <div class="schoolHeroActions">
+            <a class="btn primary large" href="index.html?event=schools#availability">Check your school date <span>→</span></a>
+            <a class="btn secondary" href="#safety">Schools, families &amp; safety <span>↓</span></a>
+          </div>
+        </div>
+
+        <div class="schoolHeroVisual" aria-hidden="true">
+          <div class="schoolDisc"></div>
+          <div class="schoolEqualiser">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+      </section>
+
+      <div class="schoolStrip" aria-label="School event types">
+        <div>School Discos</div>
+        <div>Formals &amp; Socials</div>
+        <div>Graduations</div>
+        <div>Presentation Nights</div>
+      </div>
+
+      <section class="schoolSection">
+        <div class="schoolSectionHead">
+          <div>
+            <div class="eyebrow">Built around the event</div>
+            <h2>More than one kind of school night.</h2>
+          </div>
+          <p>
+            Different age groups and school events need different energy. Tell us what you're planning,
+            who it's for and what you want the room to feel like, and we can build the entertainment around it.
+          </p>
+        </div>
+
+        <div class="schoolGrid">
+          <article class="schoolCard">
+            <small>01 · Dance floor</small>
+            <h3>School Discos</h3>
+            <p>Music, lighting and an energetic setup shaped around the age group, event length and school's direction.</p>
+          </article>
+
+          <article class="schoolCard">
+            <small>02 · Milestones</small>
+            <h3>Formals &amp; Socials</h3>
+            <p>A more polished event feel for school formals, socials and senior celebrations.</p>
+          </article>
+
+          <article class="schoolCard">
+            <small>03 · Celebrate</small>
+            <h3>Graduations &amp; Leavers</h3>
+            <p>Sound and entertainment for milestone events that move from formal moments into celebration.</p>
+          </article>
+
+          <article class="schoolCard">
+            <small>04 · On stage</small>
+            <h3>Presentation &amp; Awards Nights</h3>
+            <p>Music and audio support around arrivals, presentations, announcements and the celebration afterwards.</p>
+          </article>
+
+          <article class="schoolCard">
+            <small>05 · Community</small>
+            <h3>Fundraisers &amp; Family Events</h3>
+            <p>Entertainment planned for mixed-age school communities, family nights and fundraising events.</p>
+          </article>
+
+          <article class="schoolCard">
+            <small>06 · End the year</small>
+            <h3>End-of-Year Celebrations</h3>
+            <p>A flexible event setup for the final celebration of the school year, from casual functions to a full dance floor.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="schoolSection">
+        <div class="schoolSectionHead">
+          <div>
+            <div class="eyebrow">A clear event plan</div>
+            <h2>Plan it with the school.</h2>
+          </div>
+          <p>
+            The school stays in control of the event brief. Ozzsound can work with the nominated organiser
+            on the music direction, venue setup, timing and any school-specific requirements before event day.
+          </p>
+        </div>
+
+        <div class="schoolPlan">
+          <article>
+            <h3>Tell us the brief</h3>
+            <p>Age group, event type, venue, expected attendance, timing and the atmosphere you're trying to create.</p>
+          </article>
+          <article>
+            <h3>Set the music direction</h3>
+            <p>Share favourites, must-plays, do-not-plays and any rules around requests or music content.</p>
+          </article>
+          <article>
+            <h3>Plan the setup</h3>
+            <p>Work through access, setup position, sound, lighting, power, bump-in and the event schedule.</p>
+          </article>
+          <article>
+            <h3>Run the event</h3>
+            <p>Keep a clear school contact on the night so music, announcements and timing can follow the event plan.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="schoolSection" id="safety">
+        <div class="schoolSafety">
+          <div class="schoolSafetyMain">
+            <div class="eyebrow">Schools, families &amp; safety</div>
+            <h2>Clear expectations before the first song.</h2>
+            <p>
+              School events need more than a playlist. We can plan the entertainment around the school's
+              nominated contact, venue rules, student age group, music requirements, event timing and site procedures.
+            </p>
+
+            <div class="schoolChecks">
+              <div class="schoolCheck">
+                <b>✓</b>
+                <div><strong>School-led music direction</strong><span>The organiser can set music boundaries, request rules, must-plays and do-not-plays before the event.</span></div>
+              </div>
+              <div class="schoolCheck">
+                <b>✓</b>
+                <div><strong>Venue &amp; site planning</strong><span>Access, setup, power, sound position, bump-in and bump-out can be worked through with the school contact.</span></div>
+              </div>
+              <div class="schoolCheck">
+                <b>✓</b>
+                <div><strong>One clear point of contact</strong><span>A nominated staff contact helps keep timing, announcements and any changes coordinated on the night.</span></div>
+              </div>
+              <div class="schoolCheck">
+                <b>✓</b>
+                <div><strong>Documentation before the event</strong><span>Tell us what contractor, induction or compliance documentation your school requires so it can be addressed during booking.</span></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="schoolSafetySide">
+            <div class="eyebrow">Tasmanian school requirements</div>
+            <h2 style="font-size:clamp(28px,3vw,40px)">Credentials &amp; compliance.</h2>
+            <p>
+              Tasmanian government schools require contractors and external providers working with children
+              to maintain a current Tasmanian Registration to Work with Vulnerable People (RWVP).
+            </p>
+            <p>
+              Schools may also have their own sign-in, induction, risk-management or contractor documentation requirements.
+              Let us know what your school needs as part of the enquiry.
+            </p>
+            <p class="credentialNote">
+              <strong>Important:</strong> a White Card is a construction-induction credential for construction work.
+              It is separate from RWVP and is not a substitute for child-safety registration.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="schoolCta">
+        <div>
+          <div class="eyebrow">Planning a school event?</div>
+          <h2>Tell us what you've got in mind.</h2>
+          <p>
+            Start with the date and a few event details. You don't need to have the whole night worked out yet —
+            we can build the plan from there.
+          </p>
+        </div>
+
+        <div class="schoolCtaActions">
+          <a class="btn primary large" href="index.html?event=schools#availability">Check availability <span>→</span></a>
+          <a class="btn secondary" href="index.html?event=schools#enquiry">School enquiry <span>↗</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>© 2026 Ozzsound Mobile Music</div>
+      <div>Tasmania · Professional DJ &amp; Event Entertainment</div>
+    </div>
+  </footer>
+</body>
+</html>
