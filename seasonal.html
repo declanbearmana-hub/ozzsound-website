@@ -119,60 +119,57 @@ body.theme-christmas .christmasSleigh{display:block}
       };
       return;
     }
-    const sides=['left','right','top','bottom'];
-    let startSide=sides[Math.floor(Math.random()*sides.length)];
-    if(startSide===lastSide && Math.random()<.65) startSide=sides[(sides.indexOf(startSide)+1+Math.floor(Math.random()*3))%4];
-    lastSide=startSide;
-    let endSide=sides[Math.floor(Math.random()*sides.length)];
-    while(endSide===startSide) endSide=sides[Math.floor(Math.random()*sides.length)];
+    const direction=Math.random()<.5?1:-1;
+    const santaWidth=santa.getBoundingClientRect().width || 320;
+    const edge=santaWidth+80;
+    const startX=direction===1?-edge:w+edge;
+    const endX=direction===1?w+edge:-edge;
 
-    const a=edgePoint(startSide,w,h,pad);
-    const b=edgePoint(endSide,w,h,pad);
-    const points=[a];
-    const bends=Math.random()<.72?1:2;
-    for(let i=0;i<bends;i++) points.push({x:rand(w*.08,w*.92),y:rand(h*.12,h*.82)});
-    points.push(b);
+    // Keep desktop flights cinematic: broad sweeps through the middle/upper-middle,
+    // with gentle altitude changes instead of darting randomly around the viewport.
+    const centerY=Math.max(145,Math.min(h*.42,h-280));
+    const startY=centerY+rand(-110,90);
+    const midY=centerY+rand(-75,75);
+    const endY=centerY+rand(-110,90);
+    const tilt1=Math.max(-10,Math.min(10,(midY-startY)*.055));
+    const tilt2=Math.max(-10,Math.min(10,(endY-midY)*.055));
+    const facing=direction;
 
-    const doLoops=Math.random()<.12;
-    const loopIndex=doLoops?1+Math.floor(Math.random()*Math.max(1,points.length-2)):-1;
-    const loopCount=doLoops?1:0;
-    const frames=[];
-    let previous=points[0];
+    const frames=[
+      {transform:`translate3d(${startX}px,${startY}px,0) rotate(0deg) scaleX(${facing})`,offset:0},
+      {transform:`translate3d(${w*.24}px,${startY+(midY-startY)*.45}px,0) rotate(${tilt1}deg) scaleX(${facing})`,offset:.25},
+      {transform:`translate3d(${w*.52}px,${midY}px,0) rotate(${Math.max(-7,Math.min(7,tilt2))}deg) scaleX(${facing})`,offset:.52}
+    ];
 
-    points.forEach((p,i)=>{
-      if(i===0){
-        frames.push({transform:`translate3d(${p.x}px,${p.y}px,0) rotate(0deg)`});
-        return;
+    // A loop is now a rare little Easter egg, not part of normal flight.
+    if(Math.random()<.06){
+      const loopX=w*.66;
+      const loopY=midY+(endY-midY)*.35;
+      const radius=72;
+      for(let s=1;s<=8;s++){
+        const t=s/8*Math.PI*2;
+        const lx=loopX+Math.sin(t)*radius;
+        const ly=loopY-Math.cos(t)*radius+radius;
+        const spin=(t*180/Math.PI)*direction;
+        frames.push({
+          transform:`translate3d(${lx}px,${ly}px,0) rotate(${spin}deg) scaleX(${facing})`,
+          offset:.55+(s/8)*.20
+        });
       }
-      const dx=p.x-previous.x,dy=p.y-previous.y;
-      const rawAngle=Math.atan2(dy,dx)*180/Math.PI;
-      const facing=dx>=0?1:-1;
-      const travelAngle=facing===1?rawAngle:(rawAngle>0?rawAngle-180:rawAngle+180);
-      const angle=Math.max(-18,Math.min(18,travelAngle));
-      const base=`translate3d(${p.x}px,${p.y}px,0) rotate(${angle}deg) scaleX(${facing})`;
+    }
 
-      if(i===loopIndex){
-        const radius=mobile?55:85;
-        const steps=loopCount*8;
-        for(let s=1;s<=steps;s++){
-          const t=s/8*Math.PI*2;
-          const lx=p.x+Math.sin(t)*radius;
-          const ly=p.y-Math.cos(t)*radius+radius;
-          const spin=(t*180/Math.PI)*(dx>=0?1:-1);
-          frames.push({transform:`translate3d(${lx}px,${ly}px,0) rotate(${angle+spin}deg) scaleX(${facing})`});
-        }
-      }
-      frames.push({transform:base});
-      previous=p;
-    });
+    frames.push(
+      {transform:`translate3d(${w*.78}px,${midY+(endY-midY)*.58}px,0) rotate(${tilt2}deg) scaleX(${facing})`,offset:.80},
+      {transform:`translate3d(${endX}px,${endY}px,0) rotate(0deg) scaleX(${facing})`,offset:1}
+    );
 
     santa.classList.add('is-flying');
-    const duration=mobile?rand(10500,14500):rand(12500,17500);
+    const duration=rand(13500,18000);
     const anim=santa.animate(frames,{duration,easing:'linear',fill:'forwards'});
     anim.onfinish=()=>{
       santa.classList.remove('is-flying');
       anim.cancel();
-      setTimeout(fly,rand(7500,16000));
+      setTimeout(fly,rand(10000,22000));
     };
   }
   setTimeout(fly,1400);
