@@ -61,7 +61,7 @@ to{transform:translateY(2px)}}
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div>
 <div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
-  <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
+  <img class="christmasSantaFlyby" src="assets/seasonal/reindeer-sleigh-exact.svg" alt="" decoding="async">
 </div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
 <section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
 <div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
@@ -226,7 +226,7 @@ to{transform:translateY(2px)}}
 </script><div id="reindeerMotionTest" aria-hidden="true">
   <div class="rigStardust" aria-hidden="true"></div>
   <div class="santaRig">
-    <img class="sleighArtwork" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
+    <img class="sleighArtwork" src="assets/seasonal/reindeer-sleigh-exact.svg" alt="" decoding="async">
     <span class="santaArm"><i class="santaHand"></i><i class="whipHandle"></i></span>
     <span class="whipLine"></span>
   </div>
@@ -373,4 +373,12 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
 </script></body></html>
 <!-- Reindeer artwork source: FreeSVG/OpenClipart public-domain vector (SVG ID 19399). Test branch only. -->
 
-<style id="broken-deer-cleanup">#reindeerMotionTest .motionDeer{display:none!important}</style>
+
+
+<style id="exact-sleigh-preview">
+#reindeerMotionTest .motionDeer,.teamReins,.teamTrace,.santaToTeamReins{display:none!important}
+#reindeerMotionTest .santaRig{left:-430px;top:18%;width:860px;height:auto;transform-origin:50% 55%;animation:testTeamFly 13.5s linear infinite;z-index:5}
+#reindeerMotionTest .sleighArtwork{position:relative!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;object-fit:contain!important;animation:sleighFloat 1.35s ease-in-out infinite}
+#reindeerMotionTest .santaArm,#reindeerMotionTest .santaHand,#reindeerMotionTest .whipHandle,#reindeerMotionTest .whipLine{display:none!important}
+@media(max-width:760px){#reindeerMotionTest .santaRig{left:-310px;width:620px;top:27%}}
+</style>
