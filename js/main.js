@@ -253,6 +253,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
         if(enquire){
           delete enquire.dataset.date;
+          enquire.href='event-enquiry.html';
         }
 
         selectedKey='';
@@ -321,6 +322,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       copy;
 
     enquire.dataset.date=k;
+    enquire.href='event-enquiry.html?date='+encodeURIComponent(k);
     enquire.textContent='Enquire about this date →';
   }
 
@@ -508,10 +510,15 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const submit=document.querySelector('#submitEnquiry'), status=document.querySelector('#formStatus');
   const fallback=document.querySelector('#contactFallback');
   const eventMap={weddings:'Wedding',parties:'Birthday & Party',schools:'School Function',seasonal:'Seasonal Event',corporate:'Corporate Event',sporting:'Sporting Event',karaoke:'Karaoke',other:'Other Event'};
-  const requestedEvent=new URLSearchParams(location.search).get('event');
-  if(requestedEvent&&eventMap[requestedEvent]&&eventSelect){
-    eventSelect.value=eventMap[requestedEvent];
+  const params=new URLSearchParams(location.search);
+  const requestedEvent=params.get('event');
+  if(requestedEvent&&eventSelect){
+    const wanted=eventMap[requestedEvent]||requestedEvent;
+    const option=[...eventSelect.options].find(o=>o.value===wanted||o.textContent.trim()===wanted);
+    if(option)eventSelect.value=option.value;
   }
+  const requestedDate=params.get('date');
+  if(requestedDate&&dateInput&&/^\d{4}-\d{2}-\d{2}$/.test(requestedDate))dateInput.value=requestedDate;
   const today=new Date(); dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
   const selectedTime=(d,prefix)=>{
