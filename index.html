@@ -25,7 +25,7 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="css/styles.css?v=20260919-8">
+  <link rel="stylesheet" href="css/styles.css?v=20260919-9">
 
   <!-- Critical booked-date styling: keep visible even if an older stylesheet is cached -->
   <style>
@@ -307,22 +307,10 @@
 
   <div class="wrap reveal">
 
-    <div class="sectionTop">
-
-      <h2>
-        Check your<br>
-        <span class="gradientText">
-          date.
-        </span>
-      </h2>
-
-      <p>
-        Choose a date to see Ozzsound's current availability.
-        Booked dates are unavailable; available and limited dates
-        can still be enquired about.
-      </p>
-
-    </div>
+    <div class="sectionTop availabilityIntro">
+  <div><div class="eyebrow">Availability</div><h2>Have a date <span class="gradientText">in mind?</span></h2></div>
+  <p>Choose your date and get a quick indication of Ozzsound's availability. If it looks good, you can enquire straight away.</p>
+</div>
 
 
     <div class="calendarShell">
@@ -356,38 +344,17 @@
       </div>
 
 
-      <div class="calendarLegend">
-
-        <span>
-          <i class="legendAvailable"></i>
-          Available
-        </span>
-
-        <span>
-          <i class="legendAvailableFrom"></i>
-          Available from time
-        </span>
-
-        <span>
-          <i class="legendLimited"></i>
-          Limited / enquire
-        </span>
-
-        <span>
-          <i class="legendUnavailable"></i>
-          Unavailable
-        </span>
-
-        <span>
-          <i class="legendBooked"></i>
-          Booked
-        </span>
-
-      </div>
-
-
-      <div
-        class="calendarGrid"
+      <details class="calendarLegendWrap">
+  <summary>Availability guide <span>+</span></summary>
+  <div class="calendarLegend">
+    <span><i class="legendAvailable"></i>Available</span>
+    <span><i class="legendAvailableFrom"></i>Available from time</span>
+    <span><i class="legendLimited"></i>Limited / enquire</span>
+    <span><i class="legendUnavailable"></i>Unavailable</span>
+    <span><i class="legendBooked"></i>Booked</span>
+  </div>
+</details>
+<div class="calendarGrid"
         id="calendarGrid"
         aria-label="Ozzsound availability calendar"
       ></div>
@@ -440,30 +407,23 @@
 
 
 
-<footer>
-
-  <div class="wrap foot">
-
-    <div>
-      © 2026 Ozzsound Mobile Music
-    </div>
-
-    <div>
-      Tasmania · Professional DJ & Event Entertainment
-    </div>
-
-    <a class="footerPrivacyLink" href="privacy.html">Your Privacy</a>
-
-    <a
-      class="adminLoginLink"
-      href="admin/"
-      aria-label="Ozzsound administrator login"
-    >
-      Admin Login
+<footer class="siteFooter">
+  <div class="wrap footerMain">
+    <a class="footerBrand" href="#top" aria-label="Ozzsound home">
+      <img src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music">
     </a>
-
+    <div class="footerTagline">DJ &amp; event entertainment<br><span>Tasmania-wide</span></div>
+    <div class="footerLinks">
+      <a href="#events">Events</a>
+      <a href="why-ozzsound.html">Why Ozzsound</a>
+      <a href="event-enquiry.html">Enquire</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
   </div>
-
+  <div class="wrap footerBottom">
+    <span>© 2026 Ozzsound Mobile Music</span>
+    <a class="adminLoginLink" href="admin/" aria-label="Ozzsound administrator login">Admin Login</a>
+  </div>
 </footer>
 
 
