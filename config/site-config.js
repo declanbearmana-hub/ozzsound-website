@@ -40,6 +40,7 @@ window.OZZSOUND_CONFIG = {
   gearCatalogue: [
     { id: "pa", name: "PA / Speaker System", category: "sound", description: "Sound equipment for parties, functions, speeches and events.", image: "assets/images/gear/pa-speaker.jpg" },
     { id: "lighting", name: "Party / Event Lighting", category: "lighting", description: "Lighting options to add colour and atmosphere to your event.", image: "assets/images/gear/event-lighting.jpg" },
+    { id: "strobe", name: "Strobe Lighting", category: "lighting", description: "Optional flashing-light effect. Organiser approval is required before use.", image: "assets/images/gear/strobe-light.jpg" },
     { id: "mic", name: "Microphone", category: "microphones", description: "Ask about microphone options for speeches, announcements and presentations.", image: "assets/images/gear/microphone.jpg" },
     { id: "karaoke", name: "Karaoke Setup", category: "karaoke", description: "Equipment for a self-run karaoke night. Ozzsound will confirm the suitable setup.", image: "assets/images/gear/karaoke.jpg" },
     { id: "dj", name: "DJ Equipment", category: "dj", description: "DJ equipment hire subject to the equipment and setup required.", image: "assets/images/gear/dj-equipment.jpg" },
