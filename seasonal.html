@@ -235,7 +235,7 @@ to{transform:translateY(2px)}}
 <style>
 #reindeerMotionTest{display:none}
 body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
-.motionDeer{--cycle:680ms;position:absolute;left:0;top:38%;width:260px;height:150px;transform-origin:50% 50%;animation:testDeerFly 9s linear infinite,deerFloat var(--cycle) ease-in-out infinite}
+.motionDeer{--cycle:820ms;position:absolute;left:0;top:40%;width:245px;height:145px;transform-origin:50% 50%;animation:testDeerFly 11.5s linear infinite,deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
 .deerBody{position:absolute;left:58px;top:43px;width:128px;height:67px;border-radius:58% 48% 46% 55%;background:radial-gradient(ellipse at 70% 28%,#d99a64 0 9%,transparent 10%),linear-gradient(165deg,#d39a68 0%,#b66d3d 38%,#8a4727 78%,#6d351f 100%);box-shadow:inset 0 8px 12px rgba(255,224,188,.16),inset 0 -13px 18px rgba(70,28,13,.2),0 3px 5px rgba(0,0,0,.18)}
 .deerBody:before{content:"";position:absolute;inset:7px 10px 14px 12px;border-radius:50%;background:repeating-linear-gradient(168deg,rgba(255,235,210,.08) 0 2px,transparent 2px 7px);opacity:.8}
 .deerBody .belly{position:absolute;left:25px;bottom:2px;width:77px;height:19px;border-radius:50%;background:linear-gradient(180deg,transparent,#d9a77b 85%);opacity:.8}
@@ -285,11 +285,24 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
   76%{transform:rotate(-36deg) scaleY(.84)}
   100%{transform:rotate(18deg) scaleY(1)}
 }
-@keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-8px}42%{margin-top:-2px}58%{margin-top:4px}76%{margin-top:-5px}}
-@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-1deg) translateY(-2px)}58%{transform:rotate(3deg) translateY(2px)}76%{transform:rotate(-2deg) translateY(-1px)}}
+@keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-5px}42%{margin-top:-1px}58%{margin-top:3px}76%{margin-top:-3px}}
+@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-2deg) translateY(-1px)}58%{transform:rotate(1deg) translateY(1px)}76%{transform:rotate(-3deg) translateY(-1px)}}
 @keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
-@keyframes testDeerFly{0%{transform:translateX(-320px) rotate(-2deg)}48%{transform:translateX(calc(50vw - 130px)) rotate(1deg)}100%{transform:translateX(calc(100vw + 320px)) rotate(-1deg)}}
-@media(max-width:720px){.motionDeer{top:42%;scale:.72}}
+@keyframes testDeerFly{0%{transform:translateX(-300px) rotate(-1deg)}48%{transform:translateX(calc(50vw - 122px)) rotate(.5deg)}100%{transform:translateX(calc(100vw + 300px)) rotate(-.5deg)}}
+@media(max-width:720px){.motionDeer{top:44%;scale:.68;--cycle:860ms}}
 @media(prefers-reduced-motion:reduce){#reindeerMotionTest{display:none!important}}
 </style>
-<script>if(new URLSearchParams(location.search).get('reindeerTest')==='1')document.body.classList.add('reindeer-motion-test');</script></body></html>
+<script>
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.get('reindeerTest')!=='1') return;
+  document.body.classList.add('reindeer-motion-test');
+  const deer=document.querySelector('.motionDeer');
+  if(!deer) return;
+  if(q.get('deerSlow')==='1') deer.style.setProperty('--cycle','1600ms');
+  if(q.get('deerPause')==='1'){
+    deer.style.animationPlayState='paused';
+    deer.querySelectorAll('*').forEach(el=>el.style.animationPlayState='paused');
+  }
+})();
+</script></body></html>
