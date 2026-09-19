@@ -42,11 +42,11 @@ body.theme-christmas .christmasSnow{z-index:2}
   body.theme-christmas .seasonMain{background-position:center bottom;background-size:auto 100%;background-attachment:scroll}
 }
 /* Christmas flying Santa artwork */
-.christmasSleigh{display:none;position:fixed;left:0;top:72px;width:100%;height:calc(100vh - 150px);overflow:hidden;pointer-events:none;z-index:4}
+.christmasSleigh{display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:4}
 body.theme-christmas .christmasSleigh{display:block}
 .christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
 .christmasSantaFlyby.is-flying{opacity:1}
-@media(max-width:720px){.christmasSleigh{top:64px;height:calc(100vh - 132px)}.christmasSantaFlyby{top:0;width:220px}}
+@media(max-width:720px){.christmasSantaFlyby{top:0;width:220px}}
 @media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
@@ -77,37 +77,78 @@ body.theme-christmas .christmasSleigh{display:block}
 (function(){
   const santa=document.querySelector('.christmasSantaFlyby');
   if(!santa || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  let lastDirection='';
-  function fly(){
-    if(!document.body.classList.contains('theme-christmas')){setTimeout(fly,3000);return;}
-    let direction=Math.random()<.5?'ltr':'rtl';
-    if(direction===lastDirection && Math.random()<.65) direction=direction==='ltr'?'rtl':'ltr';
-    lastDirection=direction;
-    const mobile=window.matchMedia('(max-width:720px)').matches;
-    const width=santa.getBoundingClientRect().width || (mobile?220:320);
-    const edge=width+80;
-    const start=direction==='ltr'?-edge:window.innerWidth+edge;
-    const finish=direction==='ltr'?window.innerWidth+edge:-edge;
-    const layer=santa.parentElement;
-    const layerHeight=layer.clientHeight || window.innerHeight;
-    const santaHeight=santa.getBoundingClientRect().height || (mobile?110:160);
-    const safeBottom=Math.max(10,layerHeight-santaHeight-18);
-    const y=Math.round(10+Math.random()*Math.max(1,safeBottom-10));
-    const duration=Math.round(10500+Math.random()*4500);
-    santa.style.transition='none';
-    santa.style.transform=`translate3d(${start}px,${y}px,0) scaleX(${direction==='ltr'?1:-1})`;
-    santa.classList.add('is-flying');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      santa.style.transition=`transform ${duration}ms linear`;
-      santa.style.transform=`translate3d(${finish}px,${y}px,0) scaleX(${direction==='ltr'?1:-1})`;
-    }));
-    setTimeout(()=>{
-      santa.classList.remove('is-flying');
-      santa.style.transition='none';
-      setTimeout(fly,6500+Math.random()*12000);
-    },duration+150);
+
+  const rand=(min,max)=>min+Math.random()*(max-min);
+  let lastSide='';
+
+  function edgePoint(side,w,h,pad){
+    if(side==='left') return {x:-pad,y:rand(90,h-120)};
+    if(side==='right') return {x:w+pad,y:rand(90,h-120)};
+    if(side==='top') return {x:rand(80,w-80),y:-pad};
+    return {x:rand(80,w-80),y:h+pad};
   }
-  setTimeout(fly,1800);
+
+  function fly(){
+    if(!document.body.classList.contains('theme-christmas')){setTimeout(fly,2500);return;}
+
+    const mobile=window.matchMedia('(max-width:720px)').matches;
+    const w=window.innerWidth,h=window.innerHeight;
+    const pad=mobile?260:390;
+    const sides=['left','right','top','bottom'];
+    let startSide=sides[Math.floor(Math.random()*sides.length)];
+    if(startSide===lastSide && Math.random()<.65) startSide=sides[(sides.indexOf(startSide)+1+Math.floor(Math.random()*3))%4];
+    lastSide=startSide;
+    let endSide=sides[Math.floor(Math.random()*sides.length)];
+    while(endSide===startSide) endSide=sides[Math.floor(Math.random()*sides.length)];
+
+    const a=edgePoint(startSide,w,h,pad);
+    const b=edgePoint(endSide,w,h,pad);
+    const points=[a];
+    const bends=2+Math.floor(Math.random()*3);
+    for(let i=0;i<bends;i++) points.push({x:rand(w*.08,w*.92),y:rand(h*.12,h*.82)});
+    points.push(b);
+
+    const doLoops=Math.random()<.48;
+    const loopIndex=doLoops?1+Math.floor(Math.random()*Math.max(1,points.length-2)):-1;
+    const loopCount=doLoops?(Math.random()<.35?2:1):0;
+    const frames=[];
+    let previous=points[0];
+
+    points.forEach((p,i)=>{
+      if(i===0){
+        frames.push({transform:`translate3d(${p.x}px,${p.y}px,0) rotate(0deg)`});
+        return;
+      }
+      const dx=p.x-previous.x,dy=p.y-previous.y;
+      const angle=Math.atan2(dy,dx)*180/Math.PI;
+      const facing=dx>=0?1:-1;
+      const base=`translate3d(${p.x}px,${p.y}px,0) rotate(${angle}deg) scaleX(${facing})`;
+
+      if(i===loopIndex){
+        const radius=mobile?55:85;
+        const steps=loopCount*8;
+        for(let s=1;s<=steps;s++){
+          const t=s/8*Math.PI*2;
+          const lx=p.x+Math.sin(t)*radius;
+          const ly=p.y-Math.cos(t)*radius+radius;
+          const spin=(t*180/Math.PI)*(dx>=0?1:-1);
+          frames.push({transform:`translate3d(${lx}px,${ly}px,0) rotate(${angle+spin}deg) scaleX(${facing})`});
+        }
+      }
+      frames.push({transform:base});
+      previous=p;
+    });
+
+    santa.classList.add('is-flying');
+    const duration=mobile?rand(9000,13500):rand(11000,16500);
+    const anim=santa.animate(frames,{duration,easing:'linear',fill:'forwards'});
+    anim.onfinish=()=>{
+      santa.classList.remove('is-flying');
+      anim.cancel();
+      setTimeout(fly,rand(4500,12000));
+    };
+  }
+  setTimeout(fly,1400);
 })();
 </script>
 <script>
