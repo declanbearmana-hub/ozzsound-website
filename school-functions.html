@@ -85,8 +85,11 @@
     .schoolCta h2{font:700 clamp(34px,5vw,58px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 12px}
     .schoolCta p{color:#94a1b4;line-height:1.65;max-width:700px;margin:0}
     .schoolCtaActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;min-width:250px}
+    .callbackCard{margin-top:22px;padding:22px;border:1px solid rgba(70,221,255,.2);border-radius:20px;background:linear-gradient(135deg,rgba(70,221,255,.07),rgba(239,55,255,.05))}
+    .callbackCard h3{font:700 24px "Space Grotesk";margin:0 0 6px}.callbackCard>p{margin:0 0 16px;color:#93a1b4;line-height:1.55}.callbackToggle{width:100%;justify-content:center}
+    .callbackForm{display:none;margin-top:18px}.callbackForm.open{display:block}.callbackGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.callbackField{display:grid;gap:6px}.callbackField.full{grid-column:1/-1}.callbackField label{font-size:12px;font-weight:800;color:#b8c5d8}.callbackField input,.callbackField select,.callbackField textarea{width:100%;box-sizing:border-box;border:1px solid #303a4c;border-radius:12px;background:#080b11;color:#eef5ff;padding:12px 13px;font:inherit}.callbackField textarea{min-height:72px;resize:vertical}.callbackPrivacy{display:flex;gap:9px;align-items:flex-start;margin:13px 0;color:#8795a8;font-size:12px;line-height:1.5}.callbackPrivacy input{margin-top:2px}.callbackPrivacy a{color:#6fe4ff}.callbackStatus{min-height:20px;margin-top:10px;font-size:13px;color:#8fa0b5}.callbackStatus.ok{color:#78efbd}.callbackStatus.err{color:#ff9ba9}
     @media(max-width:900px){.schoolHero,.schoolSafety,.schoolSectionHead{grid-template-columns:1fr}.schoolHeroVisual{min-height:320px}.schoolGrid{grid-template-columns:1fr 1fr}.schoolPlan,.schoolStrip{grid-template-columns:1fr 1fr}.schoolCta{align-items:flex-start;flex-direction:column}.schoolCtaActions{justify-content:flex-start}.schoolChoiceRow{grid-template-columns:1fr}.strobeLine,.strobeConfirm{align-items:flex-start;flex-direction:column}}
-    @media(max-width:600px){.schoolMain{padding-top:115px}.schoolHero{padding:24px}.schoolHeroVisual{min-height:270px}.schoolDisc{width:230px}.schoolGrid,.schoolPlan,.schoolStrip{grid-template-columns:1fr}.schoolStrip{gap:1px}.schoolSection{padding:55px 0}.schoolSafety{grid-template-columns:1fr}.schoolHeroActions .btn,.schoolCtaActions .btn{width:100%;justify-content:center}.schoolCtaActions{width:100%;min-width:0}}
+    @media(max-width:600px){.callbackGrid{grid-template-columns:1fr}.callbackField.full{grid-column:auto}.schoolMain{padding-top:115px}.schoolHero{padding:24px}.schoolHeroVisual{min-height:270px}.schoolDisc{width:230px}.schoolGrid,.schoolPlan,.schoolStrip{grid-template-columns:1fr}.schoolStrip{gap:1px}.schoolSection{padding:55px 0}.schoolSafety{grid-template-columns:1fr}.schoolHeroActions .btn,.schoolCtaActions .btn{width:100%;justify-content:center}.schoolCtaActions{width:100%;min-width:0}}
   </style>
 </head>
 
@@ -145,7 +148,7 @@
           <div><div class="eyebrow">Choose the feel</div><h2>What kind of night are you planning?</h2></div>
           <p>Start with the atmosphere. Nothing is locked in — this just gives Dazz a feel for what your school wants.</p>
         </div>
-        <div class="schoolFun id="schoolFun">
+        <div class="schoolFun" id="schoolFun">
           <div class="eyebrow">Make it your kind of event</div>
           <h2>Formal, fun — or a bit of both?</h2>
           <p class="schoolFunLead">
@@ -264,6 +267,24 @@
           <a class="btn primary large" href="index.html#availability" data-school-handoff>Check availability <span>→</span></a>
           <a class="btn secondary" href="event-enquiry.html?event=School%20Function" data-school-handoff>School enquiry <span>↗</span></a>
         </div>
+        <div class="callbackCard" style="flex-basis:100%">
+          <h3>Rather talk it through with Dazz?</h3>
+          <p>Leave a few details and ask Dazz to call you. His number stays private, and you don't need to plan the whole event first.</p>
+          <button class="btn secondary callbackToggle" type="button" id="callbackToggle">Ask Dazz to call me <span>→</span></button>
+          <form class="callbackForm" id="schoolCallbackForm">
+            <div class="callbackGrid">
+              <div class="callbackField"><label for="callbackName">Your name</label><input id="callbackName" name="name" maxlength="120" autocomplete="name" required></div>
+              <div class="callbackField"><label for="callbackSchool">School</label><input id="callbackSchool" name="school" maxlength="200" required></div>
+              <div class="callbackField"><label for="callbackPhone">Phone number</label><input id="callbackPhone" name="phone" type="tel" maxlength="60" autocomplete="tel" required></div>
+              <div class="callbackField"><label for="callbackEmail">Work email</label><input id="callbackEmail" name="email" type="email" maxlength="200" autocomplete="email" required></div>
+              <div class="callbackField full"><label for="callbackTime">Best time for Dazz to call</label><select id="callbackTime" name="bestTime" required><option value="">Choose a time</option><option>Morning</option><option>Lunch time</option><option>Afternoon</option><option>After school</option><option>Any time</option></select></div>
+              <div class="callbackField full"><label for="callbackNote">Anything Dazz should know? <span style="font-weight:500;color:#738196">(optional)</span></label><textarea id="callbackNote" name="note" maxlength="600" placeholder="e.g. Year 6 disco, looking at November"></textarea></div>
+            </div>
+            <label class="callbackPrivacy"><input type="checkbox" name="privacy" required><span>I agree that Ozzsound can use these details to contact me about this school event. <a href="privacy.html">Privacy</a></span></label>
+            <button class="btn primary" type="submit" id="callbackSubmit">Request a call <span>→</span></button>
+            <div class="callbackStatus" id="callbackStatus" aria-live="polite"></div>
+          </form>
+        </div>
       </section>
     </div>
   </main>
@@ -275,6 +296,7 @@
     </div>
   </footer>
 
+  <script src="config/site-config.js"></script>
   <script>
   (() => {
     const state={vibe:'',extras:new Set(),strobe:'',strobeApproval:''};
@@ -330,6 +352,24 @@
       };
       try{localStorage.setItem('ozzsoundSchoolPlan',JSON.stringify(payload));}catch(e){}
     }));
+  })();
+
+  (() => {
+    const toggle=document.querySelector('#callbackToggle'),form=document.querySelector('#schoolCallbackForm'),status=document.querySelector('#callbackStatus'),submit=document.querySelector('#callbackSubmit');
+    if(!toggle||!form)return;
+    toggle.addEventListener('click',()=>{const open=form.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));toggle.innerHTML=open?'Hide callback form <span>↑</span>':'Ask Dazz to call me <span>→</span>';if(open)form.querySelector('input')?.focus();});
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();status.className='callbackStatus';status.textContent='Sending your callback request…';submit.disabled=true;
+      const data=new FormData(form),cfg=window.OZZSOUND_CONFIG||{};
+      const name=String(data.get('name')||'').trim(),school=String(data.get('school')||'').trim(),phone=String(data.get('phone')||'').trim(),email=String(data.get('email')||'').trim(),bestTime=String(data.get('bestTime')||'').trim(),note=String(data.get('note')||'').trim();
+      if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){status.className='callbackStatus err';status.textContent='The callback form is temporarily unavailable. Please use the school enquiry instead.';submit.disabled=false;return;}
+      try{
+        const payload={enquiry_type:'callback_request',name,phone,email,event_type:'School Function',venue_suburb:school,message:['School callback request',`Best time to call: ${bestTime}`,note?`Note: ${note}`:''].filter(Boolean).join('\n'),source:'school_callback',upload_count:0,enquiry_data:{school,best_time_to_call:bestTime,callback_requested:true}};
+        const res=await fetch(cfg.supabaseUrl+'/rest/v1/enquiries',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(payload)});
+        if(!res.ok)throw new Error('Request failed');
+        form.reset();status.className='callbackStatus ok';status.textContent='Thanks — your callback request has been sent to Ozzsound. Dazz can call you at the time you selected.';submit.textContent='Request sent ✓';
+      }catch(err){status.className='callbackStatus err';status.textContent='That did not send. Please try again, or use the school enquiry button above.';submit.disabled=false;}
+    });
   })();
   </script>
 <script src="js/i18n.js?v=20260919-3"></script>
