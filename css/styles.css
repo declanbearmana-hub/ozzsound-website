@@ -764,3 +764,17 @@
  .dateResult .btn{width:100%;justify-content:center}
  .footerBottom{align-items:flex-start;flex-direction:column}
 }
+
+/* Final polish — interaction, accessibility and section rhythm */
+html{scroll-padding-top:92px}
+a,button,input,select,textarea{outline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan)}
+.navlinks>a,.navDropButton{transition:color .2s ease,opacity .2s ease}
+.navlinks>a:hover,.navlinks>a[aria-current="page"],.navDropButton:hover{color:#fff}
+#events,#availability{scroll-margin-top:88px}
+.enquiryForm input,.enquiryForm select,.enquiryForm textarea{transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.enquiryForm input:focus,.enquiryForm select:focus,.enquiryForm textarea:focus{border-color:rgba(40,230,255,.48);box-shadow:0 0 0 3px rgba(40,230,255,.055)}
+.contactFallback a{color:var(--cyan);text-decoration:none}
+.contactFallback a:hover{text-decoration:underline}
+@media(max-width:900px){.siteFooter{padding-bottom:72px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal{transition:none!important}.flowCard,.homeToolGrid a,.btn{transition:none!important}}
