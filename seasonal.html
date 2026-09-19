@@ -41,27 +41,19 @@ body.theme-christmas .christmasSnow{z-index:2}
 @media(max-width:720px){
   body.theme-christmas .seasonMain{background-position:center bottom;background-size:auto 100%;background-attachment:scroll}
 }
-/* Christmas flying Santa — CSS animation, no image asset */
-.christmasSleigh{display:none;position:fixed;left:0;top:92px;width:100%;height:105px;overflow:hidden;pointer-events:none;z-index:4}
+/* Christmas flying Santa artwork */
+.christmasSleigh{display:none;position:fixed;left:0;top:88px;width:100%;height:150px;overflow:hidden;pointer-events:none;z-index:4}
 body.theme-christmas .christmasSleigh{display:block}
-.christmasSleigh .sleighRig{position:absolute;left:-520px;top:10px;display:flex;align-items:center;gap:3px;white-space:nowrap;font-size:42px;filter:drop-shadow(0 4px 5px rgba(0,0,0,.45));animation:christmasSleighFly 19s linear infinite;will-change:transform}
-.christmasSleigh .santa{font-size:.9em;margin-right:-8px}
-.christmasSleigh .sleigh{font-size:1.05em;margin-right:10px}
-.christmasSleigh .reindeer{display:inline-block;transform:scaleX(-1);animation:christmasReindeerBob .7s ease-in-out infinite alternate}
-.christmasSleigh .reindeer:nth-child(4){animation-delay:-.18s}.christmasSleigh .reindeer:nth-child(5){animation-delay:-.36s}.christmasSleigh .reindeer:nth-child(6){animation-delay:-.54s}
-@keyframes christmasSleighFly{0%{transform:translate3d(0,18px,0)}45%{transform:translate3d(calc(50vw + 260px),0,0)}100%{transform:translate3d(calc(100vw + 1040px),18px,0)}}
-@keyframes christmasReindeerBob{from{translate:0 -2px}to{translate:0 4px}}
-@media(max-width:720px){.christmasSleigh{top:76px;height:82px}.christmasSleigh .sleighRig{font-size:29px;left:-360px;animation-duration:16s}}
+.christmasSantaFlyby{position:absolute;left:-390px;top:12px;width:320px;height:auto;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));animation:christmasSantaFly 22s linear infinite;will-change:transform}
+@keyframes christmasSantaFly{0%{transform:translate3d(0,18px,0) rotate(-1.5deg)}25%{transform:translate3d(calc(25vw + 190px),0,0) rotate(.5deg)}55%{transform:translate3d(calc(55vw + 390px),12px,0) rotate(-.5deg)}100%{transform:translate3d(calc(100vw + 760px),-3px,0) rotate(1deg)}}
+@media(max-width:720px){.christmasSleigh{top:70px;height:105px}.christmasSantaFlyby{left:-260px;top:8px;width:220px;animation-duration:18s}}
 @media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div>
 <div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
-  <div class="sleighRig">
-    <span class="santa">🎅</span><span class="sleigh">🛷</span>
-    <span class="reindeer">🦌</span><span class="reindeer">🦌</span><span class="reindeer">🦌</span><span class="reindeer">🦌</span>
-  </div>
+  <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-1" alt="" decoding="async">
 </div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
 <section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
 <div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
