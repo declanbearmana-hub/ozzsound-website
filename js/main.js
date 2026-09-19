@@ -840,3 +840,26 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
 
 (()=>{if(document.querySelector('#privacyNotice'))return;let ok=false;try{ok=localStorage.getItem('ozzsoundPrivacyNotice')==='acknowledged'}catch(e){}if(ok)return;const n=document.createElement('div');n.id='privacyNotice';n.className='privacyNotice';n.innerHTML='<span>Ozzsound uses the information you provide to manage enquiries, bookings and event planning. <a href="privacy.html">Your Privacy</a></span><button type="button">Acknowledge</button>';document.body.appendChild(n);n.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem('ozzsoundPrivacyNotice','acknowledged')}catch(e){}n.remove()});})();
+
+/* Homepage event carousel: arrows, mouse drag and touch swipe */
+document.addEventListener('DOMContentLoaded',()=>{
+  const flow=document.querySelector('#eventFlow');
+  if(!flow)return;
+  const track=flow.querySelector('.eventFlowTrack');
+  const prev=document.querySelector('.eventFlowPrev');
+  const next=document.querySelector('.eventFlowNext');
+  let offset=0,startX=0,startOffset=0,dragging=false,moved=false;
+  const cardStep=()=>{const card=flow.querySelector('.flowCard');return card?card.getBoundingClientRect().width+18:348};
+  const apply=()=>{track.style.animation='none';track.style.transform='translateX('+offset+'px)';flow.classList.add('isUserControlled')};
+  const bounds=()=>{const half=track.scrollWidth/2;return {min:Math.min(0,flow.clientWidth-half),max:0}};
+  const clamp=()=>{const b=bounds();offset=Math.max(b.min,Math.min(b.max,offset));};
+  const move=(dir)=>{offset+=dir*cardStep();clamp();apply();};
+  prev?.addEventListener('click',()=>move(1));
+  next?.addEventListener('click',()=>move(-1));
+  flow.addEventListener('pointerdown',e=>{dragging=true;moved=false;startX=e.clientX;const matrix=new DOMMatrixReadOnly(getComputedStyle(track).transform);offset=Number.isFinite(matrix.m41)?matrix.m41:offset;startOffset=offset;track.style.animation='none';flow.classList.add('isDragging','isUserControlled');flow.setPointerCapture(e.pointerId);});
+  flow.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-startX;if(Math.abs(dx)>5)moved=true;offset=startOffset+dx;clamp();track.style.transform='translateX('+offset+'px)';});
+  const end=e=>{if(!dragging)return;dragging=false;flow.classList.remove('isDragging');try{flow.releasePointerCapture(e.pointerId)}catch(_){}};
+  flow.addEventListener('pointerup',end);flow.addEventListener('pointercancel',end);
+  flow.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+  flow.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();move(1)}if(e.key==='ArrowRight'){e.preventDefault();move(-1)}});
+});
