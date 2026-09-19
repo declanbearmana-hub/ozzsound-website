@@ -241,11 +241,8 @@ to{transform:translateY(2px)}}
   </svg>
   <div class="reindeerTeam">
   <div class="motionDeer deerOne">
-    <span class="deerTail"></span><span class="deerBody"><i class="belly"></i><i class="shoulder"></i></span><span class="deerNeck"><i class="chestFur"></i></span><span class="deerHead"><i class="muzzle"></i><i class="eye"></i><i class="nose"></i></span>
-    <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
-    <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
-    <span class="deerHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
-    <span class="leg lf"><em></em><b></b></span><span class="leg rf"><em></em><b></b></span><span class="leg lr"><em></em><b></b></span><span class="leg rr"><em></em><b></b></span>
+    <img class="freeDeerSkin" src="https://freesvg.org/converts/19399/2400" alt="" decoding="async">
+    <span class="deerHarness detailHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
   </div>
   </div>
 </div>
@@ -265,11 +262,14 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
 .reindeerTeam{position:absolute;left:0;top:39%;width:900px;height:180px;animation:testTeamFly 13.5s linear infinite;will-change:transform}
 .motionDeer.deerOne,.motionDeer.deerThree{transform-origin:center;filter:drop-shadow(0 4px 4px rgba(0,0,0,.2))}
 .motionDeer.deerTwo,.motionDeer.deerFour{transform-origin:center;filter:drop-shadow(0 6px 6px rgba(0,0,0,.24))}
-.motionDeer{--cycle:820ms;position:absolute;left:0;top:0;width:245px;height:145px;transform-origin:50% 50%;animation:deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
-.motionDeer.deerOne{left:18px;top:25px;scale:.89;z-index:1}
-.motionDeer.deerTwo{left:205px;top:8px;scale:.93;--cycle:845ms;z-index:2}
-.motionDeer.deerThree{left:423px;top:23px;scale:.97;--cycle:800ms;z-index:3}
-.motionDeer.deerFour{left:625px;top:3px;scale:1.01;--cycle:865ms;z-index:4}
+.motionDeer{--cycle:1050ms;position:absolute;left:0;top:0;width:205px;height:138px;transform-origin:50% 50%;animation:deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.26));will-change:transform}
+.freeDeerSkin{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;transform-origin:52% 58%;animation:deerSkinGallop var(--cycle) cubic-bezier(.45,0,.55,1) infinite;filter:sepia(.18) saturate(1.12) contrast(1.04)}
+@keyframes deerSkinGallop{0%,100%{transform:translateY(0) rotate(-1deg) scaleX(1)}22%{transform:translateY(-4px) rotate(-2deg) scaleX(1.025)}48%{transform:translateY(1px) rotate(.5deg) scaleX(.985)}72%{transform:translateY(-3px) rotate(-1.4deg) scaleX(1.018)}}
+.motionDeer .detailHarness{left:116px;top:39px;scale:.82;z-index:4}
+.motionDeer.deerOne{left:42px;top:28px;scale:.76;z-index:1}
+.motionDeer.deerTwo{left:224px;top:12px;scale:.81;--cycle:1090ms;z-index:2}
+.motionDeer.deerThree{left:425px;top:26px;scale:.86;--cycle:1010ms;z-index:3}
+.motionDeer.deerFour{left:625px;top:8px;scale:.91;--cycle:1120ms;z-index:4}
 .motionDeer.deerOne .leg,.motionDeer.deerOne .leg b{animation-delay:-.04s}
 .motionDeer.deerTwo .leg,.motionDeer.deerTwo .leg b{animation-delay:-.23s}
 .motionDeer.deerThree .leg,.motionDeer.deerThree .leg b{animation-delay:-.41s}
@@ -371,3 +371,4 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
   }
 })();
 </script></body></html>
+<!-- Reindeer artwork source: FreeSVG/OpenClipart public-domain vector (SVG ID 19399). Test branch only. -->
