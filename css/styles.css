@@ -778,3 +778,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .contactFallback a:hover{text-decoration:underline}
 @media(max-width:900px){.siteFooter{padding-bottom:72px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal{transition:none!important}.flowCard,.homeToolGrid a,.btn{transition:none!important}}
+
+/* Language selector */
+.languagePicker{position:relative;display:flex;align-items:center}
+.languageButton{display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.025);color:#aeb7c5;border-radius:999px;padding:9px 12px;font:700 11px/1 Inter,sans-serif;letter-spacing:.08em;cursor:pointer}
+.languageButton:hover,.languagePicker.open .languageButton{color:#fff;border-color:rgba(40,230,255,.35);background:rgba(40,230,255,.04)}
+.languageButton i{font-style:normal;font-size:10px;transition:transform .2s ease}.languagePicker.open .languageButton i{transform:rotate(180deg)}
+.languageMenu{position:absolute;right:0;top:calc(100% + 10px);width:190px;padding:7px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:rgba(9,11,16,.98);box-shadow:0 22px 55px rgba(0,0,0,.42);opacity:0;visibility:hidden;transform:translateY(-5px);transition:.18s ease;z-index:100}
+.languagePicker.open .languageMenu{opacity:1;visibility:visible;transform:none}
+.languageMenu button{width:100%;display:flex;justify-content:space-between;align-items:center;border:0;border-radius:10px;padding:11px 10px;background:transparent;color:#c5ccd6;cursor:pointer;text-align:left}
+.languageMenu button:hover,.languageMenu button[aria-current="true"]{background:rgba(40,230,255,.07);color:#fff}.languageMenu small{color:#667181;font-size:9px;letter-spacing:.12em}
+.languagePickerMobile{display:none}
+@media(max-width:900px){.navlinks .languagePicker{display:none}.languagePickerMobile{display:block;margin-top:18px}.languagePickerMobile .languageButton{width:100%;justify-content:center;padding:13px}.languagePickerMobile .languageMenu{position:static;width:100%;display:none;margin-top:8px;opacity:1;visibility:visible;transform:none}.languagePickerMobile.open .languageMenu{display:block}}
