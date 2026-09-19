@@ -870,3 +870,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   flow.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
   flow.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();move(1)}if(e.key==='ArrowRight'){e.preventDefault();move(-1)}});
 });
+
+// Ozzsound legal footer links — kept central so every public page stays consistent.
+document.addEventListener('DOMContentLoaded',()=>{
+  const links=[['Privacy','privacy.html'],['Booking & Website Terms','terms.html'],['Security','security.html'],['Cookies','cookies.html'],['Copyright','copyright.html']];
+  document.querySelectorAll('footer').forEach(footer=>{
+    if(footer.querySelector('.legalFooterLinks'))return;
+    const host=footer.querySelector('.footerMain,.foot')||footer;
+    const nav=document.createElement('nav');nav.className='legalFooterLinks';nav.setAttribute('aria-label','Legal and policy links');
+    nav.innerHTML=links.map(([label,href])=>'<a href="'+href+'">'+label+'</a>').join('');
+    host.appendChild(nav);
+  });
+});
