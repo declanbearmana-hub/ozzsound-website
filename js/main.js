@@ -848,27 +848,85 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
 (()=>{if(document.querySelector('#privacyNotice'))return;let ok=false;try{ok=localStorage.getItem('ozzsoundPrivacyNotice')==='acknowledged'}catch(e){}if(ok)return;const n=document.createElement('div');n.id='privacyNotice';n.className='privacyNotice';n.innerHTML='<span>Ozzsound uses the information you provide to manage enquiries, bookings and event planning. <a href="privacy.html">Your Privacy</a></span><button type="button">Acknowledge</button>';document.body.appendChild(n);n.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem('ozzsoundPrivacyNotice','acknowledged')}catch(e){}n.remove()});})();
 
-/* Homepage event carousel: arrows, mouse drag and touch swipe */
+/* Homepage event carousel: continuous auto-scroll with arrows, drag and swipe.
+   Manual interaction temporarily takes control, then seamlessly resumes movement. */
 document.addEventListener('DOMContentLoaded',()=>{
   const flow=document.querySelector('#eventFlow');
   if(!flow)return;
   const track=flow.querySelector('.eventFlowTrack');
   const prev=document.querySelector('.eventFlowPrev');
   const next=document.querySelector('.eventFlowNext');
-  let offset=0,startX=0,startOffset=0,dragging=false,moved=false;
+  if(!track)return;
+
+  let offset=0,startX=0,startOffset=0,dragging=false,moved=false,lastTime=performance.now();
+  const speed=34; // pixels per second
   const cardStep=()=>{const card=flow.querySelector('.flowCard');return card?card.getBoundingClientRect().width+18:348};
-  const apply=()=>{track.style.animation='none';track.style.transform='translateX('+offset+'px)';flow.classList.add('isUserControlled')};
-  const bounds=()=>{const half=track.scrollWidth/2;return {min:Math.min(0,flow.clientWidth-half),max:0}};
-  const clamp=()=>{const b=bounds();offset=Math.max(b.min,Math.min(b.max,offset));};
-  const move=(dir)=>{offset+=dir*cardStep();clamp();apply();};
+  const loopWidth=()=>track.scrollWidth/2;
+
+  const readOffset=()=>{
+    const matrix=new DOMMatrixReadOnly(getComputedStyle(track).transform);
+    return Number.isFinite(matrix.m41)?matrix.m41:offset;
+  };
+  const normalise=()=>{
+    const w=loopWidth();
+    if(!w)return;
+    while(offset<=-w)offset+=w;
+    while(offset>0)offset-=w;
+  };
+  const render=()=>{normalise();track.style.transform='translate3d('+offset+'px,0,0)'};
+  const takeControl=()=>{
+    offset=readOffset();
+    track.style.animation='none';
+    flow.classList.add('isUserControlled');
+    render();
+  };
+  const move=dir=>{
+    takeControl();
+    offset+=dir*cardStep();
+    render();
+  };
+
   prev?.addEventListener('click',()=>move(1));
   next?.addEventListener('click',()=>move(-1));
-  flow.addEventListener('pointerdown',e=>{dragging=true;moved=false;startX=e.clientX;const matrix=new DOMMatrixReadOnly(getComputedStyle(track).transform);offset=Number.isFinite(matrix.m41)?matrix.m41:offset;startOffset=offset;track.style.animation='none';flow.classList.add('isDragging','isUserControlled');flow.setPointerCapture(e.pointerId);});
-  flow.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-startX;if(Math.abs(dx)>5)moved=true;offset=startOffset+dx;clamp();track.style.transform='translateX('+offset+'px)';});
-  const end=e=>{if(!dragging)return;dragging=false;flow.classList.remove('isDragging');try{flow.releasePointerCapture(e.pointerId)}catch(_){}};
-  flow.addEventListener('pointerup',end);flow.addEventListener('pointercancel',end);
-  flow.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
-  flow.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();move(1)}if(e.key==='ArrowRight'){e.preventDefault();move(-1)}});
+
+  flow.addEventListener('pointerdown',e=>{
+    if(e.button!==undefined&&e.button!==0)return;
+    takeControl();
+    dragging=true;moved=false;startX=e.clientX;startOffset=offset;
+    flow.classList.add('isDragging');
+    flow.setPointerCapture?.(e.pointerId);
+  });
+  flow.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const dx=e.clientX-startX;
+    if(Math.abs(dx)>5)moved=true;
+    offset=startOffset+dx;
+    render();
+  });
+  const end=e=>{
+    if(!dragging)return;
+    dragging=false;
+    flow.classList.remove('isDragging');
+    try{flow.releasePointerCapture?.(e.pointerId)}catch(_){}
+  };
+  flow.addEventListener('pointerup',end);
+  flow.addEventListener('pointercancel',end);
+  flow.addEventListener('click',e=>{
+    if(moved){e.preventDefault();e.stopPropagation();moved=false;}
+  },true);
+  flow.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft'){e.preventDefault();move(1)}
+    if(e.key==='ArrowRight'){e.preventDefault();move(-1)}
+  });
+
+  // Replace the CSS marquee once JS is ready, but keep the same visual position.
+  takeControl();
+  const tick=now=>{
+    const dt=Math.min((now-lastTime)/1000,.05);lastTime=now;
+    if(!dragging){offset-=speed*dt;render();}
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 });
 
 // Ozzsound legal footer links — kept central so every public page stays consistent.
