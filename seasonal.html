@@ -229,7 +229,7 @@ to{transform:translateY(2px)}}
     <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
     <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
     <span class="deerHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
-    <span class="leg lf"><b></b></span><span class="leg rf"><b></b></span><span class="leg lr"><b></b></span><span class="leg rr"><b></b></span>
+    <span class="leg lf"><em></em><b></b></span><span class="leg rf"><em></em><b></b></span><span class="leg lr"><em></em><b></b></span><span class="leg rr"><em></em><b></b></span>
   </div>
 </div>
 <style>
@@ -255,16 +255,38 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
 .deerHarness .strap{position:absolute;left:-57px;top:28px;width:62px;height:6px;border-radius:4px;background:linear-gradient(#d42131,#8f0c18);box-shadow:0 0 0 1px #e4aa2e}
 .deerHarness .bell{position:absolute;width:10px;height:10px;border-radius:50% 50% 55% 55%;background:radial-gradient(circle at 35% 30%,#fff3a1,#f4b72c 40%,#9a6109 80%);box-shadow:0 0 5px rgba(255,198,54,.6)}.deerHarness .b1{left:5px;top:42px}.deerHarness .b2{left:-2px;top:50px}
 .leg{position:absolute;top:91px;width:19px;height:58px;border-radius:12px;background:linear-gradient(90deg,#7f3f22,#b66e3e 58%,#8a4828);box-shadow:inset -3px 0 4px rgba(65,27,14,.18);transform-origin:50% 4px;animation-duration:var(--cycle);animation-timing-function:cubic-bezier(.45,0,.55,1);animation-iteration-count:infinite}
-.leg b{position:absolute;left:4px;top:43px;width:12px;height:38px;border-radius:8px;background:linear-gradient(90deg,#74391f,#a75e34);transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.45,0,.55,1) infinite}
-.leg b:after{content:"";position:absolute;left:-1px;bottom:-7px;width:15px;height:12px;border-radius:70% 25%;background:#241712;transform:rotate(20deg)}
+.leg em{position:absolute;left:3px;top:39px;width:13px;height:13px;border-radius:50%;background:#a76037;box-shadow:inset -2px -2px 3px rgba(58,24,12,.25);z-index:2}
+.leg b{position:absolute;left:4px;top:43px;width:12px;height:39px;border-radius:8px;background:linear-gradient(90deg,#74391f,#a75e34);transform-origin:50% 4px;animation:lowerLeg var(--cycle) cubic-bezier(.42,0,.58,1) infinite;will-change:transform}
+.leg b:after{content:"";position:absolute;left:-2px;bottom:-8px;width:16px;height:12px;border-radius:72% 28% 68% 32%;background:linear-gradient(120deg,#35231b,#17100d);transform:rotate(18deg)}
 .lf{left:166px;animation-name:frontReach}.rf{left:146px;animation-name:frontReach;animation-delay:calc(var(--cycle)*-.5)}
 .lr{left:82px;animation-name:rearKick;animation-delay:calc(var(--cycle)*-.5)}.rr{left:63px;animation-name:rearKick}
 .rf,.lr{opacity:.82}
-@keyframes frontReach{0%{transform:rotate(58deg)}25%{transform:rotate(20deg)}50%{transform:rotate(-68deg)}75%{transform:rotate(-18deg)}100%{transform:rotate(58deg)}}
-@keyframes rearKick{0%{transform:rotate(-60deg)}25%{transform:rotate(-12deg)}50%{transform:rotate(62deg)}75%{transform:rotate(16deg)}100%{transform:rotate(-60deg)}}
-@keyframes lowerLeg{0%,100%{transform:rotate(25deg)}25%{transform:rotate(-42deg)}50%{transform:rotate(18deg)}75%{transform:rotate(52deg)}}
-@keyframes deerFloat{0%,100%{margin-top:0}25%{margin-top:-7px}50%{margin-top:2px}75%{margin-top:-4px}}
-@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(2deg) translateY(2px)}}
+@keyframes frontReach{
+  0%{transform:rotate(-62deg) translateY(-1px)}
+  18%{transform:rotate(-78deg) translateY(-3px)}
+  42%{transform:rotate(-18deg) translateY(0)}
+  58%{transform:rotate(38deg) translateY(-7px)}
+  76%{transform:rotate(63deg) translateY(-10px)}
+  100%{transform:rotate(-62deg) translateY(-1px)}
+}
+@keyframes rearKick{
+  0%{transform:rotate(58deg) translateY(-7px)}
+  18%{transform:rotate(74deg) translateY(-10px)}
+  42%{transform:rotate(18deg) translateY(-2px)}
+  58%{transform:rotate(-42deg) translateY(-3px)}
+  76%{transform:rotate(-68deg) translateY(-5px)}
+  100%{transform:rotate(58deg) translateY(-7px)}
+}
+@keyframes lowerLeg{
+  0%{transform:rotate(18deg) scaleY(1)}
+  18%{transform:rotate(5deg) scaleY(1.04)}
+  42%{transform:rotate(-58deg) scaleY(.86)}
+  58%{transform:rotate(-92deg) scaleY(.72)}
+  76%{transform:rotate(-36deg) scaleY(.84)}
+  100%{transform:rotate(18deg) scaleY(1)}
+}
+@keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-8px}42%{margin-top:-2px}58%{margin-top:4px}76%{margin-top:-5px}}
+@keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-1deg) translateY(-2px)}58%{transform:rotate(3deg) translateY(2px)}76%{transform:rotate(-2deg) translateY(-1px)}}
 @keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
 @keyframes testDeerFly{0%{transform:translateX(-320px) rotate(-2deg)}48%{transform:translateX(calc(50vw - 130px)) rotate(1deg)}100%{transform:translateX(calc(100vw + 320px)) rotate(-1deg)}}
 @media(max-width:720px){.motionDeer{top:42%;scale:.72}}
