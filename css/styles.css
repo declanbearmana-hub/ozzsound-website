@@ -818,3 +818,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .decwebCredit img{display:block;width:88px;height:auto;border-radius:4px}
 .decwebCredit strong{font-weight:600;color:#9aa5b4}
 @media(max-width:650px){.decwebCredit{width:100%;gap:8px;font-size:9px}.decwebCredit img{width:76px}}
+
+
+/* Accessible native date controls across dark OzzSound forms */
+input[type="date"]{
+  color-scheme:dark;
+  cursor:pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator{
+  opacity:1;
+  cursor:pointer;
+  filter:invert(83%) sepia(73%) saturate(1775%) hue-rotate(137deg) brightness(104%) contrast(104%);
+}
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-fields-wrapper{
+  color:inherit;
+}
