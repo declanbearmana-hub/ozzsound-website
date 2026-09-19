@@ -16,11 +16,8 @@ body.theme-newyear .seasonHero .gradientText{background:linear-gradient(90deg,#f
 body.theme-newyear .seasonStep{background:linear-gradient(145deg,rgba(7,10,24,.97),rgba(15,8,27,.96));border-color:rgba(255,214,107,.20)}
 .newYearFireworks{display:none;position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1}
 body.theme-newyear .newYearFireworks{display:block}
-.nyBurst{position:absolute;left:var(--x);top:var(--y);width:7px;height:7px;border-radius:50%;opacity:0;box-shadow:0 -58px 0 #ffd66b,41px -41px 0 #b78cff,58px 0 0 #66e7ff,41px 41px 0 #ff77c8,0 58px 0 #ffd66b,-41px 41px 0 #b78cff,-58px 0 0 #66e7ff,-41px -41px 0 #ff77c8,0 -34px 0 #fff,24px -24px 0 #ffd66b,34px 0 0 #fff,24px 24px 0 #b78cff,0 34px 0 #fff,-24px 24px 0 #ffd66b,-34px 0 0 #fff,-24px -24px 0 #b78cff;animation:nyPop 2.8s ease-out var(--delay) infinite}
-@keyframes nyPop{0%,12%{opacity:0;transform:scale(.08)}20%{opacity:1}55%{opacity:.72;transform:scale(1)}100%{opacity:0;transform:scale(1.45) translateY(18px)}}
-.nyFinale{display:none;margin-top:24px;padding:25px;border:1px solid rgba(255,214,107,.28);border-radius:20px;text-align:center;background:linear-gradient(135deg,rgba(255,214,107,.07),rgba(183,140,255,.08))}
-body.theme-newyear .nyFinale{display:block}.nyFinale strong{display:block;font:800 clamp(28px,4vw,44px) "Space Grotesk";letter-spacing:-.04em;background:linear-gradient(90deg,#ffe89c,#ffd66b,#c49cff);-webkit-background-clip:text;background-clip:text;color:transparent}.nyFinale span{display:block;color:#aeb8ca;margin-top:6px}
-@media(max-width:720px){.nyBurst:nth-child(even){display:none}.nyFinale{padding:20px 14px}}@media(prefers-reduced-motion:reduce){.newYearFireworks{display:none!important}}body.theme-easter{--seasonA:#ff8ad8;--seasonB:#7ee7ff;--seasonGlow:rgba(255,138,216,.13)}@keyframes floaty{50%{transform:translateY(-9px) rotate(2deg)}}@media(max-width:1180px){.halloweenRail{width:92px;background-size:90px auto;opacity:.62}body.theme-halloween .seasonMain{padding-left:74px;padding-right:74px}}@media(max-width:900px){.halloweenRail{display:none!important}body.theme-halloween .seasonMain{padding-left:18px;padding-right:18px}body.theme-halloween .seasonHero{min-height:0;aspect-ratio:2014/780}.halloweenScene{background-position:center}.seasonDecor span{opacity:.48}.seasonDecor .d5,.seasonDecor .d6{display:none}}@media(max-width:720px){.seasonChoices{grid-template-columns:1fr 1fr}.seasonGrid,.seasonSummary{grid-template-columns:1fr}}@media(max-width:520px){.seasonMain{padding-top:112px}body.theme-halloween .seasonProgress,body.theme-halloween #seasonBuilder{position:relative;z-index:5}body.theme-halloween .seasonHero{min-height:0;padding:0;aspect-ratio:2014/780}.halloweenScene{background-position:center;background-size:cover}body.theme-halloween .seasonHero>h1{font-size:42px}body.theme-halloween .seasonHero>p{font-size:15px}.seasonChoices{grid-template-columns:1fr}.seasonNav{flex-direction:column-reverse}.seasonNav .btn{justify-content:center}.seasonDecor span{font-size:44px;opacity:.34}.seasonDecor .d1{top:25%}.seasonDecor .d2{top:40%}}
+#newYearFireworksCanvas{display:block;width:100%;height:100%}
+@media(prefers-reduced-motion:reduce){.newYearFireworks{display:none!important}}body.theme-easter{--seasonA:#ff8ad8;--seasonB:#7ee7ff;--seasonGlow:rgba(255,138,216,.13)}@keyframes floaty{50%{transform:translateY(-9px) rotate(2deg)}}@media(max-width:1180px){.halloweenRail{width:92px;background-size:90px auto;opacity:.62}body.theme-halloween .seasonMain{padding-left:74px;padding-right:74px}}@media(max-width:900px){.halloweenRail{display:none!important}body.theme-halloween .seasonMain{padding-left:18px;padding-right:18px}body.theme-halloween .seasonHero{min-height:0;aspect-ratio:2014/780}.halloweenScene{background-position:center}.seasonDecor span{opacity:.48}.seasonDecor .d5,.seasonDecor .d6{display:none}}@media(max-width:720px){.seasonChoices{grid-template-columns:1fr 1fr}.seasonGrid,.seasonSummary{grid-template-columns:1fr}}@media(max-width:520px){.seasonMain{padding-top:112px}body.theme-halloween .seasonProgress,body.theme-halloween #seasonBuilder{position:relative;z-index:5}body.theme-halloween .seasonHero{min-height:0;padding:0;aspect-ratio:2014/780}.halloweenScene{background-position:center;background-size:cover}body.theme-halloween .seasonHero>h1{font-size:42px}body.theme-halloween .seasonHero>p{font-size:15px}.seasonChoices{grid-template-columns:1fr}.seasonNav{flex-direction:column-reverse}.seasonNav .btn{justify-content:center}.seasonDecor span{font-size:44px;opacity:.34}.seasonDecor .d1{top:25%}.seasonDecor .d2{top:40%}}
 /* Final Halloween hero sizing — keep desktop compact, landscape wide, portrait readable */
 @media(min-width:901px){
   body.theme-halloween .seasonHero{min-height:0;height:clamp(390px,29vw,520px);aspect-ratio:auto}
@@ -73,7 +70,7 @@ to{transform:translateY(2px)}}
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <div class="christmasSnow" id="christmasSnow" aria-hidden="true"></div>
-<div class="newYearFireworks" aria-hidden="true"><i class="nyBurst" style="--x:12%;--y:20%;--delay:-.4s"></i><i class="nyBurst" style="--x:82%;--y:17%;--delay:-1.8s"></i><i class="nyBurst" style="--x:67%;--y:42%;--delay:-3.2s"></i><i class="nyBurst" style="--x:25%;--y:52%;--delay:-4.7s"></i></div>
+<div class="newYearFireworks" aria-hidden="true"><canvas id="newYearFireworksCanvas"></canvas></div>
 <div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
   <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
 </div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
@@ -241,5 +238,56 @@ to{transform:translateY(2px)}}
     f.style.setProperty('--drift',(((i%2)?1:-1)*(12+(i%7)*5))+'px');
     layer.appendChild(f);
   }
+})();
+</script><script>
+(function(){
+  const canvas=document.getElementById('newYearFireworksCanvas');
+  if(!canvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,dpr=1,last=0,nextLaunch=0;
+  const rockets=[],sparks=[];
+  const colours=['#ffd66b','#fff1b8','#b78cff','#d25cff','#63ddff','#ff72c6','#ffffff'];
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  addEventListener('resize',resize,{passive:true});resize();
+  function active(){return document.body.classList.contains('theme-newyear')}
+  function launch(){
+    const edge=Math.floor(rand(0,4));let x,y,tx,ty;
+    if(edge===0){x=rand(W*.08,W*.92);y=H+20;tx=rand(W*.08,W*.92);ty=rand(H*.10,H*.58)}
+    else if(edge===1){x=-20;y=rand(H*.55,H*.92);tx=rand(W*.22,W*.72);ty=rand(H*.10,H*.62)}
+    else if(edge===2){x=W+20;y=rand(H*.55,H*.92);tx=rand(W*.28,W*.78);ty=rand(H*.10,H*.62)}
+    else{x=rand(W*.05,W*.95);y=H+20;tx=rand(W*.12,W*.88);ty=rand(H*.08,H*.52)}
+    const swirl=Math.random()<.36;
+    rockets.push({x,y,px:x,py:y,tx,ty,t:0,d:rand(1.05,1.8),swirl,phase:rand(0,6.28),amp:swirl?rand(18,55):rand(-12,12),colour:colours[Math.floor(rand(0,colours.length))]});
+  }
+  function burst(r){
+    const type=Math.floor(rand(0,5)),count=type===4?90:Math.floor(rand(38,72)),base=rand(70,150);
+    for(let i=0;i<count;i++){
+      let a,s;
+      if(type===1){a=(i/count)*Math.PI*2;s=base*rand(.8,1.08)}
+      else if(type===2){a=(i/count)*Math.PI*4;s=base*(.35+i/count*.75)}
+      else if(type===3){a=rand(-Math.PI*.9,-Math.PI*.1);s=base*rand(.55,1.1)}
+      else{a=rand(0,Math.PI*2);s=base*rand(.35,1.12)}
+      sparks.push({x:r.x,y:r.y,px:r.x,py:r.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(1.3,2.7),age:0,g:rand(58,100),drag:rand(.975,.991),colour:Math.random()<.22?'#ffffff':r.colour,size:rand(1,2.8),twinkle:Math.random()<.45});
+    }
+  }
+  function frame(ms){
+    requestAnimationFrame(frame);if(!active()){ctx.clearRect(0,0,W,H);last=ms;return}
+    const dt=Math.min((ms-last)/1000||.016,.035);last=ms;
+    if(ms>nextLaunch){launch();if(Math.random()<.22)setTimeout(()=>active()&&launch(),rand(130,420));nextLaunch=ms+rand(650,1800)}
+    ctx.fillStyle='rgba(3,6,17,.16)';ctx.fillRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+    for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.t+=dt/r.d;r.px=r.x;r.py=r.y;const q=Math.min(r.t,1),ease=1-Math.pow(1-q,2);const bx=r.x+(r.tx-r.x)*0,by=r.y; // retain start through stored values below
+      if(r.sx==null){r.sx=r.x;r.sy=r.y}
+      r.x=r.sx+(r.tx-r.sx)*ease+(r.swirl?Math.sin(q*10+r.phase)*r.amp*(1-q):Math.sin(q*Math.PI)*r.amp);
+      r.y=r.sy+(r.ty-r.sy)*ease+(r.swirl?Math.cos(q*9+r.phase)*r.amp*.35*(1-q):0);
+      ctx.strokeStyle=r.colour;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(r.px,r.py);ctx.lineTo(r.x,r.y);ctx.stroke();
+      for(let k=0;k<2;k++)sparks.push({x:r.x+rand(-2,2),y:r.y+rand(-2,2),px:r.x,py:r.y,vx:rand(-12,12),vy:rand(18,48),life:rand(.25,.55),age:0,g:40,drag:.96,colour:r.colour,size:rand(.6,1.4),twinkle:false});
+      if(q>=1){burst(r);rockets.splice(i,1)}
+    }
+    for(let i=sparks.length-1;i>=0;i--){const p=sparks[i];p.age+=dt;if(p.age>=p.life){sparks.splice(i,1);continue}p.px=p.x;p.py=p.y;p.vx*=Math.pow(p.drag,dt*60);p.vy=p.vy*Math.pow(p.drag,dt*60)+p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;const a=1-p.age/p.life;ctx.globalAlpha=a*(p.twinkle?rand(.45,1):1);ctx.strokeStyle=p.colour;ctx.lineWidth=p.size;ctx.beginPath();ctx.moveTo(p.px,p.py);ctx.lineTo(p.x,p.y);ctx.stroke()}
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+  }
+  requestAnimationFrame(frame);
 })();
 </script></body></html>
