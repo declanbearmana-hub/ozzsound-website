@@ -224,18 +224,35 @@ to{transform:translateY(2px)}}
   }
 })();
 </script><div id="reindeerMotionTest" aria-hidden="true">
-  <div class="motionDeer">
+  <svg class="teamReins" viewBox="0 0 940 180" preserveAspectRatio="none" aria-hidden="true">
+    <path class="rein rein1" d="M35 96 C210 78 355 72 535 82 S760 77 905 73"/>
+    <path class="rein rein2" d="M35 103 C210 91 355 88 535 94 S760 90 905 86"/>
+  </svg>
+  <div class="reindeerTeam">
+  <div class="motionDeer deerOne">
     <span class="deerTail"></span><span class="deerBody"><i class="belly"></i><i class="shoulder"></i></span><span class="deerNeck"><i class="chestFur"></i></span><span class="deerHead"><i class="muzzle"></i><i class="eye"></i><i class="nose"></i></span>
     <span class="deerEar ear1"></span><span class="deerEar ear2"></span>
     <span class="deerAntler a1"></span><span class="deerAntler a2"></span>
     <span class="deerHarness"><i class="strap"></i><i class="bell b1"></i><i class="bell b2"></i></span>
     <span class="leg lf"><em></em><b></b></span><span class="leg rf"><em></em><b></b></span><span class="leg lr"><em></em><b></b></span><span class="leg rr"><em></em><b></b></span>
   </div>
+  </div>
 </div>
 <style>
 #reindeerMotionTest{display:none}
 body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
-.motionDeer{--cycle:820ms;position:absolute;left:0;top:40%;width:245px;height:145px;transform-origin:50% 50%;animation:testDeerFly 11.5s linear infinite,deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
+.reindeerTeam{position:absolute;left:0;top:39%;width:900px;height:180px;animation:testTeamFly 13.5s linear infinite;will-change:transform}
+.motionDeer{--cycle:820ms;position:absolute;left:0;top:0;width:245px;height:145px;transform-origin:50% 50%;animation:deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
+.motionDeer.deerOne{left:0;top:20px;scale:.88}
+.motionDeer.deerTwo{left:205px;top:7px;scale:.94;--cycle:845ms}
+.motionDeer.deerThree{left:420px;top:18px;scale:.98;--cycle:800ms}
+.motionDeer.deerFour{left:640px;top:2px;scale:1.02;--cycle:865ms}
+.motionDeer.deerTwo .leg,.motionDeer.deerTwo .leg b{animation-delay:-.17s}
+.motionDeer.deerThree .leg,.motionDeer.deerThree .leg b{animation-delay:-.31s}
+.motionDeer.deerFour .leg,.motionDeer.deerFour .leg b{animation-delay:-.46s}
+.teamReins{position:absolute;left:0;top:39%;width:900px;height:180px;overflow:visible;animation:testTeamFly 13.5s linear infinite;will-change:transform}
+.teamReins .rein{fill:none;stroke:#9b6334;stroke-width:2.2;stroke-linecap:round;opacity:.9;stroke-dasharray:3 2;animation:reinWave .72s ease-in-out infinite alternate}
+.teamReins .rein2{animation-delay:-.31s;opacity:.72}
 .deerBody{position:absolute;left:58px;top:43px;width:128px;height:67px;border-radius:58% 48% 46% 55%;background:radial-gradient(ellipse at 70% 28%,#d99a64 0 9%,transparent 10%),linear-gradient(165deg,#d39a68 0%,#b66d3d 38%,#8a4727 78%,#6d351f 100%);box-shadow:inset 0 8px 12px rgba(255,224,188,.16),inset 0 -13px 18px rgba(70,28,13,.2),0 3px 5px rgba(0,0,0,.18)}
 .deerBody:before{content:"";position:absolute;inset:7px 10px 14px 12px;border-radius:50%;background:repeating-linear-gradient(168deg,rgba(255,235,210,.08) 0 2px,transparent 2px 7px);opacity:.8}
 .deerBody .belly{position:absolute;left:25px;bottom:2px;width:77px;height:19px;border-radius:50%;background:linear-gradient(180deg,transparent,#d9a77b 85%);opacity:.8}
@@ -288,8 +305,9 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
 @keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-5px}42%{margin-top:-1px}58%{margin-top:3px}76%{margin-top:-3px}}
 @keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-2deg) translateY(-1px)}58%{transform:rotate(1deg) translateY(1px)}76%{transform:rotate(-3deg) translateY(-1px)}}
 @keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
-@keyframes testDeerFly{0%{transform:translateX(-300px) rotate(-1deg)}48%{transform:translateX(calc(50vw - 122px)) rotate(.5deg)}100%{transform:translateX(calc(100vw + 300px)) rotate(-.5deg)}}
-@media(max-width:720px){.motionDeer{top:44%;scale:.68;--cycle:860ms}}
+@keyframes testTeamFly{0%{transform:translateX(-980px) translateY(0) rotate(-.6deg)}48%{transform:translateX(calc(50vw - 450px)) translateY(-12px) rotate(.4deg)}100%{transform:translateX(calc(100vw + 980px)) translateY(2px) rotate(-.4deg)}}
+@keyframes reinWave{from{transform:translateY(-1px)}to{transform:translateY(2px)}}
+@media(max-width:720px){.reindeerTeam,.teamReins{top:43%;transform-origin:left center;scale:.62}.motionDeer{--cycle:860ms}}
 @media(prefers-reduced-motion:reduce){#reindeerMotionTest{display:none!important}}
 </style>
 <script>
@@ -297,12 +315,18 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
   const q=new URLSearchParams(location.search);
   if(q.get('reindeerTest')!=='1') return;
   document.body.classList.add('reindeer-motion-test');
+  const team=document.querySelector('.reindeerTeam');
   const deer=document.querySelector('.motionDeer');
-  if(!deer) return;
-  if(q.get('deerSlow')==='1') deer.style.setProperty('--cycle','1600ms');
+  if(!deer || !team) return;
+  ['deerTwo','deerThree','deerFour'].forEach(cls=>{
+    const clone=deer.cloneNode(true);
+    clone.classList.remove('deerOne');
+    clone.classList.add(cls);
+    team.appendChild(clone);
+  });
+  if(q.get('deerSlow')==='1') team.querySelectorAll('.motionDeer').forEach(d=>d.style.setProperty('--cycle','1600ms'));
   if(q.get('deerPause')==='1'){
-    deer.style.animationPlayState='paused';
-    deer.querySelectorAll('*').forEach(el=>el.style.animationPlayState='paused');
+    document.querySelectorAll('#reindeerMotionTest *').forEach(el=>el.style.animationPlayState='paused');
   }
 })();
 </script></body></html>
