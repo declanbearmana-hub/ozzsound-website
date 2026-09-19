@@ -57,11 +57,35 @@
     .schoolCheck strong{display:block;margin-bottom:4px}
     .schoolCheck span{display:block;color:#8592a5;font-size:13px;line-height:1.5}
     
+    .schoolFun{padding:clamp(26px,4vw,42px);border:1px solid #293243;border-radius:24px;background:radial-gradient(circle at 90% 0,rgba(239,55,255,.09),transparent 36%),#090c12}
+    .schoolFun h2{font:700 clamp(34px,4.5vw,56px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 12px}
+    .schoolFunLead{color:#96a3b6;line-height:1.6;max-width:760px;margin:0 0 24px}
+    .schoolChoiceRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .schoolChoice,.schoolChip{border:1px solid #30394a;background:#0a0e15;color:#dce6f5;border-radius:15px;padding:16px;cursor:pointer;text-align:left;font:inherit;transition:.18s}
+    .schoolChoice strong{display:block;font:800 16px "Space Grotesk";margin-bottom:5px}
+    .schoolChoice span{display:block;color:#8592a5;font-size:12px;line-height:1.4}
+    .schoolChoice.selected,.schoolChip.selected{border-color:#5edfff;background:linear-gradient(135deg,rgba(239,55,255,.12),rgba(70,221,255,.10));box-shadow:0 0 22px rgba(70,221,255,.07)}
+    .schoolFunExtras{margin-top:24px;padding-top:22px;border-top:1px solid #252e3d}
+    .schoolFunExtras h3{font:700 20px "Space Grotesk";margin:0 0 6px}
+    .schoolFunExtras>p{color:#8290a4;font-size:13px;margin:0 0 14px}
+    .schoolChipRow{display:flex;flex-wrap:wrap;gap:8px}
+    .schoolChip{padding:10px 13px;border-radius:999px;font-size:13px;font-weight:800}
+    .strobeBox{margin-top:22px;padding:17px;border:1px solid #2c3545;border-radius:16px;background:#080b11}
+    .strobeLine{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .strobeLine strong{display:block;margin-bottom:3px}
+    .strobeLine small{display:block;color:#8491a3;line-height:1.45}
+    .miniChoices{display:flex;gap:7px;flex-wrap:wrap}
+    .miniChoices button{border:1px solid #344054;background:#0b1018;color:#cbd7e8;border-radius:999px;padding:9px 13px;font-weight:800;cursor:pointer}
+    .miniChoices button.selected{border-color:#5edfff;color:white;background:rgba(70,221,255,.10)}
+    .strobeConfirm{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #252e3d}
+    .strobeConfirm.show{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .strobeWarning{color:#a8b4c5;font-size:12px;line-height:1.5;margin:10px 0 0}
+    .schoolPlanSummary{margin-top:16px;color:#75e2ff;font-size:13px;font-weight:800;min-height:20px}
     .schoolCta{margin-top:72px;padding:clamp(28px,5vw,58px);border-radius:28px;border:1px solid rgba(239,55,255,.28);background:radial-gradient(circle at 90% 0,rgba(70,221,255,.12),transparent 36%),linear-gradient(135deg,rgba(239,55,255,.08),rgba(70,221,255,.04));display:flex;align-items:center;justify-content:space-between;gap:30px}
     .schoolCta h2{font:700 clamp(34px,5vw,58px) "Space Grotesk";letter-spacing:-.05em;line-height:1;margin:8px 0 12px}
     .schoolCta p{color:#94a1b4;line-height:1.65;max-width:700px;margin:0}
     .schoolCtaActions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;min-width:250px}
-    @media(max-width:900px){.schoolHero,.schoolSafety,.schoolSectionHead{grid-template-columns:1fr}.schoolHeroVisual{min-height:320px}.schoolGrid{grid-template-columns:1fr 1fr}.schoolPlan,.schoolStrip{grid-template-columns:1fr 1fr}.schoolCta{align-items:flex-start;flex-direction:column}.schoolCtaActions{justify-content:flex-start}}
+    @media(max-width:900px){.schoolHero,.schoolSafety,.schoolSectionHead{grid-template-columns:1fr}.schoolHeroVisual{min-height:320px}.schoolGrid{grid-template-columns:1fr 1fr}.schoolPlan,.schoolStrip{grid-template-columns:1fr 1fr}.schoolCta{align-items:flex-start;flex-direction:column}.schoolCtaActions{justify-content:flex-start}.schoolChoiceRow{grid-template-columns:1fr}.strobeLine,.strobeConfirm{align-items:flex-start;flex-direction:column}}
     @media(max-width:600px){.schoolMain{padding-top:115px}.schoolHero{padding:24px}.schoolHeroVisual{min-height:270px}.schoolDisc{width:230px}.schoolGrid,.schoolPlan,.schoolStrip{grid-template-columns:1fr}.schoolStrip{gap:1px}.schoolSection{padding:55px 0}.schoolSafety{grid-template-columns:1fr}.schoolHeroActions .btn,.schoolCtaActions .btn{width:100%;justify-content:center}.schoolCtaActions{width:100%;min-width:0}}
   </style>
 </head>
@@ -78,7 +102,7 @@
       <a href="karaoke.html">Karaoke</a>
       <a href="gear-hire.html">Gear Hire</a>
       <a href="index.html#why">Why Ozzsound</a>
-      <a class="pill navCta" href="index.html?event=schools#availability">Check availability</a>
+      <a class="pill navCta" href="index.html?event=schools#availability" data-school-handoff>Check availability</a>
     </div>
   </nav>
 
@@ -96,7 +120,7 @@
           </p>
 
           <div class="schoolHeroActions">
-            <a class="btn primary large" href="index.html?event=schools#availability">Check your school date <span>→</span></a>
+            <a class="btn primary large" href="index.html?event=schools#availability" data-school-handoff>Check your school date <span>→</span></a>
             <a class="btn secondary" href="#safety">Schools, families &amp; safety <span>↓</span></a>
           </div>
         </div>
@@ -199,6 +223,77 @@
         </div>
       </section>
 
+      <section class="schoolSection">
+        <div class="schoolFun" id="schoolFun">
+          <div class="eyebrow">Make it your kind of event</div>
+          <h2>Formal, fun — or a bit of both?</h2>
+          <p class="schoolFunLead">
+            DJ Dazz can keep things polished, or get involved with the crowd, host games and competitions,
+            dress up for the theme and bring some fun props and gags.
+          </p>
+
+          <div class="schoolChoiceRow" id="schoolVibeChoices">
+            <button class="schoolChoice" type="button" data-vibe="Keep it formal">
+              <strong>Keep it formal</strong>
+              <span>Music and announcements, with the focus on the event.</span>
+            </button>
+            <button class="schoolChoice" type="button" data-vibe="A bit of both">
+              <strong>A bit of both</strong>
+              <span>Professional when needed, interactive when the moment is right.</span>
+            </button>
+            <button class="schoolChoice" type="button" data-vibe="Bring the fun">
+              <strong>Bring the fun</strong>
+              <span>Get DJ Dazz involved with the crowd, games and competitions.</span>
+            </button>
+          </div>
+
+          <div class="schoolFunExtras">
+            <h3>Want some extras?</h3>
+            <p>Pick any that suit the event. You can change these later.</p>
+            <div class="schoolChipRow" id="schoolFunExtras">
+              <button class="schoolChip" type="button" data-extra="DJ Dazz dress-up / character">Dress-up DJ Dazz</button>
+              <button class="schoolChip" type="button" data-extra="Air guitar competition">Air guitar</button>
+              <button class="schoolChip" type="button" data-extra="Limbo competition">Limbo</button>
+              <button class="schoolChip" type="button" data-extra="Macarena / dance challenge">Dance challenge</button>
+              <button class="schoolChip" type="button" data-extra="Fun props & gags">Fun props &amp; gags</button>
+              <button class="schoolChip" type="button" data-extra="Other interactive competitions">More competitions</button>
+            </div>
+          </div>
+
+          <div class="strobeBox">
+            <div class="strobeLine">
+              <div>
+                <strong>Strobe lighting?</strong>
+                <small>Optional — choose whether you'd like it considered.</small>
+              </div>
+              <div class="miniChoices" id="schoolStrobe">
+                <button type="button" data-value="Yes">Yes</button>
+                <button type="button" data-value="No">No</button>
+              </div>
+            </div>
+
+            <div class="strobeConfirm" id="schoolStrobeConfirm">
+              <div>
+                <strong>Has the organiser approved strobe effects?</strong>
+                <small>We don't need anyone's medical details.</small>
+              </div>
+              <div class="miniChoices" id="schoolStrobeApproval">
+                <button type="button" data-value="Yes">Yes</button>
+                <button type="button" data-value="No">No</button>
+                <button type="button" data-value="Not sure">Not sure</button>
+              </div>
+            </div>
+
+            <p class="strobeWarning" id="schoolStrobeWarning" hidden>
+              Flashing/strobe effects can trigger seizures in people with photosensitive epilepsy.
+              If approval is No or Not sure, Ozzsound will treat strobes as not approved.
+            </p>
+          </div>
+
+          <div class="schoolPlanSummary" id="schoolPlanSummary">Choose what suits your event — nothing here is locked in.</div>
+        </div>
+      </section>
+
       <section class="schoolSection" id="safety">
         <div class="schoolSafety">
           <div class="schoolSafetyMain">
@@ -255,8 +350,8 @@
         </div>
 
         <div class="schoolCtaActions">
-          <a class="btn primary large" href="index.html?event=schools#availability">Check availability <span>→</span></a>
-          <a class="btn secondary" href="index.html?event=schools#contact">School enquiry <span>↗</span></a>
+          <a class="btn primary large" href="index.html?event=schools#availability" data-school-handoff>Check availability <span>→</span></a>
+          <a class="btn secondary" href="index.html?event=schools#contact" data-school-handoff>School enquiry <span>↗</span></a>
         </div>
       </section>
     </div>
@@ -268,5 +363,63 @@
       <div>Tasmania · Professional DJ &amp; Event Entertainment</div>
     </div>
   </footer>
+
+  <script>
+  (() => {
+    const state={vibe:'',extras:new Set(),strobe:'',strobeApproval:''};
+    const summary=document.querySelector('#schoolPlanSummary');
+    const strobeConfirm=document.querySelector('#schoolStrobeConfirm');
+    const strobeWarning=document.querySelector('#schoolStrobeWarning');
+
+    const selectOne=(root,key)=>{
+      root?.addEventListener('click',e=>{
+        const b=e.target.closest('button[data-value],button[data-vibe]'); if(!b)return;
+        root.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));
+        b.classList.add('selected');
+        state[key]=b.dataset.value||b.dataset.vibe||'';
+        if(key==='strobe'){
+          const yes=state.strobe==='Yes';
+          strobeConfirm?.classList.toggle('show',yes);
+          strobeWarning.hidden=!yes;
+          if(!yes){
+            state.strobeApproval='';
+            document.querySelectorAll('#schoolStrobeApproval button').forEach(x=>x.classList.remove('selected'));
+          }
+        }
+        update();
+      });
+    };
+
+    selectOne(document.querySelector('#schoolVibeChoices'),'vibe');
+    selectOne(document.querySelector('#schoolStrobe'),'strobe');
+    selectOne(document.querySelector('#schoolStrobeApproval'),'strobeApproval');
+
+    document.querySelector('#schoolFunExtras')?.addEventListener('click',e=>{
+      const b=e.target.closest('button[data-extra]'); if(!b)return;
+      const v=b.dataset.extra;
+      state.extras.has(v)?state.extras.delete(v):state.extras.add(v);
+      b.classList.toggle('selected',state.extras.has(v));
+      update();
+    });
+
+    function update(){
+      const bits=[];
+      if(state.vibe)bits.push(state.vibe);
+      if(state.extras.size)bits.push(state.extras.size+' fun extra'+(state.extras.size===1?'':'s'));
+      if(state.strobe)bits.push('Strobe: '+state.strobe);
+      summary.textContent=bits.length?bits.join(' · '):'Choose what suits your event — nothing here is locked in.';
+    }
+
+    document.querySelectorAll('[data-school-handoff]').forEach(a=>a.addEventListener('click',()=>{
+      const payload={
+        vibe:state.vibe||'Not selected',
+        extras:[...state.extras],
+        strobe:state.strobe||'Not selected',
+        strobeApproval:state.strobe==='Yes'?(state.strobeApproval||'Not confirmed'):'Not applicable'
+      };
+      try{localStorage.setItem('ozzsoundSchoolPlan',JSON.stringify(payload));}catch(e){}
+    }));
+  })();
+  </script>
 </body>
 </html>
