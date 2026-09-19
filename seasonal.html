@@ -42,11 +42,11 @@ body.theme-christmas .christmasSnow{z-index:2}
   body.theme-christmas .seasonMain{background-position:center bottom;background-size:auto 100%;background-attachment:scroll}
 }
 /* Christmas flying Santa artwork */
-.christmasSleigh{display:none;position:fixed;left:0;top:88px;width:100%;height:150px;overflow:hidden;pointer-events:none;z-index:4}
+.christmasSleigh{display:none;position:fixed;left:0;top:72px;width:100%;height:calc(100vh - 150px);overflow:hidden;pointer-events:none;z-index:4}
 body.theme-christmas .christmasSleigh{display:block}
 .christmasSantaFlyby{position:absolute;left:0;top:12px;width:320px;height:auto;opacity:0;filter:drop-shadow(0 5px 7px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(255,202,92,.22));will-change:transform;transform:translate3d(-420px,0,0)}
 .christmasSantaFlyby.is-flying{opacity:1}
-@media(max-width:720px){.christmasSleigh{top:70px;height:105px}.christmasSantaFlyby{top:8px;width:220px}}
+@media(max-width:720px){.christmasSleigh{top:64px;height:calc(100vh - 132px)}.christmasSantaFlyby{top:0;width:220px}}
 @media(prefers-reduced-motion:reduce){.christmasSleigh{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
@@ -88,7 +88,11 @@ body.theme-christmas .christmasSleigh{display:block}
     const edge=width+80;
     const start=direction==='ltr'?-edge:window.innerWidth+edge;
     const finish=direction==='ltr'?window.innerWidth+edge:-edge;
-    const y=Math.round(4+Math.random()*(mobile?22:34));
+    const layer=santa.parentElement;
+    const layerHeight=layer.clientHeight || window.innerHeight;
+    const santaHeight=santa.getBoundingClientRect().height || (mobile?110:160);
+    const safeBottom=Math.max(10,layerHeight-santaHeight-18);
+    const y=Math.round(10+Math.random()*Math.max(1,safeBottom-10));
     const duration=Math.round(10500+Math.random()*4500);
     santa.style.transition='none';
     santa.style.transform=`translate3d(${start}px,${y}px,0) scaleX(${direction==='ltr'?1:-1})`;
