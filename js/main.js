@@ -494,6 +494,10 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const submit=document.querySelector('#submitEnquiry'), status=document.querySelector('#formStatus');
   const fallback=document.querySelector('#contactFallback');
   const eventMap={weddings:'Wedding',parties:'Birthday & Party',schools:'School Function',seasonal:'Seasonal Event',corporate:'Corporate Event',sporting:'Sporting Event',karaoke:'Karaoke',other:'Other Event'};
+  const requestedEvent=new URLSearchParams(location.search).get('event');
+  if(requestedEvent&&eventMap[requestedEvent]&&eventSelect){
+    eventSelect.value=eventMap[requestedEvent];
+  }
   const today=new Date(); dateInput.min=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
   const selectedTime=(d,prefix)=>{
