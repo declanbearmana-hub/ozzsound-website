@@ -230,13 +230,13 @@ to{transform:translateY(2px)}}
     <span class="whipLine"></span>
   </div>
   <svg class="santaToTeamReins" viewBox="0 0 1020 180" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 112 C155 104 286 94 416 98 S708 91 1010 78"/>
-    <path d="M0 119 C160 114 292 107 421 111 S713 104 1010 91"/>
+    <path d="M0 104 C118 100 224 96 340 99 S598 94 780 84 S930 79 1010 76"/>
+    <path d="M0 111 C120 108 228 105 344 108 S602 104 784 95 S932 91 1010 88"/>
   </svg>
   <svg class="teamReins" viewBox="0 0 940 180" preserveAspectRatio="none" aria-hidden="true">
-    <path class="rein rein1" d="M12 108 C105 99 154 92 216 82 S344 87 454 101 S580 86 657 77 S790 79 878 69"/>
-    <path class="rein rein2" d="M12 114 C108 108 164 103 220 94 S348 99 458 111 S584 98 662 89 S794 91 883 82"/>
-    <path class="teamTrace" d="M170 104 L226 88 M369 84 L451 104 M607 102 L660 83 M824 79 L883 72"/>
+    <path class="rein rein1" d="M12 104 C92 101 151 95 218 87 S350 92 449 99 S575 91 651 82 S786 80 874 72"/>
+    <path class="rein rein2" d="M12 111 C96 108 156 104 222 98 S354 103 453 109 S579 102 656 94 S790 92 879 85"/>
+    <path class="teamTrace" d="M172 101 L222 91 M374 91 L449 101 M601 99 L655 86 M818 82 L877 75"/>
   </svg>
   <div class="reindeerTeam">
   <div class="motionDeer deerOne">
@@ -251,21 +251,21 @@ to{transform:translateY(2px)}}
 <style>
 #reindeerMotionTest{display:none}
 body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;overflow:hidden}
-.santaRig{position:absolute;left:-355px;top:39%;width:390px;height:180px;animation:testTeamFly 13.5s linear infinite;transform-origin:right center;will-change:transform;z-index:5}
-.sleighArtwork{position:absolute;right:-20px;top:-18px;width:390px;height:auto;object-fit:contain;filter:drop-shadow(0 7px 6px rgba(0,0,0,.28))}
-.santaArm{position:absolute;right:88px;top:29px;width:18px;height:54px;border-radius:12px;background:linear-gradient(90deg,#a50f1d,#e42b36 58%,#8f0b17);transform-origin:50% 8px;animation:santaWhipArm 3.8s ease-in-out infinite;z-index:8}
+.santaRig{position:absolute;left:-300px;top:39%;width:360px;height:180px;animation:testTeamFly 13.5s linear infinite;transform-origin:right center;will-change:transform;z-index:5}
+.sleighArtwork{position:absolute;right:-8px;top:-10px;width:360px;height:auto;object-fit:contain;filter:drop-shadow(0 7px 6px rgba(0,0,0,.28));animation:sleighFloat 2.7s ease-in-out infinite}
+.santaArm{position:absolute;right:80px;top:31px;width:18px;height:52px;border-radius:12px;background:linear-gradient(90deg,#a50f1d,#e42b36 58%,#8f0b17);transform-origin:50% 8px;animation:santaWhipArm 3.8s ease-in-out infinite;z-index:8}
 .santaHand{position:absolute;left:2px;bottom:-5px;width:15px;height:15px;border-radius:50%;background:#f0c49d;box-shadow:0 0 0 2px rgba(92,43,26,.18)}
 .whipHandle{position:absolute;left:8px;bottom:-17px;width:4px;height:25px;border-radius:3px;background:#6c3d21;transform:rotate(-34deg);transform-origin:top center}
-.whipLine{position:absolute;right:59px;top:79px;width:116px;height:66px;border-top:2px solid #56331f;border-radius:50%;transform-origin:right top;transform:rotate(-18deg);animation:whipCrack 3.8s cubic-bezier(.4,0,.2,1) infinite;z-index:7;opacity:.9}
+.whipLine{position:absolute;right:54px;top:78px;width:112px;height:64px;border-top:2px solid #56331f;border-radius:50%;transform-origin:right top;transform:rotate(-18deg);animation:whipCrack 3.8s cubic-bezier(.4,0,.2,1) infinite;z-index:7;opacity:.9}
 .whipLine:after{content:"";position:absolute;left:-53px;top:-18px;width:67px;height:44px;border-top:2px solid #56331f;border-radius:50%;transform:rotate(16deg)}
 .reindeerTeam{position:absolute;left:0;top:39%;width:900px;height:180px;animation:testTeamFly 13.5s linear infinite;will-change:transform}
 .motionDeer.deerOne,.motionDeer.deerThree{transform-origin:center;filter:drop-shadow(0 4px 4px rgba(0,0,0,.2))}
 .motionDeer.deerTwo,.motionDeer.deerFour{transform-origin:center;filter:drop-shadow(0 6px 6px rgba(0,0,0,.24))}
 .motionDeer{--cycle:820ms;position:absolute;left:0;top:0;width:245px;height:145px;transform-origin:50% 50%;animation:deerFloat var(--cycle) ease-in-out infinite;filter:drop-shadow(0 5px 5px rgba(0,0,0,.22));will-change:transform}
-.motionDeer.deerOne{left:8px;top:27px;scale:.86;z-index:1}
-.motionDeer.deerTwo{left:198px;top:7px;scale:.91;--cycle:845ms;z-index:2}
-.motionDeer.deerThree{left:432px;top:25px;scale:.97;--cycle:800ms;z-index:3}
-.motionDeer.deerFour{left:636px;top:1px;scale:1.03;--cycle:865ms;z-index:4}
+.motionDeer.deerOne{left:18px;top:25px;scale:.89;z-index:1}
+.motionDeer.deerTwo{left:205px;top:8px;scale:.93;--cycle:845ms;z-index:2}
+.motionDeer.deerThree{left:423px;top:23px;scale:.97;--cycle:800ms;z-index:3}
+.motionDeer.deerFour{left:625px;top:3px;scale:1.01;--cycle:865ms;z-index:4}
 .motionDeer.deerOne .leg,.motionDeer.deerOne .leg b{animation-delay:-.04s}
 .motionDeer.deerTwo .leg,.motionDeer.deerTwo .leg b{animation-delay:-.23s}
 .motionDeer.deerThree .leg,.motionDeer.deerThree .leg b{animation-delay:-.41s}
@@ -329,11 +329,12 @@ body.reindeer-motion-test #reindeerMotionTest{display:block;position:fixed;inset
 @keyframes deerFloat{0%,100%{margin-top:0}18%{margin-top:-5px}42%{margin-top:-1px}58%{margin-top:3px}76%{margin-top:-3px}}
 @keyframes headBob{0%,100%{transform:rotate(-4deg) translateY(0)}18%{transform:rotate(-2deg) translateY(-1px)}58%{transform:rotate(1deg) translateY(1px)}76%{transform:rotate(-3deg) translateY(-1px)}}
 @keyframes tailFlick{from{transform:rotate(-13deg)}to{transform:rotate(14deg)}}
-@keyframes testTeamFly{0%{transform:translateX(-980px) translateY(0) rotate(-.6deg)}48%{transform:translateX(calc(50vw - 450px)) translateY(-12px) rotate(.4deg)}100%{transform:translateX(calc(100vw + 980px)) translateY(2px) rotate(-.4deg)}}
+@keyframes testTeamFly{0%{transform:translateX(-980px) translateY(0) rotate(-.35deg)}48%{transform:translateX(calc(50vw - 450px)) translateY(-9px) rotate(.25deg)}100%{transform:translateX(calc(100vw + 980px)) translateY(1px) rotate(-.25deg)}}
 @keyframes reinWave{from{transform:translateY(-1px)}to{transform:translateY(2px)}}
+@keyframes sleighFloat{0%,100%{transform:translateY(0) rotate(-.25deg)}50%{transform:translateY(-3px) rotate(.25deg)}}
 @keyframes santaWhipArm{0%,68%,100%{transform:rotate(-16deg)}74%{transform:rotate(-48deg)}79%{transform:rotate(24deg)}86%{transform:rotate(-10deg)}}
 @keyframes whipCrack{0%,68%,100%{transform:rotate(-18deg) scaleX(.92)}74%{transform:rotate(-42deg) scaleX(1.08)}79%{transform:rotate(16deg) scaleX(.78)}86%{transform:rotate(-10deg) scaleX(.96)}}
-@media(max-width:720px){.reindeerTeam,.teamReins,.santaRig,.santaToTeamReins{top:43%;transform-origin:left center;scale:.62}.motionDeer{--cycle:860ms}.santaRig{left:-355px}}
+@media(max-width:720px){.reindeerTeam,.teamReins,.santaRig,.santaToTeamReins{top:43%;transform-origin:left center;scale:.62}.motionDeer{--cycle:860ms}.santaRig{left:-300px}}
 @media(prefers-reduced-motion:reduce){#reindeerMotionTest{display:none!important}}
 </style>
 <script>
