@@ -120,8 +120,10 @@ body.theme-christmas .christmasSleigh{display:block}
         return;
       }
       const dx=p.x-previous.x,dy=p.y-previous.y;
-      const angle=Math.atan2(dy,dx)*180/Math.PI;
+      const rawAngle=Math.atan2(dy,dx)*180/Math.PI;
       const facing=dx>=0?1:-1;
+      const travelAngle=facing===1?rawAngle:(rawAngle>0?rawAngle-180:rawAngle+180);
+      const angle=Math.max(-18,Math.min(18,travelAngle));
       const base=`translate3d(${p.x}px,${p.y}px,0) rotate(${angle}deg) scaleX(${facing})`;
 
       if(i===loopIndex){
