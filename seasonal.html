@@ -287,7 +287,7 @@ to{transform:translateY(2px)}}
 (function(){
   const clock=document.getElementById('newYearClock');
   if(!clock)return;
-  let timer=null,streamerTimer=null,lastTheme=false,value=10;
+  let timer=null,streamerTimer=null,celebrationTimer=null,restartTimer=null,lastTheme=false,value=10;
   function paint(){
     clock.textContent='00:'+String(value).padStart(2,'0');
     clock.classList.remove('tick');void clock.offsetWidth;clock.classList.add('tick');
@@ -295,6 +295,8 @@ to{transform:translateY(2px)}}
   function reset(){
     if(timer){clearInterval(timer);timer=null}
     if(streamerTimer){clearTimeout(streamerTimer);streamerTimer=null}
+    if(celebrationTimer){clearTimeout(celebrationTimer);celebrationTimer=null}
+    if(restartTimer){clearTimeout(restartTimer);restartTimer=null}
     value=10;clock.classList.remove('zero');document.body.classList.remove('newyear-fireworks-live');
     document.getElementById('newYearCountdown')?.classList.remove('celebrating');
     const fx=document.getElementById('nyPartyFx');if(fx)fx.dataset.confetti='off';paint();
@@ -329,6 +331,15 @@ to{transform:translateY(2px)}}
           streamerTimer=setTimeout(popConfetti,900+Math.random()*1900);
         };
         streamerTimer=setTimeout(popConfetti,2300);
+        celebrationTimer=setTimeout(()=>{
+          document.body.classList.remove('newyear-fireworks-live');
+          if(fx)fx.dataset.confetti='off';
+          if(streamerTimer){clearTimeout(streamerTimer);streamerTimer=null}
+          const box=document.getElementById('nyConfetti');if(box)box.replaceChildren();
+          restartTimer=setTimeout(()=>{
+            if(document.body.classList.contains('theme-newyear'))start();
+          },30000);
+        },10000);
       }
     },1000);
   }
