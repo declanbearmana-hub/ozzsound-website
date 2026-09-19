@@ -494,6 +494,16 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   try{const v=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null');if(v){const msg=form.querySelector('textarea[name="message"]');if(msg&&!msg.value){const gear=(v.items||[]).map(x=>x.name).join(', ');msg.value='Virtual Setup created'+(gear?' with: '+gear:'')+'.\nA venue preview was created in the Virtual Setup planning tool.';}}}catch(e){}
   try{const w=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null');if(w&&new URLSearchParams(location.search).get('from')==='wedding'){eventSelect.value='Wedding';if(w.date)dateInput.value=w.date;const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');if(venue&&w.venue)venue.value=w.venue;if(guests&&w.guests)guests.value=w.guests;if(msg){const lines=['Wedding Experience Builder','Coverage: '+((w.coverage||[]).join(', ')||'Not decided'),'Setting: '+(w.setting||'Not decided'),'Style: '+(w.style||'Not decided'),'Ceremony: '+((w.ceremonyNeeds||[]).join(', ')||'Not specified'),'Reception: '+((w.receptionNeeds||[]).join(', ')||'Not specified'),'Extras: '+((w.extras||[]).join(', ')||'None selected')];if(w.mustPlay)lines.push('Must play: '+w.mustPlay);if(w.wouldLove)lines.push('Would love: '+w.wouldLove);if(w.doNotPlay)lines.push('Do not play: '+w.doNotPlay);if((w.timeline||[]).length){lines.push('Timeline:');w.timeline.forEach(x=>lines.push((x.time||'Time TBC')+' — '+(x.event||'Event TBC')))}msg.value=lines.join('\n');}}}catch(e){}
   try{
+    const p=JSON.parse(localStorage.getItem('ozzsoundPartyBuilder')||'null');
+    if(p&&new URLSearchParams(location.search).get('from')==='party'){
+      eventSelect.value='Birthday & Party';
+      if(p.date)dateInput.value=p.date;
+      const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');
+      if(venue&&p.venue)venue.value=p.venue;if(guests&&p.guests)guests.value=p.guests;
+      if(msg&&!msg.value){const lines=['Birthday / Party Builder','Celebration: '+(p.type||'Not decided'),'Vibe: '+(p.vibe||'Not decided'),'Crowd: '+(p.crowd||'Not decided'),'Setting: '+(p.setting||'Not decided')];if((p.involvement||[]).length)lines.push('Dazz involved in: '+p.involvement.join(', '));if(p.kidsLevel)lines.push('Kids party style: '+p.kidsLevel);if((p.fun||[]).length)lines.push('Fun options: '+p.fun.join(', '));if((p.music||[]).length)lines.push('Music: '+p.music.join(', '));if(p.musicControl)lines.push('Music direction: '+p.musicControl);if((p.moments||[]).length)lines.push('Party moments: '+p.moments.join(', '));if(p.strobe)lines.push('Strobe lighting: '+p.strobe+(p.strobe==='Yes'?' · Organiser approval: '+(p.strobeApproval||'Not confirmed'):''));if(p.notes)lines.push('Anything else: '+p.notes);msg.value=lines.join('\n')}
+    }
+  }catch(e){}
+  try{
     const s=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
     if(s&&new URLSearchParams(location.search).get('event')==='schools'){
       eventSelect.value='School Function';
