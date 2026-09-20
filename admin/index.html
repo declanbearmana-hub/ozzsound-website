@@ -1505,7 +1505,7 @@
       }
     }
 
-  </style>
+  .contractAdmin{margin:0 0 22px;border:1px solid var(--border);border-radius:16px;background:var(--panel)}.contractAdmin summary{cursor:pointer;padding:18px;font-weight:900}.contractAdminGrid{padding:0 18px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.contractAdminWide{grid-column:1/-1}.contractAdmin textarea{min-height:300px}.contractAdmin .primary-button{max-width:260px}.contractAdmin #contractTemplateStatus{margin-left:12px;color:var(--green)}@media(max-width:700px){.contractAdminGrid{grid-template-columns:1fr}.contractAdminWide{grid-column:auto}}</style>
 </head>
 
 <body>
@@ -1646,7 +1646,7 @@
       </div>
 
 
-      <section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
+      <section class="contractAdmin" id="contractAdmin"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
       <section
         id="adminNotificationArea"
         class="admin-notification-area"
@@ -9446,5 +9446,12 @@ total,
 
   </script>
 
-<script src="inventory-module.js?v=20260920-1"></script>\n</body>
+<script src="inventory-module.js?v=20260920-1"></script>\n<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const sel=document.querySelector('#contractTemplateSelect'),title=document.querySelector('#contractTemplateTitle'),ver=document.querySelector('#contractTemplateVersion'),supplier=document.querySelector('#contractTemplateSupplier'),terms=document.querySelector('#contractTemplateTerms'),save=document.querySelector('#saveContractTemplate'),status=document.querySelector('#contractTemplateStatus');
+ async function loadContract(){if(!window.OZZSOUND_ADMIN_CLIENT||!sel)return;status.textContent='Loading…';const {data,error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').select('*').eq('contract_type',sel.value).single();if(error){status.textContent=error.message;return}title.value=data.title||'';ver.value=data.version||'';supplier.value=data.supplier_display||'';terms.value=data.terms_text||'';status.textContent=''}
+ sel?.addEventListener('change',loadContract);save?.addEventListener('click',async()=>{status.textContent='Saving…';const {error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').update({title:title.value,version:ver.value,supplier_display:supplier.value,terms_text:terms.value,updated_at:new Date().toISOString()}).eq('contract_type',sel.value);status.textContent=error?error.message:'Saved ✓';});
+ setTimeout(loadContract,1200);
+});
+</script></body>
 </html>
