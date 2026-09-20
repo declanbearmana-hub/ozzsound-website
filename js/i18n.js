@@ -31,6 +31,24 @@ dict.ru={
 'Your name *':'Ваше имя *','Phone *':'Телефон *','Email':'Эл. почта','Event type *':'Тип мероприятия *','Choose event type':'Выберите тип мероприятия','Wedding':'Свадьба','Birthday & Party':'День рождения / вечеринка','School Function':'Школьное мероприятие','Seasonal Event':'Сезонное мероприятие','Corporate Event':'Корпоративное мероприятие','Sporting Event':'Спортивное мероприятие','Other Event':'Другое мероприятие','Event date *':'Дата мероприятия *','Venue / suburb *':'Площадка / район *','Approx. guests':'Примерное число гостей','Start time *':'Время начала *','Finish time *':'Время окончания *','Anything else we should know?':'Что ещё нам стоит знать?','Send enquiry':'Отправить заявку',
 'Your day. Your music.':'Ваш день. Ваша музыка.','Wedding date':'Дата свадьбы','Indoor':'В помещении','Outdoor':'На улице','Indoor & outdoor':'В помещении и на улице','Ceremony':'Церемония','Reception':'Приём','The whole day':'Весь день','Build your':'Создайте свой','karaoke night.':'вечер караоке.','Choose your eras':'Выберите эпохи','Choose your styles':'Выберите стили','gear hire.':'комплект оборудования.','All gear':'Всё оборудование','Sound':'Звук','Lighting':'Свет','Microphones':'Микрофоны','DJ gear':'DJ-оборудование','Build your package':'Соберите комплект','Clear list':'Очистить список','Event / hire date':'Дата мероприятия / аренды','Planning tool only.':'Только для планирования.','1. Your space':'1. Ваше пространство','2. Add equipment':'2. Добавьте оборудование','3. Build your setup':'3. Создайте расстановку','Upload a photo to begin':'Загрузите фото, чтобы начать','Duplicate':'Дублировать','Remove':'Удалить','Clear setup':'Очистить расстановку','Save preview image':'Сохранить изображение','Built around your event':'Создано вокруг вашего мероприятия','As formal or as fun as you want':'Формально или весело — как вам хочется','Planning beyond the playlist':'Планирование не ограничивается плейлистом','Ready to plan yours?':'Готовы спланировать своё мероприятие?'
 };
+function translateTree(root=document,lang=localStorage.getItem('ozzsoundLanguage')||'en'){
+ if(lang==='en')return;
+ const d=dict[lang]||{};
+ const selector='a,button,small,strong,p,h1,h2,h3,h4,label>span,option,.eyebrow,.heroStatus span:last-child,.scrollCue span,.footerTagline,.mobileMenuFoot,summary,.hireProductMeta,.hireStock,.hireAvailability,.hireVideoDisclaimer,.calTime';
+ root.querySelectorAll(selector).forEach(el=>{
+  if(el.closest('.languagePicker'))return;
+  if(el.children.length&&![...el.children].every(x=>x.tagName==='SPAN'))return;
+  const key=norm(el.dataset.i18nOriginal||el.textContent);
+  if(!key)return;
+  if(!el.dataset.i18nOriginal)el.dataset.i18nOriginal=key;
+  if(d[key])el.textContent=d[key];
+ });
+ root.querySelectorAll('[placeholder]').forEach(el=>{
+  const key=norm(el.dataset.i18nPlaceholder||el.getAttribute('placeholder'));
+  if(!el.dataset.i18nPlaceholder)el.dataset.i18nPlaceholder=key;
+  if(d[key])el.setAttribute('placeholder',d[key]);
+ });
+}
 function apply(lang){
  document.documentElement.lang=lang==='zh'?'zh-CN':lang;
  document.querySelectorAll('[data-i18n-original]').forEach(el=>{el.textContent=el.dataset.i18nOriginal});
@@ -43,6 +61,7 @@ function apply(lang){
    if(d[key])el.textContent=d[key];
   });
  }
+ translateTree(document,lang);
  document.querySelectorAll('[data-lang-current]').forEach(x=>x.textContent=lang.toUpperCase());
  localStorage.setItem('ozzsoundLanguage',lang);
  document.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-current',x.dataset.lang===lang?'true':'false'));
@@ -54,7 +73,18 @@ function mount(){
  const nav=document.querySelector('.navlinks');if(nav)nav.insertBefore(picker,nav.querySelector('.navCta'));
  const mobile=document.querySelector('.mobileMenuInner');if(mobile){const m=picker.cloneNode(true);m.classList.add('languagePickerMobile');mobile.appendChild(m);}
  document.querySelectorAll('.languagePicker').forEach(p=>{const b=p.querySelector('.languageButton');b.addEventListener('click',()=>{const open=p.classList.toggle('open');b.setAttribute('aria-expanded',String(open));});p.querySelectorAll('[data-lang]').forEach(x=>x.addEventListener('click',()=>{apply(x.dataset.lang);document.querySelectorAll('.languagePicker').forEach(q=>q.classList.remove('open'));}));});
- apply(localStorage.getItem('ozzsoundLanguage')||'en');
+ const activeLang=localStorage.getItem('ozzsoundLanguage')||'en';
+ apply(activeLang);
+ let translationQueued=false;
+ const observer=new MutationObserver(mutations=>{
+  if((localStorage.getItem('ozzsoundLanguage')||'en')==='en')return;
+  if(translationQueued)return;
+  if(!mutations.some(m=>m.addedNodes&&m.addedNodes.length))return;
+  translationQueued=true;
+  requestAnimationFrame(()=>{translationQueued=false;translateTree(document,localStorage.getItem('ozzsoundLanguage')||'en');});
+ });
+ observer.observe(document.body,{childList:true,subtree:true});
+ window.OZZSOUND_I18N={apply,translateTree,languages};
 }
 document.addEventListener('DOMContentLoaded',mount);
 })();
