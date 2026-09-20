@@ -615,8 +615,23 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   }
 
   form.addEventListener('submit',async e=>{
-    e.preventDefault(); if(!form.reportValidity()||!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
+    e.preventDefault();
+    if(!form.checkValidity()){
+      const invalid=form.querySelector(':invalid');
+      status.textContent='Please complete the highlighted required field before sending your enquiry.';
+      status.classList.remove('success');
+      invalid?.scrollIntoView({behavior:'smooth',block:'center'});
+      invalid?.focus({preventScroll:true});
+      form.reportValidity();
+      return;
+    }
+    if(!cfg.supabaseUrl||!cfg.supabasePublishableKey){
+      status.textContent='The secure enquiry service is temporarily unavailable. Please try again shortly.';
+      return;
+    }
     submit.disabled=true;
+    submit.textContent='Sending enquiry…';
+    status.textContent='Preparing your enquiry…';
     const enquiryId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
     const enquiryRef=`OZZ-${String(enquiryId).replace(/[^a-fA-F0-9]/g,'').slice(0,8).toUpperCase()}`;
     const d=new FormData(form);
@@ -686,6 +701,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
             ? 'We could not securely save your enquiry. Please try again in a moment.'
             : (err?.message || 'We could not securely send your enquiry. Nothing has been sent — please try again.'));
       submit.disabled=false;
+      submit.innerHTML='Send enquiry <span>→</span>';
     }
   });
 
@@ -902,7 +918,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         const id=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
         const path=`${folder}/${picker.category}/${id}-${cleanName(file.name)}`;
         const url=`${cfg.supabaseUrl}/storage/v1/object/${encodeURIComponent(cfg.supabaseUploadBucket)}/${path.split('/').map(encodeURIComponent).join('/')}`;
-        const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:`Bearer ${cfg.supabasePublishableKey}`,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
+        const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
         if(!res.ok){let detail='';try{detail=await res.text()}catch(e){};throw new Error(`Photo upload failed (${res.status}). ${detail}`)}
         paths.push(path);
         if(picker.category==='display-photos')displayPhotoPaths.push(path);else attachmentPaths.push(path);
