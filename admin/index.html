@@ -2469,11 +2469,19 @@ const { createClient } =
 
     async function deviceHash() {
       const key = "ozzsound_admin_device_id";
-      let id = localStorage.getItem(key);
-      if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
-      const raw = [id, navigator.userAgent, navigator.language, screen.width + "x" + screen.height].join("|");
-      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
-      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+      let id = "";
+      try { id = localStorage.getItem(key) || ""; } catch (_) {}
+      if (!id) {
+        id = (globalThis.crypto?.randomUUID?.() || ("dev-" + Date.now() + "-" + Math.random().toString(36).slice(2)));
+        try { localStorage.setItem(key, id); } catch (_) {}
+      }
+      const raw = [id, navigator.userAgent || "", navigator.language || "", screen?.width + "x" + screen?.height].join("|");
+      if (globalThis.crypto?.subtle && globalThis.TextEncoder) {
+        const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+        return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      /* Compatibility fallback: the server only needs a stable opaque device identifier. */
+      return "browser-" + btoa(unescape(encodeURIComponent(raw))).replace(/[^a-zA-Z0-9]/g, "").slice(0, 180);
     }
 
     async function requestDeviceApproval(hash) {
@@ -2505,7 +2513,13 @@ const { createClient } =
 
       const check = async () => {
         const { data, error } = await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
-        if (error) return;
+        if (error) {
+          stopDeviceApprovalPolling();
+          await supabaseClient.auth.signOut();
+          showLogin();
+          showMessage("The approval status could not be checked. Please sign in again.", "error");
+          return;
+        }
         if (data === "approved") {
           stopDeviceApprovalPolling();
           await verifyAdmin(user);
@@ -2544,6 +2558,15 @@ const { createClient } =
       const { data: status, error: statusError } =
         await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
 
+      if (statusError) {
+        console.warn("Device status check unavailable; continuing to secure approval request.", statusError);
+      }
+      if (!statusError && status === "unauthorized") {
+        await supabaseClient.auth.signOut();
+        showLogin();
+        showMessage("Access denied. This account is not an authorised OzzSound administrator.", "error");
+        return false;
+      }
       if (!statusError && status === "approved") {
         const { data: trustedResult } =
           await supabaseClient.rpc("admin_device_is_trusted", { p_device_hash: hash });
@@ -2551,8 +2574,6 @@ const { createClient } =
       } else if (!statusError && status === "pending") {
         await waitForDeviceApproval(user, hash);
         return false;
-      } else if (statusError) {
-        console.warn("No existing device approval yet; requesting one.", statusError);
       }
 
       if (trusted !== true) {
@@ -2568,7 +2589,7 @@ const { createClient } =
         } catch (error) {
           console.error("Device approval request failed:", error);
           await supabaseClient.auth.signOut(); showLogin();
-          showMessage("Could not send the security email. Please try again.", "error"); return false;
+          showMessage(error?.message || "Could not send the security email. Please try again.", "error"); return false;
         }
       }
 
@@ -9066,7 +9087,7 @@ total,
           console.error("Admin verification error:", verifyError);
           await supabaseClient.auth.signOut();
           showLogin();
-          showMessage("The security check could not be completed. Please try again.", "error");
+          showMessage("Security check failed: " + (verifyError?.message || "Please try again."), "error");
         } finally {
           loginButton.disabled = false;
           loginButton.textContent = "Sign In";
@@ -9287,10 +9308,14 @@ total,
       if (
         session?.user
       ) {
-
-        await verifyAdmin(
-          session.user
-        );
+        try {
+          await verifyAdmin(session.user);
+        } catch (error) {
+          console.error("Initial admin verification failed:", error);
+          await supabaseClient.auth.signOut();
+          showLogin();
+          showMessage("Security check failed: " + (error?.message || "Please sign in again."), "error");
+        }
 
       } else {
 
