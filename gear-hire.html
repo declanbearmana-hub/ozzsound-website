@@ -14,6 +14,16 @@
 .hireProductVisual .hirePhotoPrev{left:10px}.hireProductVisual .hirePhotoNext{right:10px}
 .hireProductVisual .hirePhotoCount{position:absolute;right:10px;bottom:10px;z-index:4;padding:6px 9px;border-radius:999px;background:rgba(10,13,20,.82);color:#cbd6e5;font:800 10px/1 Inter,sans-serif;letter-spacing:.05em}
 .hireProductVisual .hirePhotoPrev:hover,.hireProductVisual .hirePhotoNext:hover{border-color:#5edfff;background:rgba(19,34,46,.9)}
+/* Secondary gallery photos always show the COMPLETE uploaded image.
+   Primary/cover photos keep their carefully tuned per-item framing above. */
+.hireProduct.hireSecondaryPhoto .hireProductVisual img{
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:none!important;padding:8px!important;box-sizing:border-box!important;background:#fff!important;
+}
+@media(max-width:650px){
+ .hireProduct.hireSecondaryPhoto .hireProductVisual img{padding:6px!important}
+}
 /* Live inventory card polish */
 .hireCatalogue{align-items:stretch}
 .hireProduct{display:flex;flex-direction:column;min-width:0}
