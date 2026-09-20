@@ -62,6 +62,11 @@
     }
   </style>
 
+<style id="websiteFeedbackStyles">
+.websiteFeedback{margin-top:22px;padding:24px;border:1px solid rgba(242,43,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(242,43,255,.07),rgba(40,230,255,.05))}
+.websiteFeedback h3{margin:8px 0}.feedbackIntro{margin:0 0 22px;color:#b8b8c5}.feedbackGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.feedbackQuestion{display:flex;flex-direction:column;gap:9px;min-width:0}.feedbackWide{grid-column:1/-1}.feedbackLabel{font-weight:700;color:#fff;line-height:1.35}.websiteFeedback select,.websiteFeedback textarea{width:100%;box-sizing:border-box}.starRating{display:flex;gap:7px;align-items:center;min-height:46px}.starRating button{appearance:none;-webkit-appearance:none;border:0;background:transparent;padding:0 2px;color:#77758a;font-size:36px;line-height:1;cursor:pointer;transition:transform .12s ease,color .12s ease,text-shadow .12s ease}.starRating button.preview,.starRating button.selected{color:#ffd84a;text-shadow:0 0 8px rgba(255,216,74,.55),0 0 18px rgba(242,43,255,.25)}.starRating button:hover,.starRating button:focus-visible{transform:scale(1.14);outline:none}.boringRatingText{min-height:24px;color:#b8b8c5;font-size:14px;line-height:1.45}
+@media(max-width:720px){.websiteFeedback{padding:19px 16px}.feedbackGrid{grid-template-columns:1fr}.feedbackWide{grid-column:auto}.starRating button{font-size:34px}.starRating{gap:5px}}
+</style>
 </head>
 
 
@@ -711,17 +716,43 @@
 
 
 
-      <div class="formWide" style="margin-top:22px;padding:22px;border:1px solid rgba(242,43,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(242,43,255,.07),rgba(40,230,255,.05));">
+      <div class="formWide websiteFeedback">
         <div class="eyebrow">Quick website feedback</div>
-        <h3 style="margin:8px 0 8px;">Before you hit send — how did we do?</h3>
-        <p style="margin:0 0 18px;color:#b8b8c5;">Completely optional. Your feedback helps us make OzzSound easier and more fun to use.</p>
-        <label><span>How did you like this page?</span><select name="feedbackPageRating"><option value="">Choose 1–5 stars</option><option value="1">★ — 1 star</option><option value="2">★★ — 2 stars</option><option value="3">★★★ — 3 stars</option><option value="4">★★★★ — 4 stars</option><option value="5">★★★★★ — 5 stars</option></select></label>
-        <label><span>Was the website easy to navigate?</span><select name="feedbackNavigation"><option value="">Choose 1–5 stars</option><option value="1">★ — 1 star</option><option value="2">★★ — 2 stars</option><option value="3">★★★ — 3 stars</option><option value="4">★★★★ — 4 stars</option><option value="5">★★★★★ — 5 stars</option></select></label>
-        <label><span>Did you find the information you needed?</span><select name="feedbackFoundInfo"><option value="">Choose an answer</option><option>Yes, easily</option><option>Mostly</option><option>Not really</option><option>No</option></select></label>
-        <label><span>What do you think is missing from this website?</span><textarea name="feedbackMissing" rows="3" maxlength="1000" placeholder="Anything you'd like us to add or explain better?"></textarea></label>
-        <label><span>Would you recommend this website to friends or family?</span><select name="feedbackRecommend"><option value="">Choose an answer</option><option>Definitely</option><option>Probably</option><option>Not sure</option><option>Probably not</option><option>No</option></select></label>
-        <label><span>On a scale of 1–5, how boring was this website?</span><select name="feedbackBoring"><option value="">Choose a rating</option><option value="1">★ — Soo boring!</option><option value="2">★★ — Boring but manageable</option><option value="3">★★★ — It was alright... felt like I was at work</option><option value="4">★★★★ — Pretty good! Needs some polishing</option><option value="5">★★★★★ — This website is so cool! Can you make me one? 😂</option></select></label>
-        <label><span>Anything else you'd change or improve?</span><textarea name="feedbackImprove" rows="3" maxlength="1000" placeholder="Optional — tell us anything else you noticed."></textarea></label>
+        <h3>Before you hit send — how did we do?</h3>
+        <p class="feedbackIntro">Completely optional. Your feedback helps us make OzzSound easier and more fun to use.</p>
+
+        <div class="feedbackGrid">
+          <div class="feedbackQuestion">
+            <span class="feedbackLabel">How did you like this page?</span>
+            <div class="starRating" data-rating="feedbackPageRating" role="radiogroup" aria-label="How did you like this page?">
+              <input type="hidden" name="feedbackPageRating" value="">
+              <button type="button" data-value="1" aria-label="1 star">☆</button><button type="button" data-value="2" aria-label="2 stars">☆</button><button type="button" data-value="3" aria-label="3 stars">☆</button><button type="button" data-value="4" aria-label="4 stars">☆</button><button type="button" data-value="5" aria-label="5 stars">☆</button>
+            </div>
+          </div>
+
+          <div class="feedbackQuestion">
+            <span class="feedbackLabel">Was the website easy to navigate?</span>
+            <div class="starRating" data-rating="feedbackNavigation" role="radiogroup" aria-label="Was the website easy to navigate?">
+              <input type="hidden" name="feedbackNavigation" value="">
+              <button type="button" data-value="1" aria-label="1 star">☆</button><button type="button" data-value="2" aria-label="2 stars">☆</button><button type="button" data-value="3" aria-label="3 stars">☆</button><button type="button" data-value="4" aria-label="4 stars">☆</button><button type="button" data-value="5" aria-label="5 stars">☆</button>
+            </div>
+          </div>
+
+          <label class="feedbackQuestion"><span class="feedbackLabel">Did you find the information you needed?</span><select name="feedbackFoundInfo"><option value="">Choose an answer</option><option>Yes, easily</option><option>Mostly</option><option>Not really</option><option>No</option></select></label>
+          <label class="feedbackQuestion"><span class="feedbackLabel">Would you recommend this website to friends or family?</span><select name="feedbackRecommend"><option value="">Choose an answer</option><option>Definitely</option><option>Probably</option><option>Not sure</option><option>Probably not</option><option>No</option></select></label>
+
+          <div class="feedbackQuestion feedbackWide">
+            <span class="feedbackLabel">On a scale of 1–5, how boring was this website?</span>
+            <div class="starRating" data-rating="feedbackBoring" role="radiogroup" aria-label="How boring was this website?">
+              <input type="hidden" name="feedbackBoring" value="">
+              <button type="button" data-value="1" aria-label="1 star">☆</button><button type="button" data-value="2" aria-label="2 stars">☆</button><button type="button" data-value="3" aria-label="3 stars">☆</button><button type="button" data-value="4" aria-label="4 stars">☆</button><button type="button" data-value="5" aria-label="5 stars">☆</button>
+            </div>
+            <div class="boringRatingText" aria-live="polite">Hover or tap a star to see what it means.</div>
+          </div>
+
+          <label class="feedbackQuestion feedbackWide"><span class="feedbackLabel">What do you think is missing from this website?</span><textarea name="feedbackMissing" rows="3" maxlength="1000" placeholder="Anything you'd like us to add or explain better?"></textarea></label>
+          <label class="feedbackQuestion feedbackWide"><span class="feedbackLabel">Anything else you'd change or improve?</span><textarea name="feedbackImprove" rows="3" maxlength="1000" placeholder="Optional — tell us anything else you noticed."></textarea></label>
+        </div>
       </div>
 
       <label class="privacyConsent formWide">
@@ -765,6 +796,42 @@
 </section><footer class="siteFooter"><div class="wrap footerMain"><a class="footerBrand" href="index.html" aria-label="Ozzsound home"><img src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="footerTagline">DJ &amp; event entertainment<br><span>Tasmania-wide</span></div><div class="footerLinks"><a href="index.html#events">Events</a><a href="why-ozzsound.html">Why Ozzsound</a><a href="privacy.html">Privacy</a></div></div><div class="wrap footerBottom"><span>© 2026 Ozzsound Mobile Music</span><a class="adminLoginLink" href="admin/">Admin Login</a></div></footer>
 
 
+<script id="websiteFeedbackStars">
+(()=>{
+  const boringLabels={
+    1:"1 = Soo boring!",
+    2:"2 = Boring but manageable",
+    3:"3 = It was alright... felt like I was at work",
+    4:"4 = Pretty good! Needs some polishing",
+    5:"5 = This website is so cool! Can you make me one? 😂"
+  };
+  document.querySelectorAll(".starRating").forEach(group=>{
+    const input=group.querySelector('input[type="hidden"]');
+    const stars=[...group.querySelectorAll("button[data-value]")];
+    const boringText=group.dataset.rating==="feedbackBoring" ? group.parentElement.querySelector(".boringRatingText") : null;
+    const paint=(value,preview=false)=>{
+      stars.forEach(star=>{
+        const on=Number(star.dataset.value)<=Number(value||0);
+        star.textContent=on?"★":"☆";
+        star.classList.toggle(preview&&on?"preview":"selected",on);
+        if(preview)star.classList.remove("selected");
+        else star.classList.remove("preview");
+        star.setAttribute("aria-checked",String(!preview&&Number(star.dataset.value)===Number(value)));
+      });
+      if(boringText) boringText.textContent=value ? boringLabels[value] : "Hover or tap a star to see what it means.";
+    };
+    stars.forEach(star=>{
+      star.setAttribute("role","radio");
+      star.addEventListener("mouseenter",()=>paint(star.dataset.value,true));
+      star.addEventListener("focus",()=>paint(star.dataset.value,true));
+      star.addEventListener("click",()=>{input.value=star.dataset.value;paint(input.value,false)});
+    });
+    group.addEventListener("mouseleave",()=>paint(input.value,false));
+    group.addEventListener("focusout",e=>{if(!group.contains(e.relatedTarget))paint(input.value,false)});
+    paint(input.value,false);
+  });
+})();
+</script>
 <script src="config/site-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/main.js?v=20260920-feedback1"></script>
