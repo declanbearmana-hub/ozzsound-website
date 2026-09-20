@@ -1518,28 +1518,12 @@
         Administration Portal
       </div>
 
-      <div id="mfaEnrollPanel" class="mfa-panel">
-        <h2>Secure your admin account</h2>
-        <p class="mfa-copy">This one-time setup links an authenticator app to this admin account. Scan the QR code, then enter the 6-digit code from your app.</p>
-        <img id="mfaQr" class="mfa-qr" alt="Authenticator setup QR code">
-        <div id="mfaSecret" class="mfa-secret"></div>
-        <form id="mfaEnrollForm">
-          <label for="mfaEnrollCode">Authenticator code</label>
-          <input id="mfaEnrollCode" class="mfa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
-          <button id="mfaEnrollButton" class="primary-button" type="submit">Link Authenticator</button>
-          <div id="mfaEnrollMessage" class="message"></div>
-        </form>
-      </div>
-
-      <div id="mfaChallengePanel" class="mfa-panel">
-        <h2>Authenticator verification</h2>
-        <p class="mfa-copy">Enter the 6-digit code from your authenticator app to continue to OzzSound Admin.</p>
-        <form id="mfaChallengeForm">
-          <label for="mfaChallengeCode">Authenticator code</label>
-          <input id="mfaChallengeCode" class="mfa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
-          <button id="mfaChallengeButton" class="primary-button" type="submit">Verify &amp; Continue</button>
-          <div id="mfaChallengeMessage" class="message"></div>
-        </form>
+      <div id="deviceApprovalPanel" class="mfa-panel">
+        <h2>Check your email</h2>
+        <p class="mfa-copy">This browser has not been approved for OzzSound Admin yet. An <strong>“Is this you?”</strong> email has been sent to <strong>ozzsound@hotmail.com</strong>.</p>
+        <p class="mfa-copy">Choose <strong>Allow Access</strong> or <strong>This Wasn't Me</strong> in the email. This page will continue automatically when approved.</p>
+        <div id="deviceApprovalStatus" class="message" style="display:block;color:#b8b8c5;background:rgba(40,230,255,.07);border:1px solid rgba(40,230,255,.2)">Waiting for approval…</div>
+        <button id="cancelDeviceApproval" class="secondary-button" type="button" style="margin-top:14px">Cancel login</button>
       </div>
 
       <form id="loginForm">
@@ -2079,13 +2063,10 @@ const { createClient } =
         "loginButton"
       );
 
-    const mfaEnrollPanel = document.getElementById("mfaEnrollPanel");
-    const mfaChallengePanel = document.getElementById("mfaChallengePanel");
-    const mfaEnrollForm = document.getElementById("mfaEnrollForm");
-    const mfaChallengeForm = document.getElementById("mfaChallengeForm");
-    const mfaEnrollMessage = document.getElementById("mfaEnrollMessage");
-    const mfaChallengeMessage = document.getElementById("mfaChallengeMessage");
-    let pendingMfaFactorId = null;
+    const deviceApprovalPanel = document.getElementById("deviceApprovalPanel");
+    const deviceApprovalStatus = document.getElementById("deviceApprovalStatus");
+    let deviceApprovalTimer = null;
+
 
     const logoutButton =
       document.getElementById(
@@ -2456,11 +2437,16 @@ const { createClient } =
 
     function hideAuthPanels() {
       loginForm.style.display = "none";
-      mfaEnrollPanel.classList.remove("active");
-      mfaChallengePanel.classList.remove("active");
+      deviceApprovalPanel.classList.remove("active");
+    }
+
+    function stopDeviceApprovalPolling() {
+      if (deviceApprovalTimer) clearInterval(deviceApprovalTimer);
+      deviceApprovalTimer = null;
     }
 
     function showLogin() {
+      stopDeviceApprovalPolling();
       adminArea.style.display = "none";
       loginPage.style.display = "flex";
       hideAuthPanels();
@@ -2468,100 +2454,85 @@ const { createClient } =
     }
 
     function showAdmin(email) {
+      stopDeviceApprovalPolling();
       hideAuthPanels();
       loginPage.style.display = "none";
       adminArea.style.display = "block";
       adminEmail.textContent = email;
     }
 
-    function setMfaMessage(el, text) {
-      el.textContent = text || "";
-      el.className = text ? "message error" : "message";
+    async function deviceHash() {
+      const key = "ozzsound_admin_device_id";
+      let id = localStorage.getItem(key);
+      if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
+      const raw = [id, navigator.userAgent, navigator.language, screen.width + "x" + screen.height].join("|");
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
-    async function beginMfaEnrollment() {
-      hideAuthPanels();
-      loginPage.style.display = "flex";
-      setMfaMessage(mfaEnrollMessage, "");
-
-      const { data, error } = await supabaseClient.auth.mfa.enroll({
-        factorType: "totp",
-        friendlyName: "OzzSound Admin"
-      });
-
-      if (error) {
-        showLogin();
-        showMessage("Could not start authenticator setup. " + error.message, "error");
-        return false;
-      }
-
-      pendingMfaFactorId = data.id;
-      document.getElementById("mfaQr").src = data.totp.qr_code;
-      document.getElementById("mfaSecret").textContent =
-        "Manual setup key: " + data.totp.secret;
-      document.getElementById("mfaEnrollCode").value = "";
-      mfaEnrollPanel.classList.add("active");
-      return true;
+    async function requestDeviceApproval(hash) {
+      const { data, error } = await supabaseClient.functions.invoke("admin-device-approval", { body: { deviceHash: hash } });
+      if (error) throw error;
+      return data;
     }
 
-    async function beginMfaChallenge(factorId) {
+    async function waitForDeviceApproval(user, hash) {
       hideAuthPanels();
       loginPage.style.display = "flex";
-      pendingMfaFactorId = factorId;
-      document.getElementById("mfaChallengeCode").value = "";
-      setMfaMessage(mfaChallengeMessage, "");
-      mfaChallengePanel.classList.add("active");
+      deviceApprovalPanel.classList.add("active");
+      deviceApprovalStatus.textContent = "Waiting for approval…";
+      deviceApprovalStatus.className = "message";
+      deviceApprovalStatus.style.display = "block";
+
+      const check = async () => {
+        const { data, error } = await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
+        if (error) return;
+        if (data === "approved") {
+          stopDeviceApprovalPolling();
+          await verifyAdmin(user);
+        } else if (data === "denied") {
+          stopDeviceApprovalPolling();
+          await supabaseClient.auth.signOut();
+          showLogin();
+          showMessage("Access denied from the security email.", "error");
+        } else if (data === "expired") {
+          stopDeviceApprovalPolling();
+          await supabaseClient.auth.signOut();
+          showLogin();
+          showMessage("That approval request expired. Please sign in again.", "error");
+        }
+      };
+      await check();
+      deviceApprovalTimer = setInterval(check, 2500);
     }
 
     async function verifyAdmin(user) {
-      if (!user) {
-        showLogin();
-        return false;
-      }
+      if (!user) { showLogin(); return false; }
 
-      const { data: isAdmin, error: adminError } =
-        await supabaseClient.rpc("is_admin");
-
+      const { data: isAdmin, error: adminError } = await supabaseClient.rpc("is_admin");
       if (adminError || isAdmin !== true) {
         await supabaseClient.auth.signOut();
         showLogin();
-        showMessage(
-          "Access denied. This account is not an authorised Ozzsound administrator.",
-          "error"
-        );
+        showMessage("Access denied. This account is not an authorised OzzSound administrator.", "error");
         return false;
       }
 
-      const { data: factors, error: factorsError } =
-        await supabaseClient.auth.mfa.listFactors();
-
-      if (factorsError) {
-        await supabaseClient.auth.signOut();
-        showLogin();
-        showMessage("Unable to verify authenticator security.", "error");
-        return false;
+      const hash = await deviceHash();
+      const { data: trusted, error: trustError } =
+        await supabaseClient.rpc("admin_device_is_trusted", { p_device_hash: hash });
+      if (trustError) {
+        await supabaseClient.auth.signOut(); showLogin();
+        showMessage("Unable to verify this browser.", "error"); return false;
       }
 
-      const verifiedTotp =
-        (factors?.totp || []).find(factor => factor.status === "verified");
-
-      if (!verifiedTotp) {
-        return await beginMfaEnrollment();
-      }
-
-      const { data: aal, error: aalError } =
-        await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
-
-      if (aalError) {
-        await supabaseClient.auth.signOut();
-        showLogin();
-        showMessage("Unable to verify authenticator security.", "error");
-        return false;
-      }
-
-      if (aal.currentLevel !== "aal2") {
-        await beginMfaChallenge(verifiedTotp.id);
-        return false;
+      if (trusted !== true) {
+        try {
+          const result = await requestDeviceApproval(hash);
+          if (result?.status !== "approved") { await waitForDeviceApproval(user, hash); return false; }
+        } catch (error) {
+          await supabaseClient.auth.signOut(); showLogin();
+          showMessage("Could not send the device approval email. Please try again.", "error"); return false;
+        }
       }
 
       currentUserId = user.id;
@@ -2571,6 +2542,12 @@ const { createClient } =
       startAdminNotificationRealtime();
       return true;
     }
+
+    document.getElementById("cancelDeviceApproval").addEventListener("click", async () => {
+      stopDeviceApprovalPolling();
+      await supabaseClient.auth.signOut();
+      showLogin();
+    });
 
 
     async function loadEnquiries() {
@@ -8976,69 +8953,6 @@ total,
       currentBooking =
         null;
     }
-
-
-    mfaEnrollForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const button = document.getElementById("mfaEnrollButton");
-      const code = document.getElementById("mfaEnrollCode").value.trim();
-      button.disabled = true;
-      button.textContent = "Verifying...";
-      setMfaMessage(mfaEnrollMessage, "");
-
-      try {
-        const { data: challenge, error: challengeError } =
-          await supabaseClient.auth.mfa.challenge({ factorId: pendingMfaFactorId });
-        if (challengeError) throw challengeError;
-
-        const { error: verifyError } =
-          await supabaseClient.auth.mfa.verify({
-            factorId: pendingMfaFactorId,
-            challengeId: challenge.id,
-            code
-          });
-        if (verifyError) throw verifyError;
-
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        await verifyAdmin(user);
-      } catch (error) {
-        setMfaMessage(mfaEnrollMessage, "That code could not be verified. Please try again.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Link Authenticator";
-      }
-    });
-
-    mfaChallengeForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const button = document.getElementById("mfaChallengeButton");
-      const code = document.getElementById("mfaChallengeCode").value.trim();
-      button.disabled = true;
-      button.textContent = "Verifying...";
-      setMfaMessage(mfaChallengeMessage, "");
-
-      try {
-        const { data: challenge, error: challengeError } =
-          await supabaseClient.auth.mfa.challenge({ factorId: pendingMfaFactorId });
-        if (challengeError) throw challengeError;
-
-        const { error: verifyError } =
-          await supabaseClient.auth.mfa.verify({
-            factorId: pendingMfaFactorId,
-            challengeId: challenge.id,
-            code
-          });
-        if (verifyError) throw verifyError;
-
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        await verifyAdmin(user);
-      } catch (error) {
-        setMfaMessage(mfaChallengeMessage, "Incorrect or expired authenticator code. Please try again.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Verify & Continue";
-      }
-    });
 
 
     /*
