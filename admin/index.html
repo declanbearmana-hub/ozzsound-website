@@ -2610,6 +2610,7 @@ const { createClient } =
               event_start_time,
               event_finish_time,
               message,
+              website_feedback,
               upload_count,
               attachment_paths,
               display_photo_paths,
@@ -7116,6 +7117,20 @@ total,
             <label for="schoolExtraNotes">Anything else? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
             <textarea id="schoolExtraNotes" placeholder="Only type the things that don't fit the tiles.">${escapeHtml((enquiry.enquiry_data||{}).school_call_notes||"")}</textarea>
             <div class="quick-actions"><button type="button" class="action-button action-save" id="saveSchoolCallNotes">Save School Call Notes</button><span class="quick-save-status" id="schoolQuickStatus"></span></div>
+          </div>` : ""}
+
+          ${enquiry.website_feedback && Object.values(enquiry.website_feedback).some(Boolean) ? `
+          <div class="section-card">
+            <div class="section-head"><div><h3>Website Feedback</h3><p>Submitted with this enquiry.</p></div></div>
+            <div class="detail-grid">
+              <div><strong>Page rating</strong><br>${escapeHtml(enquiry.website_feedback.pageRating || "—")} / 5</div>
+              <div><strong>Easy to navigate</strong><br>${escapeHtml(enquiry.website_feedback.navigation || "—")} / 5</div>
+              <div><strong>Found what they needed</strong><br>${escapeHtml(enquiry.website_feedback.foundInfo || "—")}</div>
+              <div><strong>Recommend to friends/family</strong><br>${escapeHtml(enquiry.website_feedback.recommend || "—")}</div>
+              <div><strong>Boring rating</strong><br>${escapeHtml(enquiry.website_feedback.boring || "—")} / 5</div>
+            </div>
+            <div style="margin-top:14px"><strong>What they think is missing</strong><p>${escapeHtml(enquiry.website_feedback.missing || "—")}</p></div>
+            <div style="margin-top:14px"><strong>Anything else they'd improve</strong><p>${escapeHtml(enquiry.website_feedback.improve || "—")}</p></div>
           </div>` : ""}
 
           <!-- OZZSOUND BOOKING CONFIRMATION -->
