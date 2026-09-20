@@ -711,6 +711,19 @@
 
 
 
+      <div class="formWide" style="margin-top:22px;padding:22px;border:1px solid rgba(242,43,255,.28);border-radius:18px;background:linear-gradient(145deg,rgba(242,43,255,.07),rgba(40,230,255,.05));">
+        <div class="eyebrow">Quick website feedback</div>
+        <h3 style="margin:8px 0 8px;">Before you hit send — how did we do?</h3>
+        <p style="margin:0 0 18px;color:#b8b8c5;">Completely optional. Your feedback helps us make OzzSound easier and more fun to use.</p>
+        <label><span>How did you like this page?</span><select name="feedbackPageRating"><option value="">Choose 1–5 stars</option><option value="1">★ — 1 star</option><option value="2">★★ — 2 stars</option><option value="3">★★★ — 3 stars</option><option value="4">★★★★ — 4 stars</option><option value="5">★★★★★ — 5 stars</option></select></label>
+        <label><span>Was the website easy to navigate?</span><select name="feedbackNavigation"><option value="">Choose 1–5 stars</option><option value="1">★ — 1 star</option><option value="2">★★ — 2 stars</option><option value="3">★★★ — 3 stars</option><option value="4">★★★★ — 4 stars</option><option value="5">★★★★★ — 5 stars</option></select></label>
+        <label><span>Did you find the information you needed?</span><select name="feedbackFoundInfo"><option value="">Choose an answer</option><option>Yes, easily</option><option>Mostly</option><option>Not really</option><option>No</option></select></label>
+        <label><span>What do you think is missing from this website?</span><textarea name="feedbackMissing" rows="3" maxlength="1000" placeholder="Anything you'd like us to add or explain better?"></textarea></label>
+        <label><span>Would you recommend this website to friends or family?</span><select name="feedbackRecommend"><option value="">Choose an answer</option><option>Definitely</option><option>Probably</option><option>Not sure</option><option>Probably not</option><option>No</option></select></label>
+        <label><span>On a scale of 1–5, how boring was this website?</span><select name="feedbackBoring"><option value="">Choose a rating</option><option value="1">★ — Soo boring!</option><option value="2">★★ — Boring but manageable</option><option value="3">★★★ — It was alright... felt like I was at work</option><option value="4">★★★★ — Pretty good! Needs some polishing</option><option value="5">★★★★★ — This website is so cool! Can you make me one? XD</option></select></label>
+        <label><span>Anything else you'd change or improve?</span><textarea name="feedbackImprove" rows="3" maxlength="1000" placeholder="Optional — tell us anything else you noticed."></textarea></label>
+      </div>
+
       <label class="privacyConsent formWide">
         <input type="checkbox" name="privacyAcknowledged" required>
         <span>I acknowledge Ozzsound's <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and understand my information will be used to respond to and manage my enquiry.</span>
@@ -754,7 +767,7 @@
 
 <script src="config/site-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/main.js?v=20260919-8"></script>
+<script src="js/main.js?v=20260920-feedback1"></script>
 
 <script src="js/i18n.js?v=20260919-3"></script>
 </body>
