@@ -1,0 +1,29 @@
+-- Ozzsound inventory system
+-- Production database migrations were applied on 20 Sep 2026.
+-- This file documents the live inventory model for source control.
+--
+-- Core tables:
+-- public.equipment_inventory: master stock record, product metadata, photos and visibility.
+-- public.gear_reservations: dated allocations for function and gear-hire bookings.
+--
+-- Live database additions include:
+-- equipment_inventory.brand, model, sku, customer_description, specifications,
+-- admin_notes, photo_paths, primary_photo_path, show_on_gear_hire,
+-- available_for_functions, maintenance_quantity, archived_at and sort_order.
+--
+-- gear_reservations includes allocation_type, start_time, end_time and notes.
+--
+-- Database functions/triggers:
+-- inventory_availability(start,end) calculates dated available stock.
+-- prevent_inventory_overbooking() blocks reservations beyond usable stock.
+-- sync_booking_inventory_reservations() reserves/releases stock as bookings change.
+-- sync_quote_item_inventory_reservation() keeps confirmed quote equipment in sync.
+--
+-- Storage:
+-- public bucket inventory-media for customer-facing equipment photography.
+-- Upload/update/delete is restricted to authenticated Ozzsound admins.
+--
+-- RLS:
+-- Admins can manage inventory and reservations.
+-- Anonymous visitors can only read active, non-archived items explicitly enabled
+-- with show_on_gear_hire=true.
