@@ -558,6 +558,21 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     }
   }catch(e){}
   try{
+    const k=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null');
+    if(k&&new URLSearchParams(location.search).get('from')==='karaoke'){
+      eventSelect.value='Karaoke';
+      const msg=form.querySelector('textarea[name="message"]');
+      if(msg&&!msg.value){
+        const lines=['Karaoke preferences:'];
+        lines.push('Eras: '+((k.eras||[]).join(', ')||'Open to suggestions'));
+        lines.push('Genres: '+((k.genres||[]).join(', ')||'Open to suggestions'));
+        lines.push('Event style: '+(k.event||'Not specified'));
+        lines.push('Artists / songs / requests: '+(k.requests||'None supplied'));
+        msg.value=lines.join('\n');
+      }
+    }
+  }catch(e){console.warn('Could not restore karaoke builder',e)}
+  try{
     const s=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
     if(s&&['schools','School Function'].includes(new URLSearchParams(location.search).get('event'))){
       eventSelect.value='School Function';setEnquiryExtras(s.extras||[]);
