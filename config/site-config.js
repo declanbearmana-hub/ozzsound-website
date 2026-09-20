@@ -19,7 +19,9 @@ window.OZZSOUND_CONFIG = {
 
   // Add real Ozzsound media here as it arrives. Photos and videos can be mixed.
   // Missing files are skipped automatically, so the site still works while the library is empty.
-  heroMedia: [],\n\n  // Stage 4 media gallery. Add genuine Ozzsound photos/videos here.
+  heroMedia: [],
+
+  // Stage 4 media gallery. Add genuine Ozzsound photos/videos here.
   // category: wedding, party, school, seasonal, corporate, sporting or general.
   galleryMedia: [
     // { type: "image", src: "assets/images/weddings/reception-01.jpg", category: "wedding", label: "Wedding reception" },
