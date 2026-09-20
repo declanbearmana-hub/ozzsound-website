@@ -518,7 +518,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   }catch(e){}
   try{
     const s=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
-    if(s&&new URLSearchParams(location.search).get('event')==='schools'){
+    if(s&&['schools','School Function'].includes(new URLSearchParams(location.search).get('event'))){
       eventSelect.value='School Function';setEnquiryExtras(s.extras||[]);
       const msg=form.querySelector('textarea[name="message"]');
       if(msg&&!msg.value){
@@ -638,6 +638,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         finishTime:finishTime.display,
         message:finalMessage,
         websiteFeedback:{pageRating:String(d.get('feedbackPageRating')||''),navigation:String(d.get('feedbackNavigation')||''),foundInfo:String(d.get('feedbackFoundInfo')||''),missing:String(d.get('feedbackMissing')||'').trim(),recommend:String(d.get('feedbackRecommend')||''),boring:String(d.get('feedbackBoring')||''),improve:String(d.get('feedbackImprove')||'').trim()},
+        eventExtras:selectedExtras,
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
       };
       status.textContent='Saving your enquiry securely…';
