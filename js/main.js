@@ -1201,3 +1201,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initPageJumpNav,{once:true});
   else initPageJumpNav();
 })();
+
+
+// Mouse-follow brand glow: cyan normally; pink while hovering cyan/blue UI.
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+ const root=document.documentElement,body=document.body;let x=-600,y=-600,frame=0;
+ const draw=()=>{root.style.setProperty('--mouse-x',x+'px');root.style.setProperty('--mouse-y',y+'px');frame=0};
+ addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY;if(!frame)frame=requestAnimationFrame(draw)},{passive:true});
+ const isBlue=el=>{if(!el||el===body||el===root)return false;const s=getComputedStyle(el),v=[s.color,s.backgroundColor,s.borderColor,s.textDecorationColor].join(' ');const m=[...v.matchAll(/rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/g)];return m.some(a=>{const r=+a[1],g=+a[2],b=+a[3];return b>115&&b>r+18&&g>r+12})||!!el.closest('.cyan,.blue,.accent,.btn-primary,[class*="cyan"],[class*="blue"]')};
+ addEventListener('pointerover',e=>{let el=e.target,hit=false,n=0;while(el&&el!==body&&n++<6){if(isBlue(el)){hit=true;break}el=el.parentElement}body.classList.toggle('cursor-glow-pink',hit)},{passive:true});
+ addEventListener('pointerleave',()=>body.classList.remove('cursor-glow-pink'),{passive:true});
+}
