@@ -6552,8 +6552,7 @@ total,
       try{
         const {data,error}=await supabaseClient.rpc('prepare_contract_from_quote',{p_enquiry_id:currentEnquiry.id,p_deposit:dep});
         if(error)throw error;
-        if(status)status.textContent='Contract prepared: Total '+money(data.total_price)+' · Deposit '+money(data.deposit_amount)+' · Balance '+money(data.balance_due);
-        alert('Contract price approved and prepared.\n\nTotal: '+money(data.total_price)+'\nDeposit: '+money(data.deposit_amount)+'\nBalance: '+money(data.balance_due));
+        if(data.contract_type==='gear_hire'){if(status)status.textContent='Gear Hire contract prepared: '+money(data.total_price)+' payable in full upfront.';alert('Gear Hire contract price approved and prepared.\n\nTotal payable upfront: '+money(data.total_price)+'\nNo deposit applies.');}else{if(status)status.textContent='Contract prepared: Total '+money(data.total_price)+' · Deposit '+money(data.deposit_amount)+' · Balance '+money(data.balance_due);alert('Contract price approved and prepared.\n\nTotal: '+money(data.total_price)+'\nDeposit: '+money(data.deposit_amount)+'\nBalance: '+money(data.balance_due));}
       }catch(error){console.error(error);alert('Contract could not be prepared.\n\n'+(error?.message||'Unknown error.'))}
       finally{if(btn&&document.body.contains(btn)){btn.disabled=false;btn.textContent='Approve Price & Prepare Contract';}}
     }
@@ -7759,7 +7758,7 @@ total,
               >
                 Send Quote to Customer
               </button>
-              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px"><label style="margin-top:0">Contract deposit / booking payment ($)</label><input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="Uses contract default if blank"><button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
+              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div>':'<label style="margin-top:0">Contract deposit / booking payment ($)</label><input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="Uses contract default if blank">'}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
 
             </div>
 
