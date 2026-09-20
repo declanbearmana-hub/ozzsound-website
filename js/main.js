@@ -602,6 +602,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       method:'POST',
       headers:{
         apikey:cfg.supabasePublishableKey,
+        Authorization:`Bearer ${cfg.supabasePublishableKey}`,
         'Content-Type':'application/json',
         Prefer:'return=minimal'
       },
