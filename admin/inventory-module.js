@@ -52,5 +52,5 @@ grid.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b
 q('#invSearch').addEventListener('input',render);q('#invCategory').addEventListener('change',render);q('#invAdd').onclick=()=>openForm();q('#invClose').onclick=()=>shell.classList.remove('open');q('#invCancel').onclick=()=>modal.classList.remove('open');
 function addNav(){const host=document.querySelector('.header-right')||document.querySelector('.admin-header');if(!host||q('#inventoryNavButton'))return;const b=document.createElement('button');b.id='inventoryNavButton';b.className='inv-nav';b.textContent='Inventory';b.onclick=async()=>{shell.classList.add('open');await load()};host.prepend(b)}
 new MutationObserver(addNav).observe(document.body,{subtree:true,childList:true});addNav();
-})();
 q('#invPreview').addEventListener('click',e=>{const b=e.target.closest('[data-primary-photo]');if(!b||!state.editing)return;state.pendingPrimary=b.dataset.primaryPhoto;renderPreview(state.editing)});
+})();
