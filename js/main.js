@@ -333,7 +333,8 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       if(!selectedDate)return;
       try{sessionStorage.setItem('ozzsoundSelectedDate',selectedDate)}catch(err){}
       document.querySelectorAll('#eventFlow a.flowCard').forEach(link=>{
-        const raw=link.getAttribute('href')||'';
+        if(!link.dataset.baseHref)link.dataset.baseHref=link.getAttribute('href')||'';
+        const raw=link.dataset.baseHref;
         if(!raw||raw.startsWith('#'))return;
         const url=new URL(raw,location.href);
         url.searchParams.set('date',selectedDate);
