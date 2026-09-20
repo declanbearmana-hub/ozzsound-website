@@ -15,6 +15,14 @@
 .hireProductVisual .hirePhotoPrev{left:10px}.hireProductVisual .hirePhotoNext{right:10px}
 .hireProductVisual .hirePhotoCount{position:absolute;right:10px;bottom:10px;z-index:4;padding:6px 9px;border-radius:999px;background:rgba(10,13,20,.82);color:#cbd6e5;font:800 10px/1 Inter,sans-serif;letter-spacing:.05em}
 .hireProductVisual .hirePhotoPrev:hover,.hireProductVisual .hirePhotoNext:hover{border-color:#5edfff;background:rgba(19,34,46,.9)}
+/* Mobile/touch photo gallery controls */
+.hireProductVisual{touch-action:pan-y}
+@media(max-width:650px){
+ .hireProductVisual .hirePhotoPrev,.hireProductVisual .hirePhotoNext{width:44px;height:52px;border-radius:14px;font-size:29px;background:rgba(10,13,20,.84)}
+ .hireProductVisual .hirePhotoPrev{left:8px}.hireProductVisual .hirePhotoNext{right:8px}
+ .hireProductVisual .hirePhotoCount{right:8px;bottom:8px;padding:7px 10px;font-size:10px}
+ .hireProductVisual:has(.hirePhotoCount)::after{content:"Swipe photos";position:absolute;left:50%;bottom:9px;z-index:3;transform:translateX(-50%);padding:5px 8px;border-radius:999px;background:rgba(10,13,20,.66);color:#dce5ef;font:700 9px/1 Inter,sans-serif;letter-spacing:.04em;pointer-events:none}
+}
 /* Secondary gallery photos always show the COMPLETE uploaded image.
    Primary/cover photos keep their carefully tuned per-item framing above. */
 .hireProduct.hireSecondaryPhoto .hireProductVisual img{
