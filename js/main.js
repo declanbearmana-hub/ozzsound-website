@@ -887,6 +887,18 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     if(p.image){const im=new Image();im.onload=()=>{const v=a.querySelector('.hireProductVisual');v.querySelector('.gearFallback')?.remove();im.alt=p.name||'Ozzsound hire gear';v.prepend(im)};im.src=p.image}
     a.querySelector('.addHire').addEventListener('click',()=>{const input=a.querySelector('.hireQty');const max=Math.max(1,Number(input.max)||20);const qty=Math.min(max,Math.max(1,Number(input.value)||1));input.value=qty;cart.set(p.id,{...p,qty});sync();a.querySelector('.addHire').textContent='Added ✓';setTimeout(()=>a.querySelector('.addHire').textContent='Update hire list +',900)});return a};
   products.forEach(p=>catalogue.appendChild(renderProduct(p)));
+  const categoryLabels={sound:'Sound',lighting:'Lighting',effects:'Effects',microphones:'Microphones',karaoke:'Karaoke',dj:'DJ gear'};
+  function syncGearFilters(){
+    const filters=document.querySelector('#gearFilters'); if(!filters)return;
+    const cats=[...new Set(products.map(p=>String(p.category||'other').trim().toLowerCase()).filter(Boolean))];
+    const active=filters.querySelector('button.active')?.dataset.gearFilter||'all';
+    filters.innerHTML='';
+    const add=(key,label)=>{const b=document.createElement('button');b.type='button';b.dataset.gearFilter=key;b.textContent=label;b.classList.toggle('active',key===active);filters.appendChild(b)};
+    add('all','All gear');
+    cats.sort((a,b)=>(categoryLabels[a]||a).localeCompare(categoryLabels[b]||b)).forEach(cat=>add(cat,categoryLabels[cat]||cat.replace(/\b\w/g,m=>m.toUpperCase())));
+    if(!cats.includes(active)&&active!=='all')filters.querySelector('[data-gear-filter="all"]')?.classList.add('active');
+  }
+  syncGearFilters();
   async function loadLiveInventory(){
     if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
     try{
@@ -898,6 +910,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       products=rows.map(x=>({id:x.id,name:x.name,brand:x.brand||'',model:x.model||'',category:String(x.category||'other').toLowerCase(),description:x.customer_description||x.description||'',specs:x.description||'',quantity_owned:x.quantity_owned,image:(x.primary_photo_path||(x.photo_paths||[])[0])?cfg.supabaseUrl+'/storage/v1/object/public/inventory-media/'+encodeURIComponent(x.primary_photo_path||(x.photo_paths||[])[0]).replace(/%2F/g,'/'):''}));
       catalogue.innerHTML='';
       products.forEach(p=>catalogue.appendChild(renderProduct(p)));
+      syncGearFilters();
       if(hireDate?.value)refreshInventoryAvailability(hireDate.value);
     }catch(err){console.warn('Live inventory catalogue unavailable; using configured fallback catalogue.',err)}
   }
