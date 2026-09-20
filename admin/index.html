@@ -175,6 +175,46 @@
       border: 1px solid rgba(255,70,100,0.35);
     }
 
+    .mfa-panel {
+      display: none;
+    }
+
+    .mfa-panel.active {
+      display: block;
+    }
+
+    .mfa-copy {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 14px 0 18px;
+      font-size: 14px;
+    }
+
+    .mfa-qr {
+      display: block;
+      width: min(230px, 75vw);
+      height: auto;
+      margin: 18px auto;
+      padding: 10px;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .mfa-secret {
+      overflow-wrap: anywhere;
+      text-align: center;
+      color: var(--cyan);
+      font-family: monospace;
+      font-size: 12px;
+      margin: 8px 0 18px;
+    }
+
+    .mfa-code {
+      text-align: center;
+      letter-spacing: .28em;
+      font-size: 20px;
+    }
+
     /* ADMIN */
 
     #adminArea {
@@ -1478,6 +1518,30 @@
         Administration Portal
       </div>
 
+      <div id="mfaEnrollPanel" class="mfa-panel">
+        <h2>Secure your admin account</h2>
+        <p class="mfa-copy">This one-time setup links an authenticator app to this admin account. Scan the QR code, then enter the 6-digit code from your app.</p>
+        <img id="mfaQr" class="mfa-qr" alt="Authenticator setup QR code">
+        <div id="mfaSecret" class="mfa-secret"></div>
+        <form id="mfaEnrollForm">
+          <label for="mfaEnrollCode">Authenticator code</label>
+          <input id="mfaEnrollCode" class="mfa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+          <button id="mfaEnrollButton" class="primary-button" type="submit">Link Authenticator</button>
+          <div id="mfaEnrollMessage" class="message"></div>
+        </form>
+      </div>
+
+      <div id="mfaChallengePanel" class="mfa-panel">
+        <h2>Authenticator verification</h2>
+        <p class="mfa-copy">Enter the 6-digit code from your authenticator app to continue to OzzSound Admin.</p>
+        <form id="mfaChallengeForm">
+          <label for="mfaChallengeCode">Authenticator code</label>
+          <input id="mfaChallengeCode" class="mfa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+          <button id="mfaChallengeButton" class="primary-button" type="submit">Verify &amp; Continue</button>
+          <div id="mfaChallengeMessage" class="message"></div>
+        </form>
+      </div>
+
       <form id="loginForm">
 
         <label for="email">
@@ -2015,6 +2079,14 @@ const { createClient } =
         "loginButton"
       );
 
+    const mfaEnrollPanel = document.getElementById("mfaEnrollPanel");
+    const mfaChallengePanel = document.getElementById("mfaChallengePanel");
+    const mfaEnrollForm = document.getElementById("mfaEnrollForm");
+    const mfaChallengeForm = document.getElementById("mfaChallengeForm");
+    const mfaEnrollMessage = document.getElementById("mfaEnrollMessage");
+    const mfaChallengeMessage = document.getElementById("mfaChallengeMessage");
+    let pendingMfaFactorId = null;
+
     const logoutButton =
       document.getElementById(
         "logoutButton"
@@ -2382,90 +2454,121 @@ const { createClient } =
     }
 
 
-    function showLogin() {
-
-      adminArea.style.display =
-        "none";
-
-      loginPage.style.display =
-        "flex";
+    function hideAuthPanels() {
+      loginForm.style.display = "none";
+      mfaEnrollPanel.classList.remove("active");
+      mfaChallengePanel.classList.remove("active");
     }
 
+    function showLogin() {
+      adminArea.style.display = "none";
+      loginPage.style.display = "flex";
+      hideAuthPanels();
+      loginForm.style.display = "block";
+    }
 
     function showAdmin(email) {
-
-      loginPage.style.display =
-        "none";
-
-      adminArea.style.display =
-        "block";
-
-      adminEmail.textContent =
-        email;
+      hideAuthPanels();
+      loginPage.style.display = "none";
+      adminArea.style.display = "block";
+      adminEmail.textContent = email;
     }
 
+    function setMfaMessage(el, text) {
+      el.textContent = text || "";
+      el.className = text ? "message error" : "message";
+    }
 
-    async function verifyAdmin(
-      user
-    ) {
+    async function beginMfaEnrollment() {
+      hideAuthPanels();
+      loginPage.style.display = "flex";
+      setMfaMessage(mfaEnrollMessage, "");
 
-      if (!user) {
+      const { data, error } = await supabaseClient.auth.mfa.enroll({
+        factorType: "totp",
+        friendlyName: "OzzSound Admin"
+      });
 
+      if (error) {
         showLogin();
-
+        showMessage("Could not start authenticator setup. " + error.message, "error");
         return false;
       }
 
+      pendingMfaFactorId = data.id;
+      document.getElementById("mfaQr").src = data.totp.qr_code;
+      document.getElementById("mfaSecret").textContent =
+        "Manual setup key: " + data.totp.secret;
+      document.getElementById("mfaEnrollCode").value = "";
+      mfaEnrollPanel.classList.add("active");
+      return true;
+    }
 
-      const {
-        data,
-        error
-      } =
-        await supabaseClient.rpc(
-          "is_admin"
-        );
+    async function beginMfaChallenge(factorId) {
+      hideAuthPanels();
+      loginPage.style.display = "flex";
+      pendingMfaFactorId = factorId;
+      document.getElementById("mfaChallengeCode").value = "";
+      setMfaMessage(mfaChallengeMessage, "");
+      mfaChallengePanel.classList.add("active");
+    }
 
-
-      if (
-        error ||
-        data !== true
-      ) {
-
-        await supabaseClient
-          .auth
-          .signOut();
-
-
+    async function verifyAdmin(user) {
+      if (!user) {
         showLogin();
+        return false;
+      }
 
+      const { data: isAdmin, error: adminError } =
+        await supabaseClient.rpc("is_admin");
 
+      if (adminError || isAdmin !== true) {
+        await supabaseClient.auth.signOut();
+        showLogin();
         showMessage(
           "Access denied. This account is not an authorised Ozzsound administrator.",
           "error"
         );
-
-
         return false;
       }
 
+      const { data: factors, error: factorsError } =
+        await supabaseClient.auth.mfa.listFactors();
 
-      currentUserId =
-        user.id;
+      if (factorsError) {
+        await supabaseClient.auth.signOut();
+        showLogin();
+        showMessage("Unable to verify authenticator security.", "error");
+        return false;
+      }
 
+      const verifiedTotp =
+        (factors?.totp || []).find(factor => factor.status === "verified");
 
-      showAdmin(
-        user.email
-      );
+      if (!verifiedTotp) {
+        return await beginMfaEnrollment();
+      }
 
+      const { data: aal, error: aalError } =
+        await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
 
+      if (aalError) {
+        await supabaseClient.auth.signOut();
+        showLogin();
+        showMessage("Unable to verify authenticator security.", "error");
+        return false;
+      }
+
+      if (aal.currentLevel !== "aal2") {
+        await beginMfaChallenge(verifiedTotp.id);
+        return false;
+      }
+
+      currentUserId = user.id;
+      showAdmin(user.email);
       await loadEnquiries();
-
       await loadAdminCalendar();
-
-
       startAdminNotificationRealtime();
-
-
       return true;
     }
 
@@ -8858,6 +8961,69 @@ total,
       currentBooking =
         null;
     }
+
+
+    mfaEnrollForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = document.getElementById("mfaEnrollButton");
+      const code = document.getElementById("mfaEnrollCode").value.trim();
+      button.disabled = true;
+      button.textContent = "Verifying...";
+      setMfaMessage(mfaEnrollMessage, "");
+
+      try {
+        const { data: challenge, error: challengeError } =
+          await supabaseClient.auth.mfa.challenge({ factorId: pendingMfaFactorId });
+        if (challengeError) throw challengeError;
+
+        const { error: verifyError } =
+          await supabaseClient.auth.mfa.verify({
+            factorId: pendingMfaFactorId,
+            challengeId: challenge.id,
+            code
+          });
+        if (verifyError) throw verifyError;
+
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        await verifyAdmin(user);
+      } catch (error) {
+        setMfaMessage(mfaEnrollMessage, "That code could not be verified. Please try again.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Link Authenticator";
+      }
+    });
+
+    mfaChallengeForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = document.getElementById("mfaChallengeButton");
+      const code = document.getElementById("mfaChallengeCode").value.trim();
+      button.disabled = true;
+      button.textContent = "Verifying...";
+      setMfaMessage(mfaChallengeMessage, "");
+
+      try {
+        const { data: challenge, error: challengeError } =
+          await supabaseClient.auth.mfa.challenge({ factorId: pendingMfaFactorId });
+        if (challengeError) throw challengeError;
+
+        const { error: verifyError } =
+          await supabaseClient.auth.mfa.verify({
+            factorId: pendingMfaFactorId,
+            challengeId: challenge.id,
+            code
+          });
+        if (verifyError) throw verifyError;
+
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        await verifyAdmin(user);
+      } catch (error) {
+        setMfaMessage(mfaChallengeMessage, "Incorrect or expired authenticator code. Please try again.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Verify & Continue";
+      }
+    });
 
 
     /*
