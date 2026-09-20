@@ -871,7 +871,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 // Stage 4.2 — Configurable gear catalogue, package hire period and enquiry cart.
 (()=>{
   const catalogue=document.querySelector('#hireCatalogue'); if(!catalogue)return;
-  const products=Array.isArray(cfg.gearCatalogue)?cfg.gearCatalogue:[];
+  let products=Array.isArray(cfg.gearCatalogue)?cfg.gearCatalogue:[];
   const cart=new Map(), cartItems=document.querySelector('#hireCartItems'), empty=document.querySelector('#hireCartEmpty');
   const summary=document.querySelector('#gearSelectionText'), enquire=document.querySelector('#gearEnquire');
   const period=document.querySelector('#overallHirePeriod'), hireDate=document.querySelector('#gearHireDate');
@@ -879,10 +879,36 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const eventType=document.querySelector('#eventType'), eventDate=document.querySelector('#eventDate'), message=document.querySelector('textarea[name="message"]');
   const icons={sound:'🔊',lighting:'✦',microphones:'🎤',karaoke:'🎙',dj:'◉'};
   const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const renderProduct=p=>{const a=document.createElement('article');a.className='hireProduct';a.dataset.category=p.category||'other';a.innerHTML=`<div class="hireProductVisual"><div class="gearFallback">${icons[p.category]||'♫'}</div><small>${esc(p.category)}</small></div><div class="hireProductBody"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="hireControls"><label><span>Qty</span><input class="hireQty" type="number" min="1" max="20" value="1"></label></div><button class="addHire" type="button">Add to hire list +</button></div>`;
+  const renderProduct=p=>{const a=document.createElement('article');a.className='hireProduct';a.dataset.category=p.category||'other';a.dataset.inventoryId=p.id||'';a.innerHTML=`<div class="hireProductVisual"><div class="gearFallback">${icons[p.category]||'♫'}</div><small>${esc(p.category)}</small></div><div class="hireProductBody"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="hireControls"><label><span>Qty</span><input class="hireQty" type="number" min="1" max="${Math.max(1,Number(p.available_quantity??p.quantity_owned??20))}" value="1"></label></div><button class="addHire" type="button">Add to hire list +</button></div>`;
     if(p.image){const im=new Image();im.onload=()=>{const v=a.querySelector('.hireProductVisual');v.querySelector('.gearFallback')?.remove();im.alt=p.name||'Ozzsound hire gear';v.prepend(im)};im.src=p.image}
     a.querySelector('.addHire').addEventListener('click',()=>{const qty=Math.max(1,Number(a.querySelector('.hireQty').value)||1);cart.set(p.id,{...p,qty});sync();a.querySelector('.addHire').textContent='Added ✓';setTimeout(()=>a.querySelector('.addHire').textContent='Update hire list +',900)});return a};
   products.forEach(p=>catalogue.appendChild(renderProduct(p)));
+  async function loadLiveInventory(){
+    if(!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
+    try{
+      const url=cfg.supabaseUrl+'/rest/v1/equipment_inventory?select=id,name,category,customer_description,description,quantity_owned,primary_photo_path,photo_paths&active=eq.true&show_on_gear_hire=eq.true&archived_at=is.null&order=sort_order.asc,name.asc';
+      const res=await fetch(url,{headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey}});
+      if(!res.ok)throw new Error('Inventory catalogue '+res.status);
+      const rows=await res.json();
+      if(!Array.isArray(rows)||!rows.length)return;
+      products=rows.map(x=>({id:x.id,name:x.name,category:String(x.category||'other').toLowerCase(),description:x.customer_description||x.description||'',quantity_owned:x.quantity_owned,image:(x.primary_photo_path||(x.photo_paths||[])[0])?cfg.supabaseUrl+'/storage/v1/object/public/inventory-media/'+encodeURIComponent(x.primary_photo_path||(x.photo_paths||[])[0]).replace(/%2F/g,'/'):''}));
+      catalogue.innerHTML='';
+      products.forEach(p=>catalogue.appendChild(renderProduct(p)));
+      if(hireDate?.value)refreshInventoryAvailability(hireDate.value);
+    }catch(err){console.warn('Live inventory catalogue unavailable; using configured fallback catalogue.',err)}
+  }
+  async function refreshInventoryAvailability(date){
+    if(!date||!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
+    try{
+      const packageDays=packageDates(new Date(date+'T00:00:00'));
+      const end=packageDays.length?iso(packageDays[packageDays.length-1]):date;
+      const res=await fetch(cfg.supabaseUrl+'/rest/v1/rpc/inventory_availability',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json'},body:JSON.stringify({p_start:date,p_end:end})});
+      if(!res.ok)return;
+      const availability=await res.json(), map=new Map(availability.map(x=>[x.inventory_id,Number(x.available_quantity)]));
+      catalogue.querySelectorAll('.hireProduct').forEach(card=>{const qty=map.get(card.dataset.inventoryId);if(qty===undefined)return;const input=card.querySelector('.hireQty'),button=card.querySelector('.addHire');input.max=Math.max(1,qty);input.disabled=qty<1;button.disabled=qty<1;button.textContent=qty<1?'Unavailable for this date':'Add to hire list +';const small=card.querySelector('.hireProductVisual small');if(small)small.textContent=(card.dataset.category||'gear')+' · '+qty+' available';});
+    }catch(err){console.warn('Could not refresh dated stock availability',err)}
+  }
+  loadLiveInventory();
   function sync(){cartItems.innerHTML='';const vals=[...cart.values()];empty.hidden=vals.length>0;vals.forEach(x=>{const r=document.createElement('div');r.className='hireCartRow';r.innerHTML=`<strong>${esc(x.name)}</strong><span>Qty ${x.qty}</span><button type="button" aria-label="Remove ${esc(x.name)}">×</button>`;r.querySelector('button').onclick=()=>{cart.delete(x.id);sync()};cartItems.appendChild(r)});const hasStrobe=vals.some(x=>x.id==='strobe');if(strobeSafety)strobeSafety.hidden=!hasStrobe;if(!hasStrobe&&strobeApproval)strobeApproval.value='';if(!hasStrobe&&strobeAcknowledgement)strobeAcknowledgement.checked=false;if(strobeRecommendation&&hasStrobe){const v=strobeApproval?.value||'';strobeRecommendation.textContent=(v.includes('Reason known')||v.includes('Not sure'))?'Ozzsound recommendation: do not use strobe lighting for this event.':'If there is any uncertainty, Ozzsound recommends that strobe lighting is not used.';}const total=vals.reduce((n,x)=>n+x.qty,0);summary.textContent=vals.length?`${total} item${total===1?'':'s'} · ${vals.length} gear type${vals.length===1?'':'s'} selected`:'Nothing selected yet';enquire.classList.toggle('ready',vals.length>0)}
   document.querySelector('#clearHire')?.addEventListener('click',()=>{cart.clear();sync()});
   document.querySelector('#gearFilters')?.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#gearFilters button').forEach(x=>x.classList.toggle('active',x===b));const f=b.dataset.gearFilter;document.querySelectorAll('.hireProduct').forEach(x=>x.classList.toggle('filtered',f!=='all'&&x.dataset.category!==f))});
@@ -923,7 +949,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       const b=document.createElement('button');b.type='button';b.textContent=n;
       b.className='calDay'+(isWeekend?' weekend':'')+(past?' past':'')+(weekend&&isWeekend&&!past?' weekendActive':'')+(inRange?' hireRange':'')+(isStart?' selected rangeStart':'');
       b.disabled=blocked;b.setAttribute('aria-label',pretty(d)+(blocked?' unavailable':inRange?' included in hire period':''));
-      if(!blocked)b.addEventListener('click',()=>{selected=d;hireDate.value=iso(d);dateDisplay.textContent=pretty(d);renderCalendar()});
+      if(!blocked)b.addEventListener('click',()=>{selected=d;hireDate.value=iso(d);dateDisplay.textContent=pretty(d);renderCalendar();refreshInventoryAvailability(hireDate.value)});
       calGrid.appendChild(b)
     }
     calPrev.disabled=view.getFullYear()===today.getFullYear()&&view.getMonth()===today.getMonth();
