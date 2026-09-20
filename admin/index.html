@@ -2020,6 +2020,9 @@ const { createClient } =
         }
       );
 
+    // Share the authenticated admin client with admin modules.
+    window.OZZSOUND_ADMIN_CLIENT = supabaseClient;
+
 
     let allEnquiries = [];
     let inventory = [];
@@ -9025,12 +9028,23 @@ total,
         }
 
         if (normaliseStatus(enquiry.status) === "new") {
-          const { error: reviewError } = await supabaseClient.from("enquiries").update({status:"reviewing"}).eq("id",id).eq("status","new");
-          if (!reviewError) {
+          const { data: reviewedRows, error: reviewError } = await supabaseClient
+            .from("enquiries")
+            .update({status:"reviewing"})
+            .eq("id",id)
+            .eq("status","new")
+            .select("id,status");
+          if (reviewError) {
+            console.error("Could not mark enquiry as reviewed:", reviewError);
+          } else if (reviewedRows?.length) {
             enquiry.status="reviewing";
             updateStats();
             renderNewEnquiryBanner();
             filterEnquiries();
+          } else {
+            // Another tab/session may already have changed it; refresh so the badge is truthful.
+            const {data:fresh}=await supabaseClient.from("enquiries").select("status").eq("id",id).maybeSingle();
+            if(fresh?.status){enquiry.status=fresh.status;updateStats();renderNewEnquiryBanner();filterEnquiries();}
           }
         }
 
