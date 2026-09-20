@@ -965,36 +965,40 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 
-// Site-wide page navigation: logo returns home on subpages, with unobtrusive top/bottom controls.
+// Site-wide page navigation: delegated click handling works for static and injected controls.
 (()=>{
-  const brand=document.querySelector('a.brand');
-  if(brand && location.pathname && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname!=='/'){
-    brand.setAttribute('href','index.html');
-  }
-
-  let nav=document.querySelector('.pageJumpNav');
-  if(!nav){
-    nav=document.createElement('div');
-    nav.className='pageJumpNav';
-    nav.setAttribute('aria-label','Page navigation');
-    nav.innerHTML='<button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button><button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>';
-    document.body.appendChild(nav);
-  }
-
-  const topButton=nav.querySelector('.pageJumpTop');
-  const bottomButton=nav.querySelector('.pageJumpBottom');
-  if(!topButton || !bottomButton) return;
-
-  const prefersReducedMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:prefersReducedMotion?'auto':'smooth'}));
-  bottomButton.addEventListener('click',()=>window.scrollTo({top:Math.max(document.body.scrollHeight,document.documentElement.scrollHeight),behavior:prefersReducedMotion?'auto':'smooth'}));
-
-  const update=()=>{
-    const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-    topButton.disabled=window.scrollY<80;
-    bottomButton.disabled=window.scrollY>=max-80;
+  const initPageJumpNav=()=>{
+    const brand=document.querySelector('a.brand');
+    if(brand && location.pathname && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname!=='/'){
+      brand.setAttribute('href','index.html');
+    }
+    if(!document.querySelector('.pageJumpNav')){
+      const nav=document.createElement('div');
+      nav.className='pageJumpNav';
+      nav.setAttribute('aria-label','Page navigation');
+      nav.innerHTML='<button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button><button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>';
+      document.body.appendChild(nav);
+    }
   };
-  update();
-  window.addEventListener('scroll',update,{passive:true});
-  window.addEventListener('resize',update);
+
+  const jump=(where)=>{
+    const root=document.scrollingElement || document.documentElement;
+    const top=where==='top' ? 0 : Math.max(root.scrollHeight,document.body?.scrollHeight||0);
+    try{window.scrollTo({top,behavior:'smooth'});}catch(_){window.scrollTo(0,top);}
+    root.scrollTop=top;
+    document.documentElement.scrollTop=top;
+    if(document.body) document.body.scrollTop=top;
+  };
+
+  document.addEventListener('click',event=>{
+    const top=event.target.closest?.('.pageJumpTop');
+    const bottom=event.target.closest?.('.pageJumpBottom');
+    if(!top && !bottom) return;
+    event.preventDefault();
+    event.stopPropagation();
+    jump(top?'top':'bottom');
+  },true);
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initPageJumpNav,{once:true});
+  else initPageJumpNav();
 })();
