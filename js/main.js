@@ -963,3 +963,28 @@ document.addEventListener('DOMContentLoaded',()=>{
     host.appendChild(nav);
   });
 });
+
+
+// Site-wide page navigation: logo returns home on subpages, with unobtrusive top/bottom controls.
+(()=>{
+  const brand=document.querySelector('a.brand');
+  if(brand && location.pathname && !/(^|\/)index\.html$/.test(location.pathname) && location.pathname!=='/'){
+    brand.setAttribute('href','index.html');
+  }
+
+  if(!document.querySelector('.pageJumpNav')){
+    const nav=document.createElement('div');
+    nav.className='pageJumpNav';
+    nav.setAttribute('aria-label','Page navigation');
+    nav.innerHTML='<button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button><button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>';
+    document.body.appendChild(nav);
+    nav.querySelector('.pageJumpTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'}));
+    nav.querySelector('.pageJumpBottom').addEventListener('click',()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:reduceMotion?'auto':'smooth'}));
+    const update=()=>{
+      const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+      nav.querySelector('.pageJumpTop').disabled=window.scrollY<80;
+      nav.querySelector('.pageJumpBottom').disabled=window.scrollY>max-80;
+    };
+    update(); window.addEventListener('scroll',update,{passive:true}); window.addEventListener('resize',update);
+  }
+})();
