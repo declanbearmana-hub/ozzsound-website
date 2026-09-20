@@ -180,6 +180,25 @@ body.theme-halloween .halloweenVampire{left:-115px;top:50%;width:min(620px,42vw)
 @media(max-width:1050px){body.theme-halloween .halloweenVampire{left:-95px;top:50%;width:480px;clip-path:none}}
 @media(max-width:760px){body.theme-halloween .halloweenVampire{left:-75px;top:49%;width:370px;clip-path:none}}
 @media(max-width:520px){body.theme-halloween .halloweenVampire{left:-62px;top:48%;width:215px;clip-path:none}}
+
+/* Halloween CSS-only falling jack-o-lanterns and web-drop spiders */
+.halloweenFxLayer{display:none;position:fixed;inset:0;z-index:57;pointer-events:none;overflow:hidden}
+body.theme-halloween .halloweenFxLayer{display:block}
+.fallingPumpkin{position:absolute;top:-90px;left:var(--x);width:var(--size);height:calc(var(--size)*.82);border-radius:48% 48% 44% 44%;background:radial-gradient(circle at 38% 30%,#ffb129 0 8%,#f36a0b 30%,#9f2805 72%,#491004 100%);box-shadow:inset 8px 0 10px rgba(255,181,41,.18),inset -8px 0 12px rgba(55,7,0,.35),0 0 14px rgba(255,92,0,.25);animation:pumpkinFall var(--dur) linear var(--delay) infinite;transform-origin:50% 45%}
+.fallingPumpkin:before{content:"";position:absolute;left:44%;top:-13%;width:14%;height:18%;border-radius:45% 45% 20% 20%;background:#4c6c1d;transform:rotate(7deg)}
+.fallingPumpkin .eye{position:absolute;top:30%;width:22%;height:20%;background:#ffd85a;clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 0 5px #ff7b00)}
+.fallingPumpkin .eye.l{left:18%;transform:rotate(-7deg)} .fallingPumpkin .eye.r{right:18%;transform:rotate(7deg)}
+.fallingPumpkin .mouth{position:absolute;left:22%;bottom:19%;width:56%;height:23%;background:#ffd85a;clip-path:polygon(0 20%,16% 42%,28% 18%,42% 48%,56% 17%,70% 46%,84% 18%,100% 38%,91% 83%,72% 68%,55% 91%,37% 68%,18% 88%,5% 68%);filter:drop-shadow(0 0 6px #ff7200)}
+@keyframes pumpkinFall{0%{transform:translate3d(0,-110px,0) rotate(var(--rot));opacity:0}5%{opacity:1}50%{transform:translate3d(var(--drift),52vh,0) rotate(calc(var(--rot) + 190deg))}95%{opacity:1}100%{transform:translate3d(calc(var(--drift)*-.35),calc(100vh + 120px),0) rotate(calc(var(--rot) + 390deg));opacity:0}}
+.webSpider{position:absolute;top:0;left:var(--x);width:42px;height:42px;transform:translate(-50%,-48px);animation:spiderDrop var(--dur) ease-in-out var(--delay) infinite}
+.webSpider .web{position:absolute;left:50%;bottom:28px;width:1px;height:var(--drop);background:linear-gradient(#d7d4df,rgba(215,212,223,.45));transform:translateX(-50%);transform-origin:top}
+.webSpider .body{position:absolute;left:50%;top:13px;width:16px;height:20px;border-radius:50% 50% 58% 58%;background:radial-gradient(circle at 40% 30%,#51445e,#120d18 62%,#050407);box-shadow:0 0 8px rgba(160,92,190,.4);transform:translateX(-50%)}
+.webSpider .body:before{content:"";position:absolute;left:4px;top:-7px;width:8px;height:9px;border-radius:50%;background:#17101d}
+.webSpider .legs,.webSpider .legs:before,.webSpider .legs:after{position:absolute;content:"";left:50%;top:17px;width:38px;height:18px;transform:translateX(-50%);border-top:2px solid #17101d;border-radius:50%}
+.webSpider .legs:before{left:19px;top:5px;width:36px;transform:translateX(-50%) rotate(18deg)} .webSpider .legs:after{left:19px;top:7px;width:36px;transform:translateX(-50%) rotate(-18deg)}
+@keyframes spiderDrop{0%,12%,100%{transform:translate(-50%,-48px)}28%,62%{transform:translate(-50%,var(--drop))}76%{transform:translate(-50%,-48px)}}
+@media(max-width:700px){.fallingPumpkin{--size:44px!important}.webSpider{width:34px;height:34px}}
+@media(prefers-reduced-motion:reduce){.halloweenFxLayer{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
@@ -510,4 +529,24 @@ body.theme-halloween .halloweenVampire{left:-115px;top:50%;width:min(620px,42vw)
   }
   requestAnimationFrame(frame);
 })();
-</script><div class="halloweenWalker" aria-hidden="true"><img alt="" src="data:image/gif;base64,R0lGODlhHgAUAOMAAAQCBKSijLy6pPwSBLS+1CQmJJymvLzG3P//AAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAeABQAAARtEMlJq5Ug382x+EAnTsDxgWMHFAJBFEQQphcwFPgt0zX7sTueBeAqzoQVwAmFRGQygqcyiiS2ooTr6ThSZglebYsrUkqjT1eQxp0u103r0kAWeosCeHX50duzb3VsH2BEMYJdSwABjH4pUpAhEQA7"></div></body></html>
+</script><div class="halloweenWalker" aria-hidden="true"><img alt="" src="data:image/gif;base64,R0lGODlhHgAUAOMAAAQCBKSijLy6pPwSBLS+1CQmJJymvLzG3P//AAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAeABQAAARtEMlJq5Ug382x+EAnTsDxgWMHFAJBFEQQphcwFPgt0zX7sTueBeAqzoQVwAmFRGQygqcyiiS2ooTr6ThSZglebYsrUkqjT1eQxp0u103r0kAWeosCeHX50duzb3VsH2BEMYJdSwABjH4pUpAhEQA7"></div><div class="halloweenFxLayer" aria-hidden="true" id="halloweenFxLayer"></div>
+<script>
+(()=>{
+ const layer=document.getElementById('halloweenFxLayer');
+ if(!layer) return;
+ const pumpkin=(i)=>{
+   const p=document.createElement('div'); p.className='fallingPumpkin';
+   const size=44+Math.random()*34;
+   p.style.cssText=`--x:${Math.random()*96}vw;--size:${size}px;--dur:${8+Math.random()*7}s;--delay:${-Math.random()*14}s;--drift:${-90+Math.random()*180}px;--rot:${-35+Math.random()*70}deg`;
+   p.innerHTML='<i class="eye l"></i><i class="eye r"></i><i class="mouth"></i>'; return p;
+ };
+ for(let i=0;i<9;i++) layer.appendChild(pumpkin(i));
+ const spider=(x,delay,drop,dur)=>{
+   const s=document.createElement('div'); s.className='webSpider';
+   s.style.cssText=`--x:${x}%;--delay:${delay}s;--drop:${drop}px;--dur:${dur}s`;
+   s.innerHTML='<i class="web"></i><i class="body"></i><i class="legs"></i>'; layer.appendChild(s);
+ };
+ spider(18,2,190,12); spider(72,7,245,15); spider(91,13,160,17);
+})();
+</script>
+</body></html>
