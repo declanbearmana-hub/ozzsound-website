@@ -12,9 +12,9 @@
 /* Live inventory card polish */
 .hireCatalogue{align-items:stretch}
 .hireProduct{display:flex;flex-direction:column;min-width:0}
-.hireProductVisual{height:230px;background:#f5f6f8}
-.hireProductVisual img{object-fit:contain;object-position:center;padding:10px;box-sizing:border-box;background:#fff}
-.hireProductVisual small{z-index:2;font-size:9px}
+.hireProductVisual{height:clamp(270px,24vw,380px);background:#fff;padding:18px;box-sizing:border-box}
+.hireProductVisual img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain!important;object-position:50% 50%!important;padding:0;box-sizing:border-box;background:#fff}
+.hireProductVisual:has(img){place-items:stretch}.hireProductVisual small{z-index:2;font-size:9px}
 .hireProductBody{display:flex;flex-direction:column;flex:1;padding:22px 24px 24px}
 .hireProduct h3{font-size:19px;line-height:1.2;min-height:46px;overflow-wrap:anywhere}
 .hireProductMeta{min-height:20px}
@@ -22,7 +22,7 @@
 .hireControls{margin-top:auto}
 .hireSpecs{min-height:42px}
 @media(max-width:1000px){.hireCatalogue{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:650px){.hireCatalogue{grid-template-columns:1fr}.hireProductVisual{height:240px}.hireProduct h3,.hireProductMeta,.hireProductBody>p{min-height:0}}
+@media(max-width:650px){.hireCatalogue{grid-template-columns:1fr}.hireProductVisual{height:320px;padding:12px}.hireProduct h3,.hireProductMeta,.hireProductBody>p{min-height:0}}
 \n</style></head><body class="subPage"><nav class="nav wrap"><a class="brand" href="index.html" aria-label="Ozzsound home"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="karaoke.html">Karaoke</a><a href="gear-hire.html" aria-current="page">Gear Hire</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div><button class="menuToggle" id="menuToggle" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false"><span></span><span></span><span></span></button></nav><div class="mobileMenu" id="mobileMenu" aria-hidden="true"><div class="mobileMenuGlow"></div><div class="mobileMenuInner"><div class="mobileMenuEyebrow">Ozzsound Mobile Music</div><a href="index.html#events"><small>01</small><span>Events</span></a><a href="karaoke.html"><small>02</small><span>Karaoke</span></a><a href="gear-hire.html"><small>03</small><span>Gear Hire</span></a><a href="why-ozzsound.html"><small>04</small><span>Why Ozzsound</span></a><a href="index.html#availability"><small>06</small><span>Check My Date</span></a><a href="index.html#contact"><small>07</small><span>Enquire</span></a><div class="mobileMenuFoot">Tasmania · DJ & Event Entertainment</div></div></div><main class="subPageMain"><section class="gearHire gearHirePage" id="gear-hire"><div class="wrap"><div class="subPageBack"><a href="index.html">← Back to Ozzsound</a></div><div class="gearIntro"><div><div class="eyebrow">Ozzsound equipment hire</div><h1>Build your<br><span class="gradientText">gear hire.</span></h1></div><div><p>Choose everything you need, set quantities, choose one hire period for the whole package, then continue to the enquiry page. No payment is taken online — Ozzsound will confirm equipment availability, setup requirements and pricing with you.</p></div></div><div class="gearToolbar" id="gear-catalogue"><div class="gearFilters" id="gearFilters"><button class="active" type="button" data-gear-filter="all">All gear</button><button type="button" data-gear-filter="sound">Sound</button><button type="button" data-gear-filter="lighting">Lighting</button><button type="button" data-gear-filter="effects">Effects</button><button type="button" data-gear-filter="microphones">Microphones</button><button type="button" data-gear-filter="karaoke">Karaoke</button><button type="button" data-gear-filter="dj">DJ gear</button></div></div><div class="hireCatalogue" id="hireCatalogue"></div><div class="strobeSafety" id="strobeSafety" hidden>
   <div class="strobeSafetyCopy">
     <strong>Strobe lighting safety</strong>
