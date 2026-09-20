@@ -1924,13 +1924,7 @@
 
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_-5JZTaagJ2ozQ6QPPyIbxA_kgp-L5jx";
-
-
-    const AUSTRALIAN_GST_RATE =
-      0;
-
-
-    const { createClient } =
+const { createClient } =
       supabase;
 
 
@@ -5342,24 +5336,12 @@
         quoteAdjustment();
 
 
-      const gstExclusiveTotal =
-        Math.max(
-          0,
-          subtotal + adjustment
-        );
-
-
-      const gstAmount =
-        roundCurrency(
-          gstExclusiveTotal *
-          AUSTRALIAN_GST_RATE
-        );
-
-
       const total =
         roundCurrency(
-          gstExclusiveTotal +
-          gstAmount
+          Math.max(
+            0,
+            subtotal + adjustment
+          )
         );
 
 
@@ -5372,12 +5354,6 @@
       const adjustmentEl =
         document.getElementById(
           "quoteAdjustmentDisplay"
-        );
-
-
-      const gstEl =
-        document.getElementById(
-          "quoteGst"
         );
 
 
@@ -5398,13 +5374,6 @@
 
         adjustmentEl.textContent =
           money(adjustment);
-      }
-
-
-      if (gstEl) {
-
-        gstEl.textContent =
-          money(gstAmount);
       }
 
 
@@ -5840,28 +5809,12 @@ The automatic customer decline email will be added in the next customer-response
         quoteAdjustment();
 
 
-      const gstExclusiveTotal =
-        Math.max(
-          0,
-          subtotal + adjustment
-        );
-
-
-      const gstRate =
-        AUSTRALIAN_GST_RATE;
-
-
-      const gstAmount =
-        roundCurrency(
-          gstExclusiveTotal *
-          gstRate
-        );
-
-
       const total =
         roundCurrency(
-          gstExclusiveTotal +
-          gstAmount
+          Math.max(
+            0,
+            subtotal + adjustment
+          )
         );
 
 
@@ -5914,10 +5867,10 @@ The automatic customer decline email will be added in the next customer-response
                 adjustment,
 
                 gst_rate:
-                  gstRate,
+                  0,
 
                 gst_amount:
-                  gstAmount,
+                  0,
 
                 total,
 
@@ -5967,10 +5920,10 @@ The automatic customer decline email will be added in the next customer-response
                 adjustment,
 
                 gst_rate:
-                  gstRate,
+                  0,
 
                 gst_amount:
-                  gstAmount,
+                  0,
 
                 total,
 
@@ -7285,7 +7238,7 @@ The automatic customer decline email will be added in the next customer-response
 
             <div class="info-banner">
 
-              Prices shown are the amount charged to the customer. No GST is added.
+              Prices shown are the amount charged to the customer.
               <br><br>
 
               Inventory currently contains
