@@ -35,6 +35,9 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   const grid=document.querySelector('#calendarGrid');
   if(!grid)return;
 
+  const params=new URLSearchParams(location.search);
+  const returnEvent=params.get('returnEvent')||'';
+  const returnPage=params.get('returnPage')||'';
   const monthLabel=document.querySelector('#calendarMonth');
   const result=document.querySelector('#dateResult');
   const enquire=document.querySelector('#dateEnquire');
@@ -345,9 +348,20 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       copy;
 
     enquire.dataset.date=k;
-    enquire.href='#events';
     enquire.dataset.selectedDate=k;
-    enquire.textContent='Choose your event →';
+
+    // If the visitor came from a specific event builder, keep them in
+    // that event flow instead of making them choose the event again.
+    if(returnPage){
+      const back=new URL(returnPage,location.href);
+      back.searchParams.set('date',k);
+      if(returnEvent)back.searchParams.set('event',returnEvent);
+      enquire.href=back.pathname.split('/').pop()+back.search;
+      enquire.textContent=returnEvent?`Continue with ${returnEvent} →`:'Continue planning →';
+    }else{
+      enquire.href='#events';
+      enquire.textContent='Choose your event →';
+    }
   }
 
   if(enquire){
