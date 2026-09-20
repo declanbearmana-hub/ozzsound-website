@@ -190,8 +190,13 @@
               <button class="schoolChip" type="button" data-extra="Air guitar competition">Air guitar</button>
               <button class="schoolChip" type="button" data-extra="Limbo competition">Limbo</button>
               <button class="schoolChip" type="button" data-extra="Macarena / dance challenge">Dance challenge</button>
-              <button class="schoolChip" type="button" data-extra="Fun props & gags">Fun props &amp; gags</button><button class="schoolChip" type="button" data-extra="Karaoke">🎤 Karaoke</button><button class="schoolChip" type="button" data-extra="Bubble machine">🫧 Bubble machine</button><button class="schoolChip" type="button" data-extra="Smoke machine">💨 Smoke machine</button><button class="schoolChip" type="button" data-extra="Laser lighting">✨ Laser lighting</button>
+              <button class="schoolChip" type="button" data-extra="Fun props & gags">Fun props &amp; gags</button>
               
+            </div>
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid #252e3d">
+              <h3 style="margin-bottom:5px">Optional equipment extras</h3>
+              <p style="margin-bottom:12px">A few simple add-ons — select only what interests you.</p>
+              <div class="schoolChipRow" id="schoolGearExtras"><button class="schoolChip" type="button" data-extra="Karaoke">🎤 Karaoke</button><button class="schoolChip" type="button" data-extra="Bubble machine">🫧 Bubble machine</button><button class="schoolChip" type="button" data-extra="Smoke machine">💨 Smoke machine</button><button class="schoolChip" type="button" data-extra="Laser lighting">✨ Laser lighting</button></div>
             </div>
           </div>
 
@@ -346,7 +351,7 @@
 
     const restoreSchoolSelections=()=>{
       document.querySelectorAll('#schoolVibeChoices [data-vibe]').forEach(b=>b.classList.toggle('selected',b.dataset.vibe===state.vibe));
-      document.querySelectorAll('#schoolFunExtras [data-extra]').forEach(b=>b.classList.toggle('selected',state.extras.has(b.dataset.extra)));
+      document.querySelectorAll('#schoolFunExtras [data-extra],#schoolGearExtras [data-extra]').forEach(b=>b.classList.toggle('selected',state.extras.has(b.dataset.extra)));
       document.querySelectorAll('#schoolStrobe [data-value]').forEach(b=>b.classList.toggle('selected',b.dataset.value===state.strobe));
       document.querySelectorAll('#schoolStrobeApproval [data-value]').forEach(b=>b.classList.toggle('selected',b.dataset.value===state.strobeApproval));
       const yes=state.strobe==='Yes';strobeConfirm?.classList.toggle('show',yes);strobeWarning.hidden=!yes;
@@ -356,13 +361,13 @@
     selectOne(document.querySelector('#schoolStrobe'),'strobe');
     selectOne(document.querySelector('#schoolStrobeApproval'),'strobeApproval');
 
-    document.querySelector('#schoolFunExtras')?.addEventListener('click',e=>{
+    document.querySelectorAll('#schoolFunExtras,#schoolGearExtras').forEach(box=>box.addEventListener('click',e=>{
       const b=e.target.closest('button[data-extra]'); if(!b)return;
       const v=b.dataset.extra;
       state.extras.has(v)?state.extras.delete(v):state.extras.add(v);
       b.classList.toggle('selected',state.extras.has(v));
       update();
-    });
+    }));
 
     function update(){
       const bits=[];
