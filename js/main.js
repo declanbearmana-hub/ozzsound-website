@@ -737,10 +737,11 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         status.textContent='Securely uploading your photos…';
         uploads=await window.OZZSOUND_UPLOADS(enquiryRef,{name:d.get('name')||'',venue:d.get('venue')||'',eventDate:d.get('eventDate')||''});
       }
-      let weddingData=null,karaokeData=null,virtualSetupData=null;
+      let weddingData=null,karaokeData=null,virtualSetupData=null,gearHireData=null;
       try{weddingData=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null')}catch(e){}
       try{karaokeData=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null')}catch(e){}
       try{virtualSetupData=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null')}catch(e){}
+      try{gearHireData=JSON.parse(localStorage.getItem('ozzsoundGearHire')||'null')}catch(e){}
       const startTime=selectedTime(d,'start');
       const finishTime=selectedTime(d,'finish');
 
@@ -768,7 +769,9 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         message:finalMessage,
         websiteFeedback:{pageRating:String(d.get('feedbackPageRating')||''),navigation:String(d.get('feedbackNavigation')||''),foundInfo:String(d.get('feedbackFoundInfo')||''),missing:String(d.get('feedbackMissing')||'').trim(),recommend:String(d.get('feedbackRecommend')||''),boring:String(d.get('feedbackBoring')||''),improve:String(d.get('feedbackImprove')||'').trim()},
         eventExtras:selectedExtras,
-        wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
+        wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData,
+        gearHire:gearHireData,
+        gearHireAgreement:String(d.get('eventType')||'')==='Gear Hire'?{version:'2026-09-21-v1',hirerAddress:String(d.get('hirerAddress')||''),signatureName:String(d.get('gearHireSignature')||''),termsAccepted:d.get('gearHireTermsAccepted')==='on',smokeVenueAcknowledged:d.get('smokeVenueAcknowledged')==='on',acceptedAt:new Date().toISOString()}:null
       };
       status.textContent='Saving your enquiry securely…';
       await saveEnquiry({
@@ -785,6 +788,15 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         attachment_paths:uploads.attachmentPaths||[], display_photo_paths:uploads.displayPhotoPaths||[], enquiry_data:enquiryData,
         source:'website'
       });
+      if(enquiryData.eventType==='Gear Hire'){
+        const ag=enquiryData.gearHireAgreement||{};
+        if(!ag.termsAccepted||!ag.signatureName||!ag.hirerAddress)throw new Error('Please complete and sign the Gear Hire Agreement.');
+        const smokeSelected=/smoke|fog|haze|atmospheric/i.test((gearHireData?.items||[]).map(x=>(x.name||'')+' '+(x.description||'')).join(' '));
+        if(smokeSelected&&!ag.smokeVenueAcknowledged)throw new Error('Please acknowledge the venue and alarm requirements for smoke, fog or haze equipment.');
+        const snapshot='OzzSound Mobile Music Equipment & Gear Hire Agreement | Version 2026-09-21-v1 | Darren Leslie Archer trading as OzzSound Mobile Music | ABN 33 235 488 201 | 1 Walana Street, Geilston Bay TAS 7015 | Terms displayed and accepted on the Gear Hire enquiry page. Includes equipment ownership and care; pre-hire testing; faults; investigation of damage/loss; reasonable repair/replacement costs where hirer is responsible; missing items/cleaning; late return; smoke/fog/haze venue and alarm responsibility; strobe/special effects; return inspection; Australian Consumer Law; Tasmania governing law.';
+        const agreementRes=await fetch(cfg.supabaseUrl+'/rest/v1/gear_hire_agreements',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({enquiry_id:enquiryId,enquiry_ref:enquiryRef,contract_version:'2026-09-21-v1',hirer_name:enquiryData.name,hirer_email:enquiryData.email||null,hirer_phone:enquiryData.phone||null,hirer_address:ag.hirerAddress,venue:enquiryData.venue||null,hire_date:enquiryData.eventDate||null,hire_period:gearHireData?.overallPeriod||null,equipment:gearHireData?.items||[],smoke_effects_acknowledged:!!ag.smokeVenueAcknowledged,terms_acknowledged:true,signature_name:ag.signatureName,signature_text:ag.signatureName,signed_at:ag.acceptedAt,contract_snapshot:snapshot})});
+        if(!agreementRes.ok)throw new Error('Your enquiry was received, but the signed Gear Hire Agreement could not be securely recorded. Please contact OzzSound before proceeding.');
+      }
       status.textContent=`Thanks — your enquiry has been securely received. Reference: ${enquiryRef}`;
       status.classList.add('success');
       submit.textContent='Enquiry sent ✓';
