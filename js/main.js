@@ -263,6 +263,29 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   }
 
   function select(dt,k,info,b){
+    // Clicking the currently selected date again clears the selection.
+    if(selectedKey===k){
+      b.classList.remove('selected');
+      selectedKey='';
+      selectedPretty='';
+
+      if(result){
+        result.classList.remove('actionable');
+        const strong=result.querySelector('strong');
+        const paragraph=result.querySelector('p');
+        if(strong)strong.textContent='Choose a date';
+        if(paragraph)paragraph.textContent='Select an available date to continue.';
+      }
+
+      if(enquire){
+        delete enquire.dataset.date;
+        delete enquire.dataset.selectedDate;
+        enquire.href='#availability';
+        enquire.textContent='Choose a date →';
+      }
+      return;
+    }
+
     grid.querySelectorAll('.selected').forEach(
       x=>x.classList.remove('selected')
     );
