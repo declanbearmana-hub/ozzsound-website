@@ -25,6 +25,8 @@
 /* Per-item framing for portrait/tall catalogue photos: show the complete product image. */
 .hireProduct[data-inventory-id] .hireProductVisual{overflow:hidden}
 .hireProduct:has(h3) .hireProductVisual img{transform-origin:center center}
+/* RAVE laser landscape photo: fill its Gear Hire image panel cleanly. */
+.hireProduct[data-inventory-id="df690158-a188-4621-8b56-b70ebe67d176"] .hireProductVisual img{transform:scale(1.12);transform-origin:center center}
 /* LE60 portrait collage: use more of the card height without clipping the equipment. */
 .hireProduct[data-inventory-id="f44874cf-8952-406f-a959-2da58d228512"] .hireProductVisual img{transform:translateY(3%) scale(.78);transform-origin:center center}
 /* RCF speaker framing: lift the source photos so the complete cabinet is visible. */
