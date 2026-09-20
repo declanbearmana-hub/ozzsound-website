@@ -322,8 +322,24 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       copy;
 
     enquire.dataset.date=k;
-    enquire.href='event-enquiry.html?date='+encodeURIComponent(k);
-    enquire.textContent='Enquire about this date →';
+    enquire.href='#events';
+    enquire.dataset.selectedDate=k;
+    enquire.textContent='Choose your event →';
+  }
+
+  if(enquire){
+    enquire.addEventListener('click',e=>{
+      const selectedDate=enquire.dataset.selectedDate||enquire.dataset.date||'';
+      if(!selectedDate)return;
+      try{sessionStorage.setItem('ozzsoundSelectedDate',selectedDate)}catch(err){}
+      document.querySelectorAll('#eventFlow a.flowCard').forEach(link=>{
+        const raw=link.getAttribute('href')||'';
+        if(!raw||raw.startsWith('#'))return;
+        const url=new URL(raw,location.href);
+        url.searchParams.set('date',selectedDate);
+        link.href=url.pathname.split('/').pop()+url.search;
+      });
+    });
   }
 
   async function loadCalendarAvailability(){
