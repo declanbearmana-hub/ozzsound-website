@@ -1,8 +1,8 @@
 (()=>{
 'use strict';
 const cfg=window.OZZSOUND_CONFIG||{};
-if(!window.supabase||!cfg.supabaseUrl||!cfg.supabasePublishableKey)return;
-const db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey);
+const db=window.OZZSOUND_ADMIN_CLIENT || (window.supabase&&cfg.supabaseUrl&&cfg.supabasePublishableKey ? window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey) : null);
+if(!db)return;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const state={items:[],editing:null};
 const style=document.createElement('style');
