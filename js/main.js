@@ -558,6 +558,25 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     }
   }catch(e){}
   try{
+    const g=JSON.parse(localStorage.getItem('ozzsoundGearHire')||'null');
+    if(g&&new URLSearchParams(location.search).get('from')==='gear'){
+      eventSelect.value='Gear Hire';
+      if(g.hireDate)dateInput.value=g.hireDate;
+      const msg=form.querySelector('textarea[name="message"]');
+      if(msg&&!msg.value){
+        const lines=['Gear hire request:'];
+        (g.items||[]).forEach(x=>lines.push('- '+x.name+' — Qty '+x.qty));
+        lines.push('Package hire period: '+(g.overallPeriod||'Not specified'));
+        lines.push('Hire date: '+(g.hireDate||'Not specified'));
+        if(g.strobeApproval&&g.strobeApproval!=='Not applicable'){
+          lines.push('Strobe safety response: '+g.strobeApproval);
+          lines.push('Strobe warning acknowledged: '+(g.strobeAcknowledged?'Yes':'No'));
+        }
+        msg.value=lines.join('\n');
+      }
+    }
+  }catch(e){console.warn('Could not restore gear hire builder',e)}
+  try{
     const k=JSON.parse(localStorage.getItem('ozzsoundKaraoke')||'null');
     if(k&&new URLSearchParams(location.search).get('from')==='karaoke'){
       eventSelect.value='Karaoke';
