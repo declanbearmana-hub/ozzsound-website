@@ -3432,7 +3432,7 @@ const { createClient } =
               "bookings"
             )
             .select(
-              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,updated_at"
+              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,completed_at,final_income,updated_at"
             )
             .eq(
               "status",
@@ -4788,15 +4788,6 @@ const { createClient } =
       newEnquiryBanner.onclick=()=>{statusFilter.value="new";filterEnquiries();enquiryList.scrollIntoView({behavior:"smooth",block:"start"});};
     }
 
-    async function completeEnquiry(enquiryId) {
-      const enquiry=allEnquiries.find(item=>String(item.id)===String(enquiryId)); if(!enquiry)return;
-      const entered=window.prompt("Total income received from this completed job (AUD):",enquiry.completed_income??""); if(entered===null)return;
-      const amount=Number(String(entered).replace(/[$,\s]/g,"")); if(!Number.isFinite(amount)||amount<0){alert("Please enter a valid income amount, for example 1250.00");return;}
-      if(!confirm("Mark this function as completed with total income of "+money(amount)+"?"))return;
-      const {error}=await supabaseClient.from("enquiries").update({status:"completed",completed_income:amount,completed_at:new Date().toISOString()}).eq("id",enquiryId);
-      if(error){console.error(error);alert("Could not complete this enquiry.");return;} await loadEnquiries();
-    }
-
     async function deleteEnquiry(enquiryId) {
       const enquiry=allEnquiries.find(item=>String(item.id)===String(enquiryId)); if(!enquiry)return;
       if(!confirm("Delete enquiry "+(enquiry.enquiry_ref||"")+" from "+(enquiry.name||"this customer")+"?\n\nThis cannot be undone. Linked booking or quote history will prevent deletion."))return;
@@ -4935,7 +4926,6 @@ const { createClient } =
 
                 <div class="enquiry-card-actions">
                   <button class="open-button" type="button" onclick="openEnquiry('${escapeHtml(enquiry.id)}')">Open Enquiry</button>
-                  ${status !== "completed" ? `<button class="complete-button" type="button" onclick="completeEnquiry('${escapeHtml(enquiry.id)}')">✓ Complete Function</button>` : `<div class="income-line">Income: ${money(enquiry.completed_income || 0)}</div>`}
                   <button class="delete-enquiry-button" type="button" onclick="deleteEnquiry('${escapeHtml(enquiry.id)}')">Delete</button>
                 </div>
 
@@ -5000,7 +4990,7 @@ const { createClient } =
               "bookings"
             )
             .select(
-              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,created_at"
+              "id,enquiry_id,quote_id,event_date,event_start_time,event_finish_time,event_times,booking_type,status,confirmed_at,completed_at,final_income,created_at"
             )
             .eq(
               "enquiry_id",
@@ -7339,6 +7329,16 @@ total,
                       "confirmed"
                     )}
 
+                    ${currentBooking.status === "completed" ? `
+                      <br><br><strong>Final income:</strong> ${money(currentBooking.final_income || 0)}
+                    ` : ""}
+
+                    ${currentBooking.status === "confirmed" ? `
+                      <br><br>
+                      <button type="button" class="action-button action-save" id="completeFunctionButton">✓ COMPLETE FUNCTION</button>
+                      <div style="margin-top:8px;color:var(--muted);font-size:12px">Use this only after Ozzsound has actually attended and completed the event.</div>
+                    ` : ""}
+
                   </div>
 
                 </div>
@@ -7870,6 +7870,8 @@ total,
       );
 
 
+      document.getElementById("completeFunctionButton")?.addEventListener("click", completeCurrentBooking);
+
       document.getElementById(
         "addInventoryButton"
       )?.addEventListener(
@@ -7936,6 +7938,26 @@ total,
       renderNotes();
     }
 
+
+    async function completeCurrentBooking() {
+      if (!currentBooking || currentBooking.status !== "confirmed") return;
+      const entered=window.prompt("Final income received from this completed function (AUD):","");
+      if(entered===null)return;
+      const amount=Number(String(entered).replace(/[$,\s]/g,""));
+      if(!Number.isFinite(amount)||amount<0){alert("Please enter a valid final income amount, for example 1250.00");return;}
+      if(!confirm("Has this event actually been completed by Ozzsound?\n\nFinal income: "+money(amount)+"\n\nThis will close the booking as a completed function."))return;
+      const completedAt=new Date().toISOString();
+      const {error:bookingError}=await supabaseClient.from("bookings").update({status:"completed",final_income:amount,completed_at:completedAt}).eq("id",currentBooking.id).eq("status","confirmed");
+      if(bookingError){console.error(bookingError);alert("Could not complete this booking.");return;}
+      const {error:enquiryError}=await supabaseClient.from("enquiries").update({status:"completed",completed_income:amount,completed_at:completedAt}).eq("id",currentBooking.enquiry_id);
+      if(enquiryError) console.error("Enquiry completion sync error:",enquiryError);
+      currentBooking.status="completed"; currentBooking.final_income=amount; currentBooking.completed_at=completedAt;
+      if(currentEnquiry){currentEnquiry.status="completed";currentEnquiry.completed_income=amount;currentEnquiry.completed_at=completedAt;}
+      const listItem=allEnquiries.find(item=>String(item.id)===String(currentBooking.enquiry_id));
+      if(listItem){listItem.status="completed";listItem.completed_income=amount;listItem.completed_at=completedAt;}
+      updateStats();filterEnquiries();renderModalContent();await loadAdminCalendar();
+      alert("FUNCTION COMPLETED\n\nFinal income recorded: "+money(amount));
+    }
 
     async function renderUploadSections() {
 
