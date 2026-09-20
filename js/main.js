@@ -972,19 +972,29 @@ document.addEventListener('DOMContentLoaded',()=>{
     brand.setAttribute('href','index.html');
   }
 
-  if(!document.querySelector('.pageJumpNav')){
-    const nav=document.createElement('div');
+  let nav=document.querySelector('.pageJumpNav');
+  if(!nav){
+    nav=document.createElement('div');
     nav.className='pageJumpNav';
     nav.setAttribute('aria-label','Page navigation');
     nav.innerHTML='<button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button><button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>';
     document.body.appendChild(nav);
-    nav.querySelector('.pageJumpTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'}));
-    nav.querySelector('.pageJumpBottom').addEventListener('click',()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:reduceMotion?'auto':'smooth'}));
-    const update=()=>{
-      const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
-      nav.querySelector('.pageJumpTop').disabled=window.scrollY<80;
-      nav.querySelector('.pageJumpBottom').disabled=window.scrollY>max-80;
-    };
-    update(); window.addEventListener('scroll',update,{passive:true}); window.addEventListener('resize',update);
   }
+
+  const topButton=nav.querySelector('.pageJumpTop');
+  const bottomButton=nav.querySelector('.pageJumpBottom');
+  if(!topButton || !bottomButton) return;
+
+  const prefersReducedMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  topButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:prefersReducedMotion?'auto':'smooth'}));
+  bottomButton.addEventListener('click',()=>window.scrollTo({top:Math.max(document.body.scrollHeight,document.documentElement.scrollHeight),behavior:prefersReducedMotion?'auto':'smooth'}));
+
+  const update=()=>{
+    const max=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+    topButton.disabled=window.scrollY<80;
+    bottomButton.disabled=window.scrollY>=max-80;
+  };
+  update();
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update);
 })();
