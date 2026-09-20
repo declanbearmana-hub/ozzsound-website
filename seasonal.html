@@ -214,6 +214,24 @@ body.theme-halloween .halloweenFxLayer{display:block}
   body.theme-newyear .newYearCountdown .nyClock{font-size:58px}
   body.theme-newyear .seasonHero h1{font-size:42px}
 }
+
+/* Christmas portrait mobile: frame the artwork rather than stretching it vertically */
+@media(max-width:720px) and (orientation:portrait){
+  body.theme-christmas .seasonMain{
+    background-image:
+      linear-gradient(180deg,rgba(5,10,30,.08) 0%,rgba(5,10,30,.18) 52%,rgba(5,10,30,.28) 100%),
+      url('assets/seasonal/ozzsound-christmas-snow-hills.webp?v=20260919-1');
+    background-size:auto 72vh;
+    background-position:center top;
+    background-repeat:repeat-y;
+    background-attachment:scroll;
+  }
+  body.theme-christmas .seasonHero,
+  body.theme-christmas .seasonStep{
+    background:rgba(8,11,17,.78);
+    backdrop-filter:blur(2px);
+  }
+}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
