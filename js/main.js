@@ -771,6 +771,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         eventExtras:selectedExtras,
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData,
         gearHire:gearHireData,
+        weddingAgreement:String(d.get('eventType')||'')==='Wedding'?{version:'2026-09-21-v1',clientAddress:String(d.get('weddingClientAddress')||''),partnerName:String(d.get('weddingPartnerName')||''),signatureName:String(d.get('weddingSignature')||''),termsAccepted:d.get('weddingTermsAccepted')==='on',effectsAcknowledged:d.get('weddingEffectsAcknowledged')==='on',acceptedAt:new Date().toISOString()}:null,
         gearHireAgreement:String(d.get('eventType')||'')==='Gear Hire'?{version:'2026-09-21-v1',hirerAddress:String(d.get('hirerAddress')||''),signatureName:String(d.get('gearHireSignature')||''),termsAccepted:d.get('gearHireTermsAccepted')==='on',smokeVenueAcknowledged:d.get('smokeVenueAcknowledged')==='on',acceptedAt:new Date().toISOString()}:null
       };
       status.textContent='Saving your enquiry securely…';
@@ -788,6 +789,15 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         attachment_paths:uploads.attachmentPaths||[], display_photo_paths:uploads.displayPhotoPaths||[], enquiry_data:enquiryData,
         source:'website'
       });
+      if(enquiryData.eventType==='Wedding'){
+        const wa=enquiryData.weddingAgreement||{};
+        if(!wa.termsAccepted||!wa.signatureName||!wa.clientAddress)throw new Error('Please complete and sign the Wedding Agreement.');
+        const effectsSelected=(weddingData?.extras||[]).some(x=>/smoke|fog|haze|bubble|laser|strobe/i.test(x));
+        if(effectsSelected&&!wa.effectsAcknowledged)throw new Error('Please acknowledge the venue requirements for the selected wedding effects.');
+        const weddingSnapshot='OzzSound Mobile Music Wedding Services Agreement | Version 2026-09-21-v1 | Darren Leslie Archer trading as OzzSound Mobile Music | ABN 33 235 488 201 | 1 Walana Street, Geilston Bay TAS 7015 | Terms displayed and accepted on the Wedding enquiry page. Includes agreed services/planning; booking/payment; changes/cancellation/postponement; venue access/setup; venue permissions and effects; timings/overtime; music/formalities; meals/breaks; safety/conduct; outdoor weather; equipment failure/events outside reasonable control; privacy/media; Australian Consumer Law; Tasmania governing law.';
+        const wr=await fetch(cfg.supabaseUrl+'/rest/v1/wedding_agreements',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({enquiry_id:enquiryId,enquiry_ref:enquiryRef,contract_version:'2026-09-21-v1',client_name:enquiryData.name,partner_name:wa.partnerName||null,email:enquiryData.email||null,phone:enquiryData.phone||null,address:wa.clientAddress,wedding_date:enquiryData.eventDate||null,reception_venue:enquiryData.venue||null,agreed_services:weddingData||{},terms_acknowledged:true,venue_effects_acknowledged:!!wa.effectsAcknowledged,signature_name:wa.signatureName,signature_text:wa.signatureName,signed_at:wa.acceptedAt,contract_snapshot:weddingSnapshot})});
+        if(!wr.ok)throw new Error('Your enquiry was received, but the signed Wedding Agreement could not be securely recorded. Please contact OzzSound before proceeding.');
+      }
       if(enquiryData.eventType==='Gear Hire'){
         const ag=enquiryData.gearHireAgreement||{};
         if(!ag.termsAccepted||!ag.signatureName||!ag.hirerAddress)throw new Error('Please complete and sign the Gear Hire Agreement.');
