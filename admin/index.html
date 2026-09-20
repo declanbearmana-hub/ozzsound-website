@@ -2477,20 +2477,31 @@ const { createClient } =
     }
 
     async function requestDeviceApproval(hash) {
-      const { data, error } = await supabaseClient.functions.invoke("admin-device-approval", { body: { deviceHash: hash } });
-      if (error) throw error;
-      return data;
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (sessionError || !accessToken) throw new Error("No active admin session");
+
+      const response = await fetch(SUPABASE_URL + "/functions/v1/admin-device-approval", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify({ deviceHash: hash, accessToken })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result?.error || "Device approval request failed");
+      return result;
     }
 
     async function waitForDeviceApproval(user, hash) {
       hideAuthPanels();
       loginPage.style.display = "flex";
       deviceApprovalPanel.classList.add("active");
-      deviceApprovalStatus.textContent = "Please wait — sending authentication email…";
+      deviceApprovalStatus.textContent = "Authentication email sent to ozzsound@hotmail.com — waiting for your approval…";
       deviceApprovalStatus.className = "message";
       deviceApprovalStatus.style.display = "block";
-
-      deviceApprovalStatus.textContent = "Authentication email sent to ozzsound@hotmail.com — waiting for your approval…";
 
       const check = async () => {
         const { data, error } = await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
@@ -2534,12 +2545,19 @@ const { createClient } =
       }
 
       if (trusted !== true) {
+        hideAuthPanels();
+        loginPage.style.display = "flex";
+        deviceApprovalPanel.classList.add("active");
+        deviceApprovalStatus.textContent = "Please wait — sending authentication email…";
+        deviceApprovalStatus.className = "message";
+        deviceApprovalStatus.style.display = "block";
         try {
           const result = await requestDeviceApproval(hash);
           if (result?.status !== "approved") { await waitForDeviceApproval(user, hash); return false; }
         } catch (error) {
+          console.error("Device approval request failed:", error);
           await supabaseClient.auth.signOut(); showLogin();
-          showMessage("Could not send the device approval email. Please try again.", "error"); return false;
+          showMessage("Could not send the security email. Please try again.", "error"); return false;
         }
       }
 
