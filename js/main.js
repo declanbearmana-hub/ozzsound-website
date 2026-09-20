@@ -612,6 +612,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         startTime:startTime.display,
         finishTime:finishTime.display,
         message:String(d.get('message')||''),
+        websiteFeedback:{pageRating:String(d.get('feedbackPageRating')||''),navigation:String(d.get('feedbackNavigation')||''),foundInfo:String(d.get('feedbackFoundInfo')||''),missing:String(d.get('feedbackMissing')||'').trim(),recommend:String(d.get('feedbackRecommend')||''),boring:String(d.get('feedbackBoring')||''),improve:String(d.get('feedbackImprove')||'').trim()},
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
       };
       status.textContent='Saving your enquiry securely…';
@@ -624,6 +625,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         event_start_time:startTime.database,
         event_finish_time:finishTime.database,
         message:enquiryData.message,
+        website_feedback:enquiryData.websiteFeedback,
         upload_folder:uploads.folder||null, upload_paths:uploads.paths||[], upload_count:uploads.count||0,
         attachment_paths:uploads.attachmentPaths||[], display_photo_paths:uploads.displayPhotoPaths||[], enquiry_data:enquiryData,
         source:'website'
