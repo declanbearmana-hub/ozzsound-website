@@ -1087,9 +1087,6 @@
                           item.unit_price || 0
                         )
                       )}
-                      <small>
-                        ex GST
-                      </small>
                     </div>
 
                   </div>
@@ -1409,7 +1406,7 @@
           <div class="quote-summary">
 
             <div class="summary-row">
-              <span>Subtotal (ex GST)</span>
+              <span>Subtotal</span>
               <strong>
                 ${money(
                   quote.subtotal
@@ -1418,7 +1415,7 @@
             </div>
 
             <div class="summary-row">
-              <span>Adjustment (ex GST)</span>
+              <span>Adjustment</span>
               <strong>
                 ${money(
                   quote.adjustment
@@ -1426,20 +1423,11 @@
               </strong>
             </div>
 
-            <div class="summary-row">
-              <span>GST (10%)</span>
-              <strong>
-                ${money(
-                  quote.gst_amount
-                )}
-              </strong>
-            </div>
-
             <div class="summary-row total">
-              <span>Total (incl. GST)</span>
+              <span>Total</span>
               <strong>
                 ${money(
-                  quote.total
+                  Math.max(0, Number(quote.subtotal || 0) + Number(quote.adjustment || 0))
                 )}
               </strong>
             </div>
