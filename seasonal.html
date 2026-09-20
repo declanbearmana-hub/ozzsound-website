@@ -167,12 +167,18 @@ body.theme-other .otherOccasionBadge:not(:empty){display:block}
 
 /* Halloween walking mummy — supplied GIF, enlarged crisply and animated across the footer */
 .halloweenWalker{display:none;position:fixed;left:0;bottom:54px;width:90px;height:60px;z-index:58;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 5px rgba(255,115,30,.48));animation:halloweenMummyWalk 18s linear infinite}
-.halloweenWalker img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;animation:halloweenMummyBob .34s ease-in-out infinite alternate}
+.halloweenWalker img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;animation:halloweenMummyBob .34s ease-in-out infinite alternate;transform:scaleX(-1)}
 body.theme-halloween .halloweenWalker{display:block}
 @keyframes halloweenMummyWalk{from{transform:translateX(-110px)}to{transform:translateX(calc(100vw + 110px))}}
-@keyframes halloweenMummyBob{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-4px) rotate(1deg)}}
+@keyframes halloweenMummyBob{from{transform:scaleX(-1) translateY(0) rotate(-1deg)}to{transform:scaleX(-1) translateY(-4px) rotate(1deg)}}
 @media(max-width:700px){.halloweenWalker{width:72px;height:48px;bottom:50px;animation-duration:14s}}
 @media(prefers-reduced-motion:reduce){.halloweenWalker{display:none!important}}
+
+/* Halloween side-character presentation fix: use the existing vampire artwork, positioned so only the complete upper pose is shown. */
+body.theme-halloween .halloweenVampire{left:-92px;top:46%;width:min(610px,41vw);max-height:92vh;object-fit:contain;object-position:left top;clip-path:inset(0 0 20% 0);transform:translateY(-43%) rotate(1deg)}
+@media(max-width:1050px){body.theme-halloween .halloweenVampire{left:-76px;top:49%;width:465px;clip-path:inset(0 0 18% 0)}}
+@media(max-width:760px){body.theme-halloween .halloweenVampire{left:-62px;top:48%;width:365px;clip-path:inset(0 0 17% 0)}}
+@media(max-width:520px){body.theme-halloween .halloweenVampire{left:-58px;top:46%;width:205px;clip-path:inset(0 0 16% 0)}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
