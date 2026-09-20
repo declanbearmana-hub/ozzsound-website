@@ -358,6 +358,10 @@
       font-weight: 900;
     }
 
+    /* NEW ENQUIRY ALERT */
+    .new-enquiry-banner{display:none;position:sticky;top:78px;z-index:45;margin:-20px 0 24px;padding:22px 26px;border-radius:18px;border:2px solid rgba(255,56,209,.78);background:linear-gradient(100deg,rgba(255,56,209,.20),rgba(168,85,247,.20),rgba(34,211,238,.14)),#101018;box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 32px rgba(255,56,209,.15);cursor:pointer}
+    .new-enquiry-banner.active{display:flex;align-items:center;justify-content:space-between;gap:20px}.new-enquiry-banner strong{font-size:clamp(22px,3vw,34px)}.new-enquiry-banner span{color:#d8d8e2;font-weight:700}
+    .enquiry-card-actions{display:grid;gap:7px}.complete-button,.delete-enquiry-button{width:100%;padding:9px 10px;border-radius:9px;cursor:pointer;font-weight:800}.complete-button{color:#7debd0;background:rgba(53,230,165,.10);border:1px solid rgba(53,230,165,.3)}.delete-enquiry-button{color:#ff9aaa;background:rgba(255,100,124,.08);border:1px solid rgba(255,100,124,.25)}.income-line{margin-top:7px;color:var(--green);font-size:12px;font-weight:800}
     /* CUSTOMER RESPONSE ALERTS */
 
     .admin-notification-area {
@@ -1642,6 +1646,7 @@
       </div>
 
 
+      <section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
       <section
         id="adminNotificationArea"
         class="admin-notification-area"
@@ -2098,6 +2103,7 @@ const { createClient } =
       document.getElementById(
         "adminNotificationArea"
       );
+    const newEnquiryBanner = document.getElementById("newEnquiryBanner");
 
     const searchInput =
       document.getElementById(
@@ -2650,7 +2656,9 @@ const { createClient } =
               attachment_paths,
               display_photo_paths,
               upload_paths,
-              status
+              status,
+              completed_income,
+              completed_at
             `)
             .order(
               "created_at",
@@ -2771,6 +2779,7 @@ const { createClient } =
       renderAdminNotifications();
 
       updateStats();
+      renderNewEnquiryBanner();
 
       filterEnquiries();
 
@@ -4770,6 +4779,31 @@ const { createClient } =
     }
 
 
+    function renderNewEnquiryBanner() {
+      if (!newEnquiryBanner) return;
+      const count = allEnquiries.filter(item => normaliseStatus(item.status) === "new").length;
+      if (!count) { newEnquiryBanner.classList.remove("active"); newEnquiryBanner.innerHTML=""; return; }
+      newEnquiryBanner.classList.add("active");
+      newEnquiryBanner.innerHTML='<div><strong>🔔 NEW ENQUIRIES ('+count+')</strong><br><span>Open each new enquiry to review it. This number reduces as you go.</span></div><span>View new enquiries ↓</span>';
+      newEnquiryBanner.onclick=()=>{statusFilter.value="new";filterEnquiries();enquiryList.scrollIntoView({behavior:"smooth",block:"start"});};
+    }
+
+    async function completeEnquiry(enquiryId) {
+      const enquiry=allEnquiries.find(item=>String(item.id)===String(enquiryId)); if(!enquiry)return;
+      const entered=window.prompt("Total income received from this completed job (AUD):",enquiry.completed_income??""); if(entered===null)return;
+      const amount=Number(String(entered).replace(/[$,\s]/g,"")); if(!Number.isFinite(amount)||amount<0){alert("Please enter a valid income amount, for example 1250.00");return;}
+      if(!confirm("Mark this function as completed with total income of "+money(amount)+"?"))return;
+      const {error}=await supabaseClient.from("enquiries").update({status:"completed",completed_income:amount,completed_at:new Date().toISOString()}).eq("id",enquiryId);
+      if(error){console.error(error);alert("Could not complete this enquiry.");return;} await loadEnquiries();
+    }
+
+    async function deleteEnquiry(enquiryId) {
+      const enquiry=allEnquiries.find(item=>String(item.id)===String(enquiryId)); if(!enquiry)return;
+      if(!confirm("Delete enquiry "+(enquiry.enquiry_ref||"")+" from "+(enquiry.name||"this customer")+"?\n\nThis cannot be undone. Linked booking or quote history will prevent deletion."))return;
+      const {error}=await supabaseClient.from("enquiries").delete().eq("id",enquiryId);
+      if(error){console.error(error);alert("This enquiry could not be deleted. It may have linked booking or quote history. Mark completed jobs as Completed instead.");return;} await loadEnquiries();
+    }
+
     function renderEnquiries(
       enquiries
     ) {
@@ -4899,22 +4933,10 @@ const { createClient } =
                 </div>
 
 
-                <div>
-
-                  <button
-                    class="open-button"
-                    type="button"
-                    onclick="
-                      openEnquiry(
-                        '${escapeHtml(
-                          enquiry.id
-                        )}'
-                      )
-                    "
-                  >
-                    Open Enquiry
-                  </button>
-
+                <div class="enquiry-card-actions">
+                  <button class="open-button" type="button" onclick="openEnquiry('${escapeHtml(enquiry.id)}')">Open Enquiry</button>
+                  ${status !== "completed" ? `<button class="complete-button" type="button" onclick="completeEnquiry('${escapeHtml(enquiry.id)}')">✓ Complete Function</button>` : `<div class="income-line">Income: ${money(enquiry.completed_income || 0)}</div>`}
+                  <button class="delete-enquiry-button" type="button" onclick="deleteEnquiry('${escapeHtml(enquiry.id)}')">Delete</button>
                 </div>
 
               </article>
@@ -8930,6 +8952,16 @@ total,
 
         if (!enquiry) {
           return;
+        }
+
+        if (normaliseStatus(enquiry.status) === "new") {
+          const { error: reviewError } = await supabaseClient.from("enquiries").update({status:"reviewing"}).eq("id",id).eq("status","new");
+          if (!reviewError) {
+            enquiry.status="reviewing";
+            updateStats();
+            renderNewEnquiryBanner();
+            filterEnquiries();
+          }
         }
 
 
