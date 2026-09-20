@@ -886,7 +886,7 @@
         supabaseClient
           .from("quotes")
           .select(
-            "id,enquiry_id,version,status,subtotal,adjustment,gst_rate,gst_amount,total,customer_visible_comments,call_requested,sent_at,customer_responded_at,created_at,updated_at"
+            "id,enquiry_id,version,status,subtotal,adjustment,total,customer_visible_comments,call_requested,sent_at,customer_responded_at,created_at,updated_at"
           )
           .eq(
             "enquiry_id",
