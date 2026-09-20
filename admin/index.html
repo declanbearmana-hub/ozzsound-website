@@ -214,6 +214,11 @@
       letter-spacing: .28em;
       font-size: 20px;
     }
+    .authLaser{position:relative;width:150px;height:100px;margin:10px auto 18px;overflow:hidden}
+    .laserHead{position:absolute;left:61px;top:36px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#171826;border:1px solid #f22bff;color:#28e6ff;box-shadow:0 0 14px rgba(242,43,255,.65);z-index:2;animation:laserHeadPulse .7s ease-in-out infinite alternate}
+    .laserBeam{position:absolute;left:75px;top:49px;width:70px;height:2px;transform-origin:0 50%;background:linear-gradient(90deg,#28e6ff,rgba(40,230,255,0));box-shadow:0 0 8px #28e6ff,0 0 15px #f22bff;animation:laserSpin 1.25s linear infinite}
+    @keyframes laserSpin{to{transform:rotate(360deg)}} @keyframes laserHeadPulse{to{box-shadow:0 0 22px rgba(40,230,255,.8),0 0 28px rgba(242,43,255,.45)}}
+    @media(prefers-reduced-motion:reduce){.laserBeam{animation-duration:4s}.laserHead{animation:none}}
 
     /* ADMIN */
 
@@ -1522,7 +1527,8 @@
         <h2>Check your email</h2>
         <p class="mfa-copy">This browser has not been approved for OzzSound Admin yet. An <strong>“Is this you?”</strong> email has been sent to <strong>ozzsound@hotmail.com</strong>.</p>
         <p class="mfa-copy">Choose <strong>Allow Access</strong> or <strong>This Wasn't Me</strong> in the email. This page will continue automatically when approved.</p>
-        <div id="deviceApprovalStatus" class="message" style="display:block;color:#b8b8c5;background:rgba(40,230,255,.07);border:1px solid rgba(40,230,255,.2)">Waiting for approval…</div>
+        <div class="authLaser" aria-hidden="true"><div class="laserHead">◉</div><div class="laserBeam"></div></div>
+        <div id="deviceApprovalStatus" class="message" style="display:block;color:#b8b8c5;background:rgba(40,230,255,.07);border:1px solid rgba(40,230,255,.2)">Please wait — sending authentication email…</div>
         <button id="cancelDeviceApproval" class="secondary-button" type="button" style="margin-top:14px">Cancel login</button>
       </div>
 
@@ -2480,9 +2486,11 @@ const { createClient } =
       hideAuthPanels();
       loginPage.style.display = "flex";
       deviceApprovalPanel.classList.add("active");
-      deviceApprovalStatus.textContent = "Waiting for approval…";
+      deviceApprovalStatus.textContent = "Please wait — sending authentication email…";
       deviceApprovalStatus.className = "message";
       deviceApprovalStatus.style.display = "block";
+
+      deviceApprovalStatus.textContent = "Authentication email sent to ozzsound@hotmail.com — waiting for your approval…";
 
       const check = async () => {
         const { data, error } = await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
@@ -9023,17 +9031,17 @@ total,
         }
 
 
-        await verifyAdmin(
-          data.user
-        );
-
-
-        loginButton.disabled =
-          false;
-
-
-        loginButton.textContent =
-          "Sign In";
+        try {
+          await verifyAdmin(data.user);
+        } catch (verifyError) {
+          console.error("Admin verification error:", verifyError);
+          await supabaseClient.auth.signOut();
+          showLogin();
+          showMessage("The security check could not be completed. Please try again.", "error");
+        } finally {
+          loginButton.disabled = false;
+          loginButton.textContent = "Sign In";
+        }
       }
     );
 
