@@ -164,6 +164,15 @@ body.theme-other.occasion-custom{--seasonA:#f22bff;--seasonB:#28e6ff;--otherGlow
 .otherOccasionBadge{display:none;margin:0 0 18px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--seasonB) 42%,transparent);border-radius:14px;background:color-mix(in srgb,var(--seasonB) 8%,transparent);font-weight:800;color:#f5f8ff}
 body.theme-other .otherOccasionBadge:not(:empty){display:block}
 @media(max-width:650px){body.theme-other .seasonHero,body.theme-other .seasonStep{backdrop-filter:none}.themeOptions .sub{padding-top:17px;margin-top:17px}.themeOptions .seasonChips{gap:7px}.themeOptions .seasonChip{padding:10px 12px;font-size:13px}}
+
+/* Halloween walking mummy — supplied GIF, enlarged crisply and animated across the footer */
+.halloweenWalker{display:none;position:fixed;left:0;bottom:54px;width:90px;height:60px;z-index:58;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 5px rgba(255,115,30,.48));animation:halloweenMummyWalk 18s linear infinite}
+.halloweenWalker img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;animation:halloweenMummyBob .34s ease-in-out infinite alternate}
+body.theme-halloween .halloweenWalker{display:block}
+@keyframes halloweenMummyWalk{from{transform:translateX(-110px)}to{transform:translateX(calc(100vw + 110px))}}
+@keyframes halloweenMummyBob{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-4px) rotate(1deg)}}
+@media(max-width:700px){.halloweenWalker{width:72px;height:48px;bottom:50px;animation-duration:14s}}
+@media(prefers-reduced-motion:reduce){.halloweenWalker{display:none!important}}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
@@ -494,4 +503,4 @@ body.theme-other .otherOccasionBadge:not(:empty){display:block}
   }
   requestAnimationFrame(frame);
 })();
-</script></body></html>
+</script><div class="halloweenWalker" aria-hidden="true"><img alt="" src="data:image/gif;base64,R0lGODlhHgAUAOMAAAQCBKSijLy6pPwSBLS+1CQmJJymvLzG3P//AAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAAeABQAAARtEMlJq5Ug382x+EAnTsDxgWMHFAJBFEQQphcwFPgt0zX7sTueBeAqzoQVwAmFRGQygqcyiiS2ooTr6ThSZglebYsrUkqjT1eQxp0u103r0kAWeosCeHX50duzb3VsH2BEMYJdSwABjH4pUpAhEQA7"></div></body></html>
