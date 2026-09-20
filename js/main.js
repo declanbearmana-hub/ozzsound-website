@@ -642,8 +642,22 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
     submit.disabled=true;
     submit.textContent='Sending enquiry…';
     status.textContent='Preparing your enquiry…';
-    const enquiryId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const enquiryRef=`OZZ-${String(enquiryId).replace(/[^a-fA-F0-9]/g,'').slice(0,8).toUpperCase()}`;
+    const makeUuid=()=>{
+      if(globalThis.crypto?.randomUUID)return globalThis.crypto.randomUUID();
+      if(globalThis.crypto?.getRandomValues){
+        const b=new Uint8Array(16); globalThis.crypto.getRandomValues(b);
+        b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+        const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+        return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+      }
+      // Last-resort RFC 4122-shaped v4 UUID for older browsers.
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,ch=>{
+        const r=Math.floor(Math.random()*16),v=ch==='x'?r:(r&3)|8;
+        return v.toString(16);
+      });
+    };
+    const enquiryId=makeUuid();
+    const enquiryRef=`OZZ-${enquiryId.replace(/-/g,'').slice(0,8).toUpperCase()}`;
     const d=new FormData(form);
     let uploads={count:0,paths:[],attachmentPaths:[],displayPhotoPaths:[],folder:''};
     try{
