@@ -9,6 +9,11 @@
 .strobeSafety select{min-width:210px;background:#07090e;border:1px solid #344054;color:#eef3fb;border-radius:12px;padding:11px;font:inherit}
 @media(max-width:700px){.strobeSafety{align-items:flex-start;flex-direction:column}.strobeSafety select{width:100%;min-width:0}}
 .hireProductMeta{margin:-4px 0 10px;color:#8f9bad;font-size:.82rem;font-weight:700}.hireSpecs{margin:12px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:10px 0}.hireSpecs summary{cursor:pointer;font-weight:800;color:#dfe7f3}.hireSpecs p{margin:9px 0 2px;font-size:.88rem;line-height:1.55;color:#aab4c4}.hireDemo{display:inline-flex;align-items:center;gap:7px;margin:4px 0 14px;color:#67dcff;font-weight:800;text-decoration:none}.hireDemo:hover{text-decoration:underline}.hireVideoDisclaimer{max-width:620px;margin:-7px 0 14px;padding:9px 11px;border-left:2px solid rgba(103,220,255,.55);background:rgba(103,220,255,.06);color:#9da9b9;font-size:.76rem;line-height:1.45;border-radius:0 7px 7px 0}
+/* Gear Hire inventory photo carousel — every Admin Inventory photo stays with its equipment. */
+.hireProductVisual .hirePhotoPrev,.hireProductVisual .hirePhotoNext{position:absolute;top:50%;z-index:4;transform:translateY(-50%);width:40px;height:48px;border:1px solid rgba(255,255,255,.22);border-radius:12px;background:rgba(10,13,20,.78);color:#fff;font-size:27px;line-height:1;cursor:pointer;backdrop-filter:blur(7px)}
+.hireProductVisual .hirePhotoPrev{left:10px}.hireProductVisual .hirePhotoNext{right:10px}
+.hireProductVisual .hirePhotoCount{position:absolute;right:10px;bottom:10px;z-index:4;padding:6px 9px;border-radius:999px;background:rgba(10,13,20,.82);color:#cbd6e5;font:800 10px/1 Inter,sans-serif;letter-spacing:.05em}
+.hireProductVisual .hirePhotoPrev:hover,.hireProductVisual .hirePhotoNext:hover{border-color:#5edfff;background:rgba(19,34,46,.9)}
 /* Live inventory card polish */
 .hireCatalogue{align-items:stretch}
 .hireProduct{display:flex;flex-direction:column;min-width:0}
