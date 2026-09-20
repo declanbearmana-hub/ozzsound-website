@@ -2537,11 +2537,22 @@ const { createClient } =
       }
 
       const hash = await deviceHash();
-      const { data: trusted, error: trustError } =
-        await supabaseClient.rpc("admin_device_is_trusted", { p_device_hash: hash });
-      if (trustError) {
-        await supabaseClient.auth.signOut(); showLogin();
-        showMessage("Unable to verify this browser.", "error"); return false;
+
+      /* New/unapproved devices must request email approval first.
+         Do not call the protected trust RPC before a device row exists. */
+      let trusted = false;
+      const { data: status, error: statusError } =
+        await supabaseClient.rpc("admin_device_status", { p_device_hash: hash });
+
+      if (!statusError && status === "approved") {
+        const { data: trustedResult } =
+          await supabaseClient.rpc("admin_device_is_trusted", { p_device_hash: hash });
+        trusted = trustedResult === true;
+      } else if (!statusError && status === "pending") {
+        await waitForDeviceApproval(user, hash);
+        return false;
+      } else if (statusError) {
+        console.warn("No existing device approval yet; requesting one.", statusError);
       }
 
       if (trusted !== true) {
