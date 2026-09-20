@@ -491,12 +491,16 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 (()=>{
   const form=document.querySelector('#enquiryForm'); if(!form)return;
   const eventSelect=document.querySelector('#eventType'), dateInput=document.querySelector('#eventDate');
+  const setEnquiryExtras=(values=[])=>{
+    const wanted=new Set((values||[]).map(v=>String(v).toLowerCase()));
+    form.querySelectorAll('input[name="eventExtras"]').forEach(x=>{if(wanted.has(x.value.toLowerCase()))x.checked=true});
+  };
   try{const v=JSON.parse(localStorage.getItem('ozzsoundVirtualSetup')||'null');if(v){const msg=form.querySelector('textarea[name="message"]');if(msg&&!msg.value){const gear=(v.items||[]).map(x=>x.name).join(', ');msg.value='Virtual Setup created'+(gear?' with: '+gear:'')+'.\nA venue preview was created in the Virtual Setup planning tool.';}}}catch(e){}
-  try{const w=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null');if(w&&new URLSearchParams(location.search).get('from')==='wedding'){eventSelect.value='Wedding';if(w.date)dateInput.value=w.date;const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');if(venue&&w.venue)venue.value=w.venue;if(guests&&w.guests)guests.value=w.guests;if(msg){const lines=['Wedding Experience Builder','Coverage: '+((w.coverage||[]).join(', ')||'Not decided'),'Setting: '+(w.setting||'Not decided'),'Style: '+(w.style||'Not decided'),'Ceremony: '+((w.ceremonyNeeds||[]).join(', ')||'Not specified'),'Reception: '+((w.receptionNeeds||[]).join(', ')||'Not specified'),'Extras: '+((w.extras||[]).join(', ')||'None selected')];if(w.mustPlay)lines.push('Must play: '+w.mustPlay);if(w.wouldLove)lines.push('Would love: '+w.wouldLove);if(w.doNotPlay)lines.push('Do not play: '+w.doNotPlay);if((w.timeline||[]).length){lines.push('Timeline:');w.timeline.forEach(x=>lines.push((x.time||'Time TBC')+' — '+(x.event||'Event TBC')))}msg.value=lines.join('\n');}}}catch(e){}
+  try{const w=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null');if(w&&new URLSearchParams(location.search).get('from')==='wedding'){eventSelect.value='Wedding';setEnquiryExtras(w.extras||[]);if(w.date)dateInput.value=w.date;const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');if(venue&&w.venue)venue.value=w.venue;if(guests&&w.guests)guests.value=w.guests;if(msg){const lines=['Wedding Experience Builder','Coverage: '+((w.coverage||[]).join(', ')||'Not decided'),'Setting: '+(w.setting||'Not decided'),'Style: '+(w.style||'Not decided'),'Ceremony: '+((w.ceremonyNeeds||[]).join(', ')||'Not specified'),'Reception: '+((w.receptionNeeds||[]).join(', ')||'Not specified'),'Extras: '+((w.extras||[]).join(', ')||'None selected')];if(w.mustPlay)lines.push('Must play: '+w.mustPlay);if(w.wouldLove)lines.push('Would love: '+w.wouldLove);if(w.doNotPlay)lines.push('Do not play: '+w.doNotPlay);if((w.timeline||[]).length){lines.push('Timeline:');w.timeline.forEach(x=>lines.push((x.time||'Time TBC')+' — '+(x.event||'Event TBC')))}msg.value=lines.join('\n');}}}catch(e){}
   try{
     const z=JSON.parse(localStorage.getItem('ozzsoundSeasonalBuilder')||'null');
     if(z&&new URLSearchParams(location.search).get('from')==='seasonal'){
-      eventSelect.value='Seasonal Event';if(z.date)dateInput.value=z.date;
+      eventSelect.value='Seasonal Event';setEnquiryExtras(z.extras||[]);if(z.date)dateInput.value=z.date;
       const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');
       if(venue&&z.venue)venue.value=z.venue;if(guests&&z.guests)guests.value=z.guests;
       if(msg&&!msg.value){const lines=['Seasonal Event Builder','Season: '+(z.season||'Not chosen'),'Feel: '+(z.vibe||'Not chosen')];if(z.crowd)lines.push('Crowd: '+z.crowd);if((z.music||[]).length)lines.push('Music: '+z.music.join(', '));if(z.musicControl)lines.push('Music approach: '+z.musicControl);if((z.extras||[]).length)lines.push('Seasonal extras: '+z.extras.join(', '));if((z.moments||[]).length)lines.push('Important bits: '+z.moments.join(', '));if(z.strobe)lines.push('Strobe: '+z.strobe+(z.strobe==='Yes'?' · Organiser approval: '+(z.strobeApproval||'Not confirmed'):''));if(z.notes)lines.push('Anything else: '+z.notes);msg.value=lines.join('\n')}
@@ -505,7 +509,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   try{
     const p=JSON.parse(localStorage.getItem('ozzsoundPartyBuilder')||'null');
     if(p&&new URLSearchParams(location.search).get('from')==='party'){
-      eventSelect.value='Birthday & Party';
+      eventSelect.value='Birthday & Party';setEnquiryExtras(p.extras||[]);
       if(p.date)dateInput.value=p.date;
       const venue=form.querySelector('[name="venue"]'),guests=form.querySelector('[name="guests"]'),msg=form.querySelector('textarea[name="message"]');
       if(venue&&p.venue)venue.value=p.venue;if(guests&&p.guests)guests.value=p.guests;
@@ -515,7 +519,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   try{
     const s=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
     if(s&&new URLSearchParams(location.search).get('event')==='schools'){
-      eventSelect.value='School Function';
+      eventSelect.value='School Function';setEnquiryExtras(s.extras||[]);
       const msg=form.querySelector('textarea[name="message"]');
       if(msg&&!msg.value){
         const lines=['School Function preferences:','Style: '+(s.vibe||'Not selected')];
@@ -618,6 +622,13 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       const eventTimes=
         `${startTime.display} – ${finishTime.display}`;
 
+      const selectedExtras=[...form.querySelectorAll('input[name="eventExtras"]:checked')].map(x=>x.value);
+      let finalMessage=String(d.get('message')||'').trim();
+      if(selectedExtras.length){
+        const extrasLine='Optional extras requested: '+selectedExtras.join(', ');
+        if(!finalMessage.includes(extrasLine)) finalMessage+=(finalMessage?'\n\n':'')+extrasLine;
+      }
+
       const enquiryData={
         name:String(d.get('name')||''), phone:String(d.get('phone')||''), email:String(d.get('email')||''),
         eventType:String(d.get('eventType')||''), eventDate:String(d.get('eventDate')||''), venue:String(d.get('venue')||''),
@@ -625,7 +636,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         times:eventTimes,
         startTime:startTime.display,
         finishTime:finishTime.display,
-        message:String(d.get('message')||''),
+        message:finalMessage,
         websiteFeedback:{pageRating:String(d.get('feedbackPageRating')||''),navigation:String(d.get('feedbackNavigation')||''),foundInfo:String(d.get('feedbackFoundInfo')||''),missing:String(d.get('feedbackMissing')||'').trim(),recommend:String(d.get('feedbackRecommend')||''),boring:String(d.get('feedbackBoring')||''),improve:String(d.get('feedbackImprove')||'').trim()},
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData
       };
