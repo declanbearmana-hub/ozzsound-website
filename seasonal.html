@@ -199,6 +199,21 @@ body.theme-halloween .halloweenFxLayer{display:block}
 @keyframes spiderDrop{0%,12%,100%{transform:translate(-50%,-48px)}28%,62%{transform:translate(-50%,var(--drop))}76%{transform:translate(-50%,-48px)}}
 @media(max-width:700px){.fallingPumpkin{--size:44px!important}.webSpider{width:34px;height:34px}}
 @media(prefers-reduced-motion:reduce){.halloweenFxLayer{display:none!important}}
+
+/* New Year mobile hero spacing: keep countdown clear of hero copy */
+@media(max-width:760px) and (orientation:portrait){
+  body.theme-newyear .seasonHero{padding:190px 32px 42px}
+  body.theme-newyear .newYearCountdown{top:70px;min-width:calc(100% - 32px)}
+  body.theme-newyear .newYearCountdown .nyClock{font-size:clamp(58px,18vw,76px)}
+  body.theme-newyear .seasonHero .eyebrow{margin-top:0}
+  body.theme-newyear .seasonHero h1{font-size:clamp(46px,12.5vw,62px);line-height:1.02}
+}
+@media(max-width:390px) and (orientation:portrait){
+  body.theme-newyear .seasonHero{padding:178px 22px 34px}
+  body.theme-newyear .newYearCountdown{top:62px;min-width:calc(100% - 28px)}
+  body.theme-newyear .newYearCountdown .nyClock{font-size:58px}
+  body.theme-newyear .seasonHero h1{font-size:42px}
+}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
