@@ -574,8 +574,22 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
   async function saveEnquiry(record){
     const url=`${cfg.supabaseUrl}/rest/v1/enquiries`;
-    const res=await fetch(url,{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:`Bearer ${cfg.supabasePublishableKey}`,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(record)});
-    if(!res.ok){let detail='';try{detail=await res.text()}catch(e){};throw new Error(`Enquiry save failed (${res.status}). ${detail}`)}
+    /* Publishable keys belong in the apikey header. Sending an sb_publishable_
+       key as a Bearer token is not valid JWT authentication for PostgREST. */
+    const res=await fetch(url,{
+      method:'POST',
+      headers:{
+        apikey:cfg.supabasePublishableKey,
+        'Content-Type':'application/json',
+        Prefer:'return=minimal'
+      },
+      body:JSON.stringify(record)
+    });
+    if(!res.ok){
+      let detail='';
+      try{detail=await res.text()}catch(e){}
+      throw new Error(`Enquiry save failed (${res.status}). ${detail}`);
+    }
   }
 
   form.addEventListener('submit',async e=>{
@@ -636,7 +650,11 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       form.querySelectorAll('input,select,textarea,button').forEach(el=>{if(el!==submit)el.disabled=true});
     }catch(err){
       console.error(err);
-      status.textContent=uploads.count?'Your photos uploaded, but the enquiry details could not be saved. Please contact Ozzsound and quote the upload folder shown in the console, or try again.':'We could not securely send your enquiry. Nothing has been sent — please try again.';
+      status.textContent=uploads.count
+        ? 'Your photos uploaded, but the enquiry details could not be saved. Please try again or contact Ozzsound.'
+        : (err?.message?.includes('Enquiry save failed')
+            ? 'We could not securely save your enquiry. Please try again in a moment.'
+            : (err?.message || 'We could not securely send your enquiry. Nothing has been sent — please try again.'));
       submit.disabled=false;
     }
   });
