@@ -4794,8 +4794,10 @@ const { createClient } =
     async function deleteEnquiry(enquiryId) {
       const enquiry=allEnquiries.find(item=>String(item.id)===String(enquiryId)); if(!enquiry)return;
       if(!confirm("Delete enquiry "+(enquiry.enquiry_ref||"")+" from "+(enquiry.name||"this customer")+"?\n\nThis cannot be undone. Linked booking or quote history will prevent deletion."))return;
-      const {error}=await supabaseClient.from("enquiries").delete().eq("id",enquiryId);
-      if(error){console.error(error);alert("This enquiry could not be deleted. It may have linked booking or quote history. Mark completed jobs as Completed instead.");return;} await loadEnquiries();
+      const {data,error}=await supabaseClient.from("enquiries").delete().eq("id",enquiryId).select("id");
+      if(error){console.error(error);alert("This enquiry could not be deleted: "+error.message);return;}
+      if(!data||!data.length){alert("Nothing was deleted. Your admin session may have expired — refresh the Admin page and sign in again.");return;}
+      await loadEnquiries();
     }
 
     function renderEnquiries(
