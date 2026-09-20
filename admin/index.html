@@ -7331,6 +7331,9 @@ total,
 
                     ${currentBooking.status === "completed" ? `
                       <br><br><strong>Final income:</strong> ${money(currentBooking.final_income || 0)}
+                      <br><br>
+                      <button type="button" class="secondary-button" id="editCompletedFunctionButton">EDIT COMPLETION / INCOME</button>
+                      <div style="margin-top:8px;color:var(--muted);font-size:12px">Correct the final amount or reopen the booking if it was marked completed by mistake.</div>
                     ` : ""}
 
                     ${currentBooking.status === "confirmed" ? `
@@ -7872,6 +7875,8 @@ total,
 
       document.getElementById("completeFunctionButton")?.addEventListener("click", completeCurrentBooking);
 
+      document.getElementById("editCompletedFunctionButton")?.addEventListener("click", editCompletedFunction);
+
       document.getElementById(
         "addInventoryButton"
       )?.addEventListener(
@@ -7957,6 +7962,49 @@ total,
       if(listItem){listItem.status="completed";listItem.completed_income=amount;listItem.completed_at=completedAt;}
       updateStats();filterEnquiries();renderModalContent();await loadAdminCalendar();
       alert("FUNCTION COMPLETED\n\nFinal income recorded: "+money(amount));
+    }
+
+    async function editCompletedFunction() {
+      if (!currentBooking || currentBooking.status !== "completed") return;
+      const action=window.prompt("Edit completed function:\n\nType MONEY to correct the final income.\nType REOPEN if this booking was marked completed by mistake.","MONEY");
+      if(action===null)return;
+      const choice=String(action).trim().toUpperCase();
+
+      if(choice==="MONEY"){
+        const entered=window.prompt("Correct final income (AUD):",Number(currentBooking.final_income||0).toFixed(2));
+        if(entered===null)return;
+        const amount=Number(String(entered).replace(/[$,\s]/g,""));
+        if(!Number.isFinite(amount)||amount<0){alert("Please enter a valid final income amount.");return;}
+        if(!confirm("Change the recorded final income to "+money(amount)+"?"))return;
+        const {error:bookingError}=await supabaseClient.from("bookings").update({final_income:amount}).eq("id",currentBooking.id).eq("status","completed");
+        if(bookingError){console.error(bookingError);alert("Could not update the income.");return;}
+        const {error:enquiryError}=await supabaseClient.from("enquiries").update({completed_income:amount}).eq("id",currentBooking.enquiry_id);
+        if(enquiryError)console.error("Enquiry income sync error:",enquiryError);
+        currentBooking.final_income=amount;
+        if(currentEnquiry)currentEnquiry.completed_income=amount;
+        const listItem=allEnquiries.find(item=>String(item.id)===String(currentBooking.enquiry_id));
+        if(listItem)listItem.completed_income=amount;
+        renderModalContent();
+        alert("Final income updated to "+money(amount)+".");
+        return;
+      }
+
+      if(choice==="REOPEN"){
+        if(!confirm("Reopen this completed function?\n\nIt will return to Confirmed/Booked status and the recorded final income/completion date will be cleared."))return;
+        const {error:bookingError}=await supabaseClient.from("bookings").update({status:"confirmed",final_income:null,completed_at:null}).eq("id",currentBooking.id).eq("status","completed");
+        if(bookingError){console.error(bookingError);alert("Could not reopen this booking.");return;}
+        const {error:enquiryError}=await supabaseClient.from("enquiries").update({status:"booked",completed_income:null,completed_at:null}).eq("id",currentBooking.enquiry_id);
+        if(enquiryError)console.error("Enquiry reopen sync error:",enquiryError);
+        currentBooking.status="confirmed";currentBooking.final_income=null;currentBooking.completed_at=null;
+        if(currentEnquiry){currentEnquiry.status="booked";currentEnquiry.completed_income=null;currentEnquiry.completed_at=null;}
+        const listItem=allEnquiries.find(item=>String(item.id)===String(currentBooking.enquiry_id));
+        if(listItem){listItem.status="booked";listItem.completed_income=null;listItem.completed_at=null;}
+        updateStats();filterEnquiries();renderModalContent();await loadAdminCalendar();
+        alert("Function reopened. It is back to a confirmed booking.");
+        return;
+      }
+
+      alert("No changes made. Type MONEY or REOPEN.");
     }
 
     async function renderUploadSections() {
