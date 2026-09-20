@@ -14,5 +14,6 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-single],[d
 form.addEventListener('input',()=>{save();summary()});form.addEventListener('change',()=>{save();summary()});
 function show(n,scroll=true){step=Math.max(0,Math.min(steps.length-1,n));steps.forEach((x,i)=>x.classList.toggle('active',i===step));bars.forEach((x,i)=>x.classList.toggle('on',i<=step));prev.style.visibility=step?'visible':'hidden';next.innerHTML=step===steps.length-1?'Continue to enquiry <span>→</span>':'Next <span>→</span>';if(step===steps.length-1)summary();if(scroll)window.scrollTo({top:Math.max(0,document.querySelector('.partyProgress').offsetTop-115),behavior:'smooth'})}
 prev.addEventListener('click',()=>show(step-1));next.addEventListener('click',()=>{if(step<steps.length-1)return show(step+1);save();location.href='event-enquiry.html?event=Birthday%20%26%20Party&from=party'});
-restore();summary();show(0,false);
+restore();summary();show(0,false);const carriedDate=new URLSearchParams(location.search).get('date')||(()=>{try{return sessionStorage.getItem('ozzsoundSelectedDate')||''}catch(e){return''}})();if(/^\d{4}-\d{2}-\d{2}$/.test(carriedDate)&&form.elements.date){form.elements.date.value=carriedDate;save();}
+
 })();
