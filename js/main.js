@@ -595,23 +595,25 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
   if(cfg.supabaseUrl&&cfg.supabasePublishableKey){fallback.hidden=true;submit.disabled=false;}else{submit.disabled=true;status.textContent='Secure enquiry storage is not configured yet.';}
 
   async function saveEnquiry(record){
-    const url=`${cfg.supabaseUrl}/rest/v1/enquiries`;
-    /* Publishable keys belong in the apikey header. Sending an sb_publishable_
-       key as a Bearer token is not valid JWT authentication for PostgREST. */
-    const res=await fetch(url,{
-      method:'POST',
-      headers:{
-        apikey:cfg.supabasePublishableKey,
-        Authorization:`Bearer ${cfg.supabasePublishableKey}`,
-        'Content-Type':'application/json',
-        Prefer:'return=minimal'
-      },
-      body:JSON.stringify(record)
-    });
-    if(!res.ok){
-      let detail='';
-      try{detail=await res.text()}catch(e){}
-      throw new Error(`Enquiry save failed (${res.status}). ${detail}`);
+    if(!window.supabase?.createClient){
+      throw new Error('Enquiry save failed. Secure enquiry client did not load.');
+    }
+    const client=window.supabase.createClient(
+      cfg.supabaseUrl,
+      cfg.supabasePublishableKey,
+      {
+        auth:{
+          persistSession:false,
+          autoRefreshToken:false,
+          detectSessionInUrl:false
+        }
+      }
+    );
+    const {error}=await client
+      .from('enquiries')
+      .insert(record);
+    if(error){
+      throw new Error(`Enquiry save failed (${error.code||'database'}). ${error.message||''}`);
     }
   }
 
