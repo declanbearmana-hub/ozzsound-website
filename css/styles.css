@@ -844,3 +844,10 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper{
 .pageJumpButton:disabled{opacity:.25;cursor:default;transform:none;box-shadow:none}
 @media(max-width:700px){.pageJumpNav{right:10px;bottom:14px;gap:7px}.pageJumpButton{width:43px;height:43px;font-size:16px}.pageJumpButton span{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.pageJumpButton{transition:none}}
+
+
+/* Global mouse-follow glow */
+@media (hover:hover) and (pointer:fine){
+ body::after{content:"";position:fixed;left:0;top:0;width:430px;height:430px;border-radius:50%;pointer-events:none;z-index:9998;opacity:.72;transform:translate3d(calc(var(--mouse-x,-600px) - 215px),calc(var(--mouse-y,-600px) - 215px),0);background:radial-gradient(circle,rgba(76,222,255,.25) 0%,rgba(76,222,255,.10) 32%,rgba(76,222,255,0) 70%);transition:background .16s ease;will-change:transform}
+ body.cursor-glow-pink::after{background:radial-gradient(circle,rgba(255,64,202,.30) 0%,rgba(255,64,202,.12) 32%,rgba(255,64,202,0) 70%)}
+}
