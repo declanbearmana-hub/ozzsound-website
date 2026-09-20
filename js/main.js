@@ -613,6 +613,13 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       .from('enquiries')
       .insert(record);
     if(error){
+      console.error('Supabase enquiry insert failed:', {
+        code:error.code,
+        message:error.message,
+        details:error.details,
+        hint:error.hint,
+        record
+      });
       throw new Error(`Enquiry save failed (${error.code||'database'}). ${error.message||''}`);
     }
   }
