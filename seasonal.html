@@ -232,6 +232,25 @@ body.theme-halloween .halloweenFxLayer{display:block}
     backdrop-filter:blur(2px);
   }
 }
+
+/* Mobile seasonal brightness pass: keep the animated themes vivid on phone screens. */
+@media(max-width:720px){
+ body.theme-halloween .halloweenScene{filter:brightness(1.28) saturate(1.12)}
+ body.theme-halloween .halloweenMummy,body.theme-halloween .halloweenVampire{opacity:.72;filter:brightness(1.22) saturate(1.12) drop-shadow(0 0 22px rgba(190,80,255,.28))}
+ body.theme-christmas .seasonMain{filter:none}
+ body.theme-christmas .christmasScene,body.theme-christmas .christmasSantaFlyby{filter:brightness(1.24) saturate(1.12)}
+ body.theme-newyear .seasonMain{background:linear-gradient(rgba(5,6,9,.24),rgba(5,6,9,.32)),url('assets/seasonal/newyear-backdrop-clean.webp') center center/cover no-repeat fixed}
+ body.theme-newyear .newYearFireworks,body.theme-newyear .nyLaser,body.theme-newyear .nyShowBeam{filter:brightness(1.32) saturate(1.18)}
+ body.theme-easter{background:#151824}
+ body.theme-easter .seasonMain{background:linear-gradient(rgba(255,255,255,.03),rgba(10,12,18,.10)),url('assets/seasonal/easter-backdrop.webp') center center/cover no-repeat scroll}
+ body.theme-easter .seasonMain:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(180deg,rgba(255,238,250,.10),rgba(176,232,255,.05) 42%,transparent 78%)}
+ body.theme-easter .seasonHero{background:linear-gradient(145deg,rgba(42,27,57,.64),rgba(15,32,40,.58));box-shadow:0 15px 45px rgba(0,0,0,.15),0 0 34px rgba(255,138,216,.10)}
+ body.theme-easter .seasonStep{background:linear-gradient(145deg,rgba(35,25,48,.78),rgba(13,28,35,.74))}
+ body.theme-easter .easterPetals{filter:brightness(1.38) saturate(1.22)}
+ body.theme-easter .easterFallingEgg{opacity:1!important;filter:brightness(1.22) saturate(1.2) drop-shadow(0 0 9px rgba(255,210,240,.34))}
+ body.theme-easter .easterSun{opacity:1;filter:brightness(1.35)}
+ body.theme-easter .easterEgg{opacity:.95;filter:brightness(1.2) saturate(1.18)}
+}
 </style></head><body class="subPage">
 <div class="halloweenRail left" aria-hidden="true"></div><div class="halloweenRail right" aria-hidden="true"></div><div class="seasonDecor" aria-hidden="true"><span class="d1">🎃</span><span class="d2">🧟</span><span class="d3">🧟‍♂️</span><span class="d4">🎃</span><span class="d5">🦇</span><span class="d6">🕸️</span></div>
 <nav class="nav wrap"><a class="brand" href="index.html"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
