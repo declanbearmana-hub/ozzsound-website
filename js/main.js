@@ -605,6 +605,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       }
     }
   }catch(e){console.warn('Could not restore karaoke builder',e)}
+  // School builder handoff is restored only when the visitor came from School Functions.
   try{
     const s=JSON.parse(localStorage.getItem('ozzsoundSchoolPlan')||'null');
     if(s&&['schools','School Function'].includes(new URLSearchParams(location.search).get('event'))){
