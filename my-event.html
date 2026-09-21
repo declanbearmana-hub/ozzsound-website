@@ -420,6 +420,11 @@
       border: 1px solid rgba(255,100,124,.22);
     }
 
+    .contract-box { margin-top:18px; padding:18px; border-radius:13px; background:rgba(34,211,238,.055); border:1px solid rgba(34,211,238,.22); }
+    .contract-terms { max-height:360px; overflow:auto; white-space:pre-wrap; line-height:1.6; padding:14px; margin:14px 0; border-radius:10px; background:#090910; border:1px solid var(--border); }
+    .contract-sign-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .contract-check { display:flex; gap:10px; align-items:flex-start; margin-top:12px; }
+    .contract-check input { width:20px; height:20px; flex:0 0 auto; }
     .notes-list {
       display: grid;
       gap: 10px;
@@ -457,7 +462,8 @@
       }
 
       .event-grid,
-      .response-actions {
+      .response-actions,
+      .contract-sign-grid {
         grid-template-columns: 1fr;
       }
 
@@ -678,6 +684,7 @@
     let currentItems = [];
     let currentNotes = [];
     let currentBooking = null;
+    let currentAgreement = null;
     let portalRealtimeChannel = null;
     let portalRefreshTimer = null;
     let portalRefreshInFlight = false;
@@ -937,10 +944,16 @@
       const quote =
         quoteRows[0];
 
+      const agreementTable =
+        /gear|hire/i.test(enquiry.enquiry_type || enquiry.event_type || "")
+          ? "gear_hire_agreements"
+          : (String(enquiry.event_type || "").toLowerCase() === "wedding" ? "wedding_agreements" : null);
+
       const [
         itemsResult,
         notesResult,
-        bookingResult
+        bookingResult,
+        agreementResult
       ] =
         await Promise.all([
 
@@ -989,7 +1002,15 @@
               "enquiry_id",
               enquiry.id
             )
-            .maybeSingle()
+            .maybeSingle(),
+
+          agreementTable
+            ? supabaseClient
+                .from(agreementTable)
+                .select("*")
+                .eq("enquiry_id", enquiry.id)
+                .maybeSingle()
+            : Promise.resolve({ data: null, error: null })
 
         ]);
 
@@ -1025,6 +1046,9 @@
 
       currentBooking =
         bookingResult.data || null;
+
+      currentAgreement =
+        agreementResult?.data || null;
 
       renderPortal();
     }
@@ -1278,6 +1302,20 @@
         `;
       }
 
+      const isGearHire = /gear|hire/i.test(enquiry.enquiry_type || enquiry.event_type || "");
+      const isWedding = String(enquiry.event_type || "").toLowerCase() === "wedding";
+      const agreementSigned = Boolean(currentAgreement?.terms_acknowledged && currentAgreement?.signed_at);
+      let contractArea = "";
+      if ((isGearHire || isWedding) && quote.status === "customer_accepted") {
+        if (!currentAgreement?.price_confirmed_at) {
+          contractArea = `<div class="card"><h2>Your Agreement</h2><p class="muted">OzzSound is preparing your final agreement using the accepted quote. You’ll be able to review and sign it here once it is ready.</p></div>`;
+        } else if (agreementSigned) {
+          contractArea = `<div class="card"><h2>Your Agreement</h2><div class="response-banner accepted"><strong>Agreement signed.</strong><br>Your digital signature was recorded ${formatDateTime(currentAgreement.signed_at)}.</div>${isGearHire ? `<p class="muted" style="margin-top:14px;">Gear Hire total: <strong>${money(currentAgreement.total_price)}</strong> · Payment required in full upfront: <strong>${money(currentAgreement.payment_due)}</strong>${currentAgreement.paid_in_full ? " · <strong>Payment recorded</strong>" : " · Payment not yet recorded"}</p>` : `<p class="muted" style="margin-top:14px;">Total: <strong>${money(currentAgreement.total_price)}</strong> · Deposit: <strong>${money(currentAgreement.deposit_amount)}</strong> · Balance: <strong>${money(currentAgreement.balance_due)}</strong></p>`}</div>`;
+        } else {
+          contractArea = `<div class="card"><h2>${isGearHire ? "Gear Hire Agreement" : "Wedding Agreement"}</h2><p class="muted">This agreement has been prepared from the quote you accepted. Review the terms before signing.</p><div class="contract-box"><strong>${isGearHire ? "Total payable upfront: " + money(currentAgreement.payment_due) + " — no deposit applies." : "Agreed total: " + money(currentAgreement.total_price) + " · Deposit: " + money(currentAgreement.deposit_amount) + " · Balance: " + money(currentAgreement.balance_due)}</strong><div class="contract-terms">${escapeHtml(currentAgreement.contract_snapshot || "")}</div><div class="contract-sign-grid"><label><span>Full legal name *</span><input id="contractSignature" type="text" autocomplete="name"></label><label><span>${isGearHire ? "Residential / business address *" : "Address"}</span><input id="contractAddress" type="text" autocomplete="street-address" value="${escapeHtml(currentAgreement.hirer_address || currentAgreement.address || "")}"></label></div><label class="contract-check"><input id="contractTermsAccepted" type="checkbox"><span>I have read and agree to this agreement and intend my typed full legal name to be my digital signature.</span></label><button id="signContractButton" class="primary-button" type="button">Sign Agreement</button><div id="contractMessage" class="message"></div></div></div>`;
+        }
+      }
+
       const portalStatus =
         bookingCancelled
           ? "cancelled"
@@ -1466,6 +1504,8 @@
         </div>
 
 
+        ${contractArea}
+
         <div class="card">
 
           <h3>
@@ -1478,6 +1518,8 @@
 
         </div>
       `;
+
+      document.getElementById("signContractButton")?.addEventListener("click", signPreparedContract);
 
       document.getElementById(
         "acceptQuoteButton"
@@ -1508,6 +1550,36 @@
             "decline"
           )
       );
+    }
+
+
+    async function signPreparedContract() {
+      if (!currentEnquiry || !currentAgreement) return;
+      const signature = document.getElementById("contractSignature")?.value.trim() || "";
+      const address = document.getElementById("contractAddress")?.value.trim() || "";
+      const accepted = Boolean(document.getElementById("contractTermsAccepted")?.checked);
+      const box = document.getElementById("contractMessage");
+      const isGear = /gear|hire/i.test(currentEnquiry.enquiry_type || currentEnquiry.event_type || "");
+      if (!signature || !accepted || (isGear && !address)) {
+        if (box) { box.textContent = "Please complete the required details and confirm you have read the agreement."; box.className = "message error"; }
+        return;
+      }
+      if (!confirm("Sign this OzzSound agreement using your typed full legal name?")) return;
+      const button = document.getElementById("signContractButton");
+      if (button) { button.disabled = true; button.textContent = "Signing..."; }
+      const { error } = await supabaseClient.rpc("customer_sign_prepared_contract", {
+        p_enquiry_id: currentEnquiry.id,
+        p_signature_name: signature,
+        p_address: address || null,
+        p_effects_acknowledged: false
+      });
+      if (error) {
+        console.error(error);
+        if (box) { box.textContent = error.message || "The agreement could not be signed."; box.className = "message error"; }
+        if (button) { button.disabled = false; button.textContent = "Sign Agreement"; }
+        return;
+      }
+      await loadPortal();
     }
 
 
