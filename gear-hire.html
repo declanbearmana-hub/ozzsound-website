@@ -71,7 +71,22 @@
 .hireProductBody>p{font-size:13px;line-height:1.55;min-height:82px;margin-bottom:8px}
 .hireControls{margin-top:auto}
 .hireSpecs{min-height:42px}
-@media(max-width:1000px){.hireCatalogue{grid-template-columns:repeat(2,1fr)}}
+/* Tablet overflow guard: keep Gear Hire inside the viewport on iPad/Android tablets. */
+.gearHirePage .wrap,.gearToolbar,.gearFilters,.hireCatalogue,.hireProduct,.hireCart,.hirePeriod,.gearDatePicker,.gearCalendar,.gearSelection{min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:1100px){
+ .gearHirePage{overflow-x:hidden}
+ .gearToolbar{width:100%;overflow:hidden}
+ .gearFilters{width:100%;max-width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+ .gearFilters button{flex:0 0 auto;white-space:nowrap}
+ .hireCatalogue{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hirePeriod{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .gearCalendarDays,.gearCalendarGrid{grid-template-columns:repeat(7,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .hireCatalogue{grid-template-columns:minmax(0,1fr)}
+ .hirePeriod{grid-template-columns:minmax(0,1fr)}
+}
+
 @media(max-width:650px){.hireCatalogue{grid-template-columns:1fr}.hireProductVisual{height:320px;padding:12px}.hireProduct h3,.hireProductMeta,.hireProductBody>p{min-height:0}}
 \n</style>
 <link rel="canonical" href="https://ozzsoundmobilemusic.com.au/gear-hire.html">
