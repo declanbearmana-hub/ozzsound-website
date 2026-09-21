@@ -6557,6 +6557,25 @@ total,
       finally{if(btn&&document.body.contains(btn)){btn.disabled=false;btn.textContent='Approve Price & Prepare Contract';}}
     }
 
+    async function markGearHirePaid(){
+      if(!currentEnquiry)return;
+      if(!confirm("Record this Gear Hire as PAID IN FULL?"))return;
+      const btn=document.getElementById("markGearPaidButton");
+      if(btn){btn.disabled=true;btn.textContent="Recording Payment...";}
+      try{
+        const {data,error}=await supabaseClient.rpc("admin_set_gear_hire_paid",{p_enquiry_id:currentEnquiry.id,p_paid:true});
+        if(error)throw error;
+        alert("Gear Hire payment recorded in full: "+money(data.payment_due)+".");
+        renderModalContent();
+        await renderUploadSections();
+      }catch(error){
+        console.error(error);
+        alert("Payment could not be recorded.\n\n"+(error?.message||"Unknown error."));
+        if(btn&&document.body.contains(btn)){btn.disabled=false;btn.textContent="Mark Paid in Full";}
+      }
+    }
+
+
     async function confirmAcceptedBooking() {
 
       if (
@@ -7758,7 +7777,7 @@ total,
               >
                 Send Quote to Customer
               </button>
-              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div>':'<label style="margin-top:0">Contract deposit / booking payment ($)</label><input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="Uses contract default if blank">'}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
+              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div>':'<label style="margin-top:0">Contract deposit / booking payment ($)</label><input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="Uses contract default if blank">'}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
 
             </div>
 
@@ -7894,6 +7913,7 @@ total,
         confirmAcceptedBooking
       );
       document.getElementById("prepareContractButton")?.addEventListener("click", prepareContractFromQuote);
+      document.getElementById("markGearPaidButton")?.addEventListener("click", markGearHirePaid);
 
 
       document.getElementById("completeFunctionButton")?.addEventListener("click", completeCurrentBooking);
