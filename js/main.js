@@ -772,7 +772,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         wedding:weddingData, karaoke:karaokeData, virtualSetup:virtualSetupData,
         gearHire:gearHireData,
         weddingAgreement:String(d.get('eventType')||'')==='Wedding'?{version:'2026-09-21-v1',clientAddress:String(d.get('weddingClientAddress')||''),partnerName:String(d.get('weddingPartnerName')||''),signatureName:String(d.get('weddingSignature')||''),termsAccepted:d.get('weddingTermsAccepted')==='on',effectsAcknowledged:d.get('weddingEffectsAcknowledged')==='on',acceptedAt:new Date().toISOString()}:null,
-        gearHireAgreement:String(d.get('eventType')||'')==='Gear Hire'?{version:'2026-09-21-v1',hirerAddress:String(d.get('hirerAddress')||''),signatureName:String(d.get('gearHireSignature')||''),termsAccepted:d.get('gearHireTermsAccepted')==='on',smokeVenueAcknowledged:d.get('smokeVenueAcknowledged')==='on',acceptedAt:new Date().toISOString()}:null
+        gearHireAgreement:null
       };
       status.textContent='Saving your enquiry securely…';
       await saveEnquiry({
@@ -798,15 +798,8 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
         const wr=await fetch(cfg.supabaseUrl+'/rest/v1/wedding_agreements',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({enquiry_id:enquiryId,enquiry_ref:enquiryRef,contract_version:'2026-09-21-v1',client_name:enquiryData.name,partner_name:wa.partnerName||null,email:enquiryData.email||null,phone:enquiryData.phone||null,address:wa.clientAddress,wedding_date:enquiryData.eventDate||null,reception_venue:enquiryData.venue||null,agreed_services:weddingData||{},terms_acknowledged:true,venue_effects_acknowledged:!!wa.effectsAcknowledged,signature_name:wa.signatureName,signature_text:wa.signatureName,signed_at:wa.acceptedAt,contract_snapshot:weddingSnapshot})});
         if(!wr.ok)throw new Error('Your enquiry was received, but the signed Wedding Agreement could not be securely recorded. Please contact OzzSound before proceeding.');
       }
-      if(enquiryData.eventType==='Gear Hire'){
-        const ag=enquiryData.gearHireAgreement||{};
-        if(!ag.termsAccepted||!ag.signatureName||!ag.hirerAddress)throw new Error('Please complete and sign the Gear Hire Agreement.');
-        const smokeSelected=/smoke|fog|haze|atmospheric/i.test((gearHireData?.items||[]).map(x=>(x.name||'')+' '+(x.description||'')).join(' '));
-        if(smokeSelected&&!ag.smokeVenueAcknowledged)throw new Error('Please acknowledge the venue and alarm requirements for smoke, fog or haze equipment.');
-        const snapshot='OzzSound Mobile Music Equipment & Gear Hire Agreement | Version 2026-09-21-v1 | Darren Leslie Archer trading as OzzSound Mobile Music | ABN 33 235 488 201 | Geilston Bay TAS 7015 | Terms displayed and accepted on the Gear Hire enquiry page. Includes equipment ownership and care; pre-hire testing; full payment upfront with no deposit; faults; investigation of damage/loss; reasonable repair/replacement costs where hirer is responsible; missing items/cleaning; late return; smoke/fog/haze venue and alarm responsibility; strobe/special effects; return inspection; Australian Consumer Law; Tasmania governing law.';
-        const agreementRes=await fetch(cfg.supabaseUrl+'/rest/v1/gear_hire_agreements',{method:'POST',headers:{apikey:cfg.supabasePublishableKey,Authorization:'Bearer '+cfg.supabasePublishableKey,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({enquiry_id:enquiryId,enquiry_ref:enquiryRef,contract_version:'2026-09-21-v1',hirer_name:enquiryData.name,hirer_email:enquiryData.email||null,hirer_phone:enquiryData.phone||null,hirer_address:ag.hirerAddress,venue:enquiryData.venue||null,hire_date:enquiryData.eventDate||null,hire_period:gearHireData?.overallPeriod||null,equipment:gearHireData?.items||[],smoke_effects_acknowledged:!!ag.smokeVenueAcknowledged,terms_acknowledged:true,signature_name:ag.signatureName,signature_text:ag.signatureName,signed_at:ag.acceptedAt,contract_snapshot:snapshot})});
-        if(!agreementRes.ok)throw new Error('Your enquiry was received, but the signed Gear Hire Agreement could not be securely recorded. Please contact OzzSound before proceeding.');
-      }
+      // Gear Hire is enquiry-first. The agreement is prepared only after OzzSound
+      // approves the final quote, so customers do not sign an unpriced contract here.
       status.textContent=`Thanks — your enquiry has been securely received. Reference: ${enquiryRef}`;
       status.classList.add('success');
       submit.textContent='Enquiry sent ✓';
