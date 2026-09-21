@@ -41,7 +41,7 @@ test('all internal links on public pages resolve', async ({ page, request }) => 
 });
 
 test('mobile pages do not overflow horizontally', async ({ page }, testInfo) => {
-  test.skip(!testInfo.project.name.includes('mobile'));
+  test.skip(testInfo.project.name.startsWith('desktop-'));
   for (const [, path] of publicPages.filter(([,p]) => !['/404.html'].includes(p))) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
