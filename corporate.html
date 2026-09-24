@@ -51,6 +51,23 @@ body.corporatePage{background:var(--corp-ink);color:var(--corp-ivory)}
 @keyframes goldTextSweep{0%,55%{background-position:100% center}100%{background-position:-100% center}}
 @keyframes goldButtonSweep{0%,60%{background-position:100% center}100%{background-position:-100% center}}
 @media(prefers-reduced-motion:reduce){.corporatePage .brand:after,.corpHero:after,.corpHero h1 em,.corpPrimary{animation:none}}
+
+/* Brighter executive-luxury pass */
+body.corporatePage{background:linear-gradient(180deg,#11141a 0,#151820 36%,#101218 100%);color:#faf8f2}
+.corporatePage:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 20% 18%,rgba(239,220,166,.10),transparent 28%),radial-gradient(circle at 80% 34%,rgba(222,231,241,.09),transparent 30%),linear-gradient(115deg,transparent 30%,rgba(255,255,255,.018) 50%,transparent 70%)}
+.corpHero{background:radial-gradient(circle at 78% 20%,rgba(229,237,246,.13),transparent 28%),radial-gradient(circle at 16% 84%,rgba(240,216,154,.12),transparent 31%),linear-gradient(135deg,#20242c 0%,#151922 44%,#1c2028 100%);border-color:rgba(236,216,160,.52);box-shadow:0 30px 85px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.10),inset 0 0 90px rgba(255,255,255,.018)}
+.corpHero:before{border-color:rgba(238,216,157,.42)}.corpHero:after{border-color:rgba(234,240,247,.25)}
+.corpHero h1{color:#fffdf8;text-shadow:0 2px 20px rgba(255,255,255,.035)}.corpHero h1 em{background-image:linear-gradient(105deg,#b59045 0%,#f1d98f 22%,#fff5cf 40%,#f5f8fb 51%,#d9e0e8 58%,#f4d887 72%,#b88e40 100%)}
+.corpHero p{color:#dedde0}.corpOrnament{border-color:rgba(243,217,150,.85)}.corpOrnament:after{border-color:rgba(240,245,250,.56)}
+.corpIntro p,.corpLead{color:#bfc2c9}.corpIntro h2,.corpBuilder h2{color:#faf9f5}
+.corpFeature{background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));border-color:rgba(228,232,239,.20);box-shadow:inset 0 1px rgba(255,255,255,.08),0 18px 45px rgba(0,0,0,.15)}.corpFeature p{color:#b9bdc5}.corpFeature h3{color:#faf8f2}
+.corpBuilder{background:radial-gradient(circle at 95% 4%,rgba(234,240,247,.09),transparent 25%),radial-gradient(circle at 5% 95%,rgba(236,210,145,.075),transparent 28%),linear-gradient(145deg,#1a1e25,#11151c);border-color:rgba(231,210,154,.42);box-shadow:inset 0 1px rgba(255,255,255,.09),0 28px 70px rgba(0,0,0,.20)}
+.corpChoice,.corpChip{background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border-color:rgba(226,231,238,.24);color:#f8f6f0}.corpChoice small{color:#b5b8c0}.corpChoice:hover,.corpChip:hover{background:linear-gradient(145deg,rgba(239,217,158,.13),rgba(232,239,247,.07));border-color:rgba(239,215,151,.70)}
+.corpChoice.selected,.corpChip.selected{background:linear-gradient(135deg,rgba(224,193,113,.24),rgba(237,242,248,.11));border-color:#e5c979;box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 28px rgba(220,188,104,.12)}
+.corpField input,.corpField select,.corpField textarea{background:#151920;border-color:rgba(229,234,241,.27);color:#fff}.corpSummaryCard{background:rgba(255,255,255,.045);border-color:rgba(231,235,241,.20)}
+.corpGoldBtn{background:linear-gradient(135deg,rgba(229,199,123,.26),rgba(244,248,252,.08));border-color:rgba(244,218,149,.90);box-shadow:inset 0 1px rgba(255,255,255,.14),0 12px 35px rgba(0,0,0,.16),0 0 24px rgba(223,191,107,.08)}
+.corpGhostBtn{background:linear-gradient(135deg,rgba(231,237,244,.10),rgba(255,255,255,.035));border-color:rgba(226,233,241,.48)}
+.corporatePage .brand .logo{filter:grayscale(1) sepia(.34) saturate(1.15) contrast(1.08) brightness(1.48) drop-shadow(0 0 14px rgba(239,218,159,.14))}
 </style></head>
 <body class="subPage corporatePage"><nav class="nav wrap"><a class="brand" href="index.html" aria-label="Ozzsound home"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><div class="navDrop"><button class="navDropButton" type="button">Plan <span>⌄</span></button><div class="navDropMenu"><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a><a href="event-enquiry.html">Enquire</a></div></div><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <main class="corpMain"><div class="wrap"><a class="corpBack" href="index.html#events">← Back to events</a>
