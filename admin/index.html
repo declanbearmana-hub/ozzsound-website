@@ -1340,6 +1340,8 @@
       text-overflow: ellipsis;
     }
 
+    .admin-cal-time{font-style:normal;font-size:9px;font-weight:900;color:#d8d2ff;white-space:nowrap}
+
     .admin-cal-day.available_from {
       border-color: rgba(143,124,255,.40);
     }
@@ -1811,6 +1813,7 @@
                 <option value="available">Available</option>
                 <option value="available_from">Available from a time</option>
                 <option value="limited">Limited / enquire</option>
+                <option value="limited_from">Limited / enquire from a time</option>
                 <option value="unavailable">Not available</option>
               </select>
             </label>
@@ -3135,8 +3138,7 @@ const { createClient } =
 
       if (field) {
         field.hidden =
-          status !==
-          "available_from";
+          !(status === "available_from" || status === "limited_from");
       }
     }
 
@@ -3843,8 +3845,9 @@ const { createClient } =
           info.status ===
           "limited"
         ) {
-          label =
-            "Limited / enquire";
+          label = info.available_from_time
+            ? "Enquire from " + adminCalendarTimeDisplay(info.available_from_time)
+            : "Limited / enquire";
         }
 
 
@@ -3867,7 +3870,10 @@ const { createClient } =
           "</strong>" +
           "<small>" +
           escapeHtml(label) +
-          "</small>";
+          "</small>" +
+          ((info.status === "limited" && info.available_from_time) || info.status === "available_from"
+            ? "<em class=\"admin-cal-time\">" + escapeHtml(adminCalendarTimeDisplay(info.available_from_time)) + "</em>"
+            : "");
 
 
         button.addEventListener(
@@ -3992,8 +3998,9 @@ const { createClient } =
 
 
       statusField.value =
-        override?.status ||
-        "available";
+        (override?.status === "limited" && override?.available_from_time)
+          ? "limited_from"
+          : (override?.status || "available");
 
 
       if (labelField) {
@@ -4113,11 +4120,15 @@ const { createClient } =
       }
 
 
-      const status =
+      const selectedStatus =
         document.getElementById(
           "adminCalendarStatus"
         )?.value ||
         "available";
+
+      const status = selectedStatus === "limited_from"
+        ? "limited"
+        : selectedStatus;
 
 
       const publicLabel =
@@ -4129,8 +4140,7 @@ const { createClient } =
 
 
       const availableFromTime =
-        status ===
-        "available_from"
+        (selectedStatus === "available_from" || selectedStatus === "limited_from")
           ? adminCalendarTimeValue()
           : null;
 
