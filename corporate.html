@@ -23,6 +23,34 @@ body.corporatePage{background:var(--corp-ink);color:var(--corp-ivory)}
 .corpSummary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.corpSummaryCard{padding:15px;border:1px solid rgba(199,204,213,.13);border-radius:14px;background:#080a0e}.corpSummaryCard small{display:block;color:#8d9098;margin-bottom:4px}.corpNav{display:flex;justify-content:space-between;gap:12px;margin-top:25px}.corpNav button{cursor:pointer}.corpSecondary{border:1px solid rgba(199,204,213,.28)!important;background:rgba(255,255,255,.025)!important;color:#fff!important}.corpPrimary{border:1px solid var(--corp-gold)!important;background:linear-gradient(135deg,#b89b58,#dfcb91)!important;color:#101014!important;box-shadow:0 8px 30px rgba(214,189,122,.12)!important}
 @keyframes corpShimmer{0%,100%{opacity:.45;filter:brightness(.85)}50%{opacity:1;filter:brightness(1.25)}}@media(prefers-reduced-motion:reduce){.corpHero:after{animation:none}}
 @media(max-width:800px){.corpMain{padding-top:105px}.corpHero{min-height:440px}.corpFeatureGrid,.corpChoices{grid-template-columns:1fr 1fr}.corpGrid,.corpSummary{grid-template-columns:1fr}.corpOrnament{width:70px;height:70px}.corpOrnament.tl{top:25px;left:25px}.corpOrnament.br{right:25px;bottom:25px}}@media(max-width:540px){.corpHero{padding:45px 24px}.corpFeatureGrid,.corpChoices{grid-template-columns:1fr}.corpNav{flex-direction:column-reverse}.corpNav .btn{justify-content:center}.corpHeroActions{display:grid}.corpHeroActions a{text-align:center}}
+
+/* Corporate couture finish — page-specific metallic treatment */
+.corporatePage .brand{position:relative}
+.corporatePage .brand .logo{filter:grayscale(1) sepia(.45) saturate(.9) contrast(1.18) brightness(1.22);opacity:.98}
+.corporatePage .brand:after{content:"";position:absolute;inset:8% -4%;pointer-events:none;background:linear-gradient(105deg,transparent 22%,rgba(255,255,255,.02) 36%,rgba(255,244,205,.48) 47%,rgba(224,231,239,.34) 52%,transparent 65%);mix-blend-mode:screen;transform:translateX(-135%) skewX(-18deg);animation:logoMetalSweep 8s ease-in-out infinite}
+.corporatePage .nav{border-bottom-color:rgba(214,189,122,.12)}
+.corpHero{border-color:rgba(218,195,137,.38);background:radial-gradient(circle at 78% 18%,rgba(226,232,241,.075),transparent 24%),radial-gradient(circle at 10% 90%,rgba(201,169,93,.075),transparent 30%),linear-gradient(128deg,#111218 0%,#08090c 47%,#0e1015 100%);box-shadow:0 36px 110px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.035)}
+.corpHero:before{border-color:rgba(218,195,137,.28)}
+.corpHero:after{border-color:rgba(226,232,241,.15);background:linear-gradient(112deg,transparent 0 38%,rgba(232,211,154,.04) 46%,rgba(235,240,247,.075) 50%,rgba(232,211,154,.035) 54%,transparent 62%);background-size:240% 100%;animation:corpMetalSweep 10s ease-in-out infinite}
+.corpOrnament{border-color:rgba(225,201,139,.72)}.corpOrnament:after{border-color:rgba(229,235,242,.38)}
+.corpKicker{background:linear-gradient(100deg,#a98b4e,#f3dfaa 40%,#e8edf4 57%,#c4a65f 78%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 22px rgba(216,189,116,.08)}
+.corpHero h1{font-weight:500;letter-spacing:-.06em;text-wrap:balance}
+.corpHero h1 em{background:linear-gradient(105deg,#9c7c3e 0%,#e4c878 25%,#fff0bd 43%,#dfe5ec 53%,#f0d78f 65%,#aa8746 100%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:goldTextSweep 9s ease-in-out infinite;text-shadow:0 10px 50px rgba(202,166,79,.10)}
+.corpHero p{color:#c3c2c0;font-weight:400;max-width:800px}
+.corpGoldBtn{position:relative;overflow:hidden;border-color:rgba(225,199,133,.78);background:linear-gradient(135deg,rgba(168,132,57,.19),rgba(239,221,170,.08));box-shadow:inset 0 1px rgba(255,255,255,.08),0 12px 35px rgba(0,0,0,.18)}
+.corpGoldBtn:before{content:"";position:absolute;inset:-2px;background:linear-gradient(110deg,transparent 30%,rgba(255,246,218,.32) 48%,rgba(225,233,242,.22) 53%,transparent 70%);transform:translateX(-150%);transition:transform .8s ease;pointer-events:none}.corpGoldBtn:hover:before{transform:translateX(150%)}.corpGoldBtn:hover{border-color:#f0d994;box-shadow:0 0 28px rgba(218,188,111,.13)}
+.corpFeature,.corpBuilder{box-shadow:inset 0 1px rgba(255,255,255,.025),0 22px 60px rgba(0,0,0,.16)}
+.corpFeature:before{background:linear-gradient(90deg,#a78542,#eedb9f,#dce3eb)}
+.corpFeature:hover{border-color:rgba(214,189,122,.34);transform:translateY(-2px);transition:.25s}
+.corpBuilder{position:relative;overflow:hidden;border-color:rgba(214,189,122,.27);background:radial-gradient(circle at 100% 0,rgba(222,229,239,.035),transparent 25%),linear-gradient(145deg,rgba(214,189,122,.035),rgba(255,255,255,.008)),#090a0e}
+.corpBuilder:before{content:"";position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,#b99a54,#f2e2b1,#dfe6ee,#b99a54,transparent)}
+.corpChoice.selected,.corpChip.selected{border-color:#d9be78;background:linear-gradient(135deg,rgba(193,157,74,.15),rgba(225,232,240,.055));box-shadow:inset 0 1px rgba(255,255,255,.045),0 0 25px rgba(201,169,87,.08)}
+.corpPrimary{position:relative;overflow:hidden;background:linear-gradient(110deg,#98763a,#d8b968 35%,#f0dda6 52%,#c6a250 76%,#8f6e35)!important;background-size:220% auto!important;animation:goldButtonSweep 8s ease-in-out infinite;color:#111!important}
+@keyframes logoMetalSweep{0%,70%{transform:translateX(-135%) skewX(-18deg)}88%,100%{transform:translateX(135%) skewX(-18deg)}}
+@keyframes corpMetalSweep{0%,55%{background-position:150% 0}100%{background-position:-80% 0}}
+@keyframes goldTextSweep{0%,55%{background-position:100% center}100%{background-position:-100% center}}
+@keyframes goldButtonSweep{0%,60%{background-position:100% center}100%{background-position:-100% center}}
+@media(prefers-reduced-motion:reduce){.corporatePage .brand:after,.corpHero:after,.corpHero h1 em,.corpPrimary{animation:none}}
 </style></head>
 <body class="subPage corporatePage"><nav class="nav wrap"><a class="brand" href="index.html" aria-label="Ozzsound home"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><div class="navDrop"><button class="navDropButton" type="button">Plan <span>⌄</span></button><div class="navDropMenu"><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a><a href="event-enquiry.html">Enquire</a></div></div><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <main class="corpMain"><div class="wrap"><a class="corpBack" href="index.html#events">← Back to events</a>
