@@ -97,7 +97,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
           status==='unavailable'
             ?'Unavailable'
             :status==='limited'
-              ?'Enquire'
+              ?(time?`Enquire from ${time}`:'Enquire')
               :status==='available_from'
                 ?(time?`From ${time}`:'Available later')
                 :'Available'
@@ -181,7 +181,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
       const timeLine=
         !isPast&&
-        status==='available_from'&&
+        (status==='available_from'||status==='limited')&&
         info.time
           ?`<em class="calTime">From ${info.time}</em>`
           :'';
@@ -315,10 +315,14 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
       'This date is currently showing as available. Send an enquiry to confirm your booking.';
 
     if(info.status==='limited'){
-      heading=`${pretty} — Limited availability`;
+      heading=info.time
+        ?`${pretty} — Enquire from ${info.time}`
+        :`${pretty} — Limited availability`;
       copy=
         info.publicLabel||
-        'This date may still be possible. Send an enquiry to confirm.';
+        (info.time
+          ?`Ozzsound may be available from ${info.time} on this date. Send an enquiry with your event times to confirm.`
+          :'This date may still be possible. Send an enquiry to confirm.');
     }
 
     if(info.status==='available_from'){
