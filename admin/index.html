@@ -4817,13 +4817,13 @@ const { createClient } =
         renderContracts();
       }
       if(activeAdminView==='inventory'){
-        const inventoryButton=document.getElementById('inventoryNavButton');
-        if(inventoryButton){
-          inventoryButton.click();
-          // The dedicated inventory manager is its own full-screen workspace.
-          // Return the top navigation highlight to Dashboard when that workspace closes.
+        if(window.OzzsoundInventory?.open){
+          window.OzzsoundInventory.open();
         } else {
           alert('Inventory is still loading. Please try again in a moment.');
+          activeAdminView='dashboard';
+          setAdminHeading('dashboard');
+          document.querySelectorAll('.workspace-tab').forEach(b=>b.classList.toggle('active',b.dataset.adminView==='dashboard'));
         }
       }
       window.scrollTo({top:0,behavior:'smooth'});
@@ -9805,7 +9805,7 @@ total,
 
   </script>
 
-<script src="inventory-module.js?v=20260920-1"></script>\n<script>
+<script src="inventory-module.js?v=20260924-2"></script>\n<script>
 document.addEventListener('DOMContentLoaded',()=>{
  const sel=document.querySelector('#contractTemplateSelect'),title=document.querySelector('#contractTemplateTitle'),ver=document.querySelector('#contractTemplateVersion'),supplier=document.querySelector('#contractTemplateSupplier'),terms=document.querySelector('#contractTemplateTerms'),deposit=document.querySelector('#contractTemplateDeposit'),save=document.querySelector('#saveContractTemplate'),status=document.querySelector('#contractTemplateStatus');
  const previewWrap=document.querySelector('#weddingContractPricePreview'),previewTitle=document.querySelector('#contractPricePreviewTitle'),pt=document.querySelector('#contractPreviewTotal'),pd=document.querySelector('#contractPreviewDeposit'),pe=document.querySelector('#contractPreviewExtras'),preview=document.querySelector('#contractLivePreview');
