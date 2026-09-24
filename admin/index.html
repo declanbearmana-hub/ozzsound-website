@@ -1329,6 +1329,14 @@
       font-size: 15px;
     }
 
+    .admin-cal-day.today{box-shadow:0 0 0 2px rgba(34,211,238,.72),0 0 20px rgba(34,211,238,.12);position:relative}
+    .admin-cal-day.today strong:after{content:" TODAY";font-size:7px;letter-spacing:.08em;color:var(--cyan);vertical-align:middle;margin-left:3px}
+    .admin-cal-day.selected{background:linear-gradient(145deg,rgba(34,211,238,.11),rgba(168,85,247,.08));border-color:var(--cyan)}
+    .admin-cal-booking-time{display:block;width:100%;font-size:8px;font-weight:900;line-height:1.25;color:#ffd3f5;white-space:normal}
+    .admin-calendar-editor.open{box-shadow:0 18px 45px rgba(0,0,0,.22)}
+    .admin-calendar-selection-summary{margin:0 0 14px;padding:11px 13px;border-radius:10px;border:1px solid rgba(34,211,238,.18);background:rgba(34,211,238,.045);color:#bfc8d6;font-size:12px;line-height:1.5}
+    .admin-calendar-selection-summary strong{color:#fff}
+
     .admin-cal-day small {
       width: 100%;
       overflow: hidden;
@@ -1804,6 +1812,8 @@
               Select a date
             </strong>
           </div>
+
+          <div id="adminCalendarSelectionSummary" class="admin-calendar-selection-summary">Choose a day above to view its availability and booking details.</div>
 
           <div class="admin-calendar-form">
 
@@ -3808,6 +3818,10 @@ const { createClient } =
           );
         }
 
+        if (date.getTime() === today.getTime()) {
+          button.classList.add("today");
+        }
+
 
         if (
           dateKey ===
@@ -3864,16 +3878,22 @@ const { createClient } =
         }
 
 
+        const dayBookings = adminBookingsForDate(dateKey);
+        const bookingSchedule = dayBookings.length
+          ? dayBookings.map(booking => {
+              const start = adminCalendarTimeDisplay(adminBookingStartValue(booking));
+              const finish = adminCalendarTimeDisplay(booking.event_finish_time);
+              return start ? (start + (finish ? " – " + finish : "")) : "";
+            }).filter(Boolean).join(" · ")
+          : "";
+
         button.innerHTML =
-          "<strong>" +
-          day +
-          "</strong>" +
-          "<small>" +
-          escapeHtml(label) +
-          "</small>" +
+          "<strong>" + day + "</strong>" +
+          "<small>" + escapeHtml(label) + "</small>" +
           ((info.status === "limited" && info.available_from_time) || info.status === "available_from"
             ? "<em class=\"admin-cal-time\">" + escapeHtml(adminCalendarTimeDisplay(info.available_from_time)) + "</em>"
-            : "");
+            : "") +
+          (bookingSchedule ? "<span class=\"admin-cal-booking-time\">" + escapeHtml(bookingSchedule) + "</span>" : "");
 
 
         button.addEventListener(
@@ -4080,6 +4100,23 @@ const { createClient } =
             );
       }
 
+
+      const selectionSummary = document.getElementById("adminCalendarSelectionSummary");
+      if (selectionSummary) {
+        const info = adminCalendarStatusFor(dateKey);
+        const bookings = adminBookingsForDate(dateKey);
+        let statusText = info.status === "booked" ? "Confirmed booking"
+          : info.status === "unavailable" ? "Unavailable"
+          : info.status === "limited" ? (info.available_from_time ? "Limited / enquire from " + adminCalendarTimeDisplay(info.available_from_time) : "Limited / enquire")
+          : info.status === "available_from" ? "Available from " + adminCalendarTimeDisplay(info.available_from_time)
+          : "Available";
+        const schedules = bookings.map(booking => {
+          const start=adminCalendarTimeDisplay(adminBookingStartValue(booking));
+          const finish=adminCalendarTimeDisplay(booking.event_finish_time);
+          return start ? start + (finish ? " – " + finish : "") : "";
+        }).filter(Boolean);
+        selectionSummary.innerHTML = "<strong>" + escapeHtml(adminCalendarPrettyDate(dateKey)) + "</strong><br>" + escapeHtml(statusText) + (schedules.length ? " · Event time: " + escapeHtml(schedules.join(" · ")) : "") + (override?.public_label ? "<br>Public note: " + escapeHtml(override.public_label) : "");
+      }
 
       renderAdminBookingManager(
         dateKey
