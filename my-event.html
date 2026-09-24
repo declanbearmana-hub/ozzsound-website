@@ -1579,6 +1579,8 @@
         if (button) { button.disabled = false; button.textContent = "Sign Agreement"; }
         return;
       }
+      // Refresh the portal after signing. Database triggers also preserve
+      // the signed lifecycle state in Admin contract history.
       await loadPortal();
     }
 
