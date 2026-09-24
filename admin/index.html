@@ -222,6 +222,20 @@
 
     /* ADMIN */
 
+    /* 2026 admin workspace navigation */
+    .admin-workspace-nav{display:flex;gap:8px;align-items:center;overflow-x:auto;padding:10px 30px;border-bottom:1px solid var(--border);background:#0b0b12;position:sticky;top:78px;z-index:45;scrollbar-width:thin}
+    .workspace-tab{border:1px solid var(--border);background:var(--panel2);color:#ddd;border-radius:11px;padding:11px 15px;font-weight:800;white-space:nowrap;cursor:pointer}
+    .workspace-tab.active{color:#fff;border-color:rgba(34,211,238,.55);box-shadow:0 0 0 1px rgba(34,211,238,.12),0 0 18px rgba(34,211,238,.08)}
+    .workspace-tab.new-alert{border-color:rgba(255,56,209,.72);color:#fff;box-shadow:0 0 16px rgba(255,56,209,.2)}
+    .workspace-badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;align-items:center;justify-content:center;border-radius:999px;background:var(--pink);color:#fff;font-size:11px;margin-left:6px}
+    .admin-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px}
+    .dash-action{padding:18px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(145deg,var(--panel2),var(--panel3));cursor:pointer;color:#fff;text-align:left}
+    .dash-action strong{font-size:26px;display:block;margin-bottom:4px}.dash-action span{color:var(--muted);font-size:13px}
+    .dash-action.urgent{border-color:rgba(255,56,209,.55);box-shadow:0 0 20px rgba(255,56,209,.1)}
+    .admin-view-hidden{display:none!important}
+    @media(max-width:760px){.admin-workspace-nav{top:70px;padding:9px 12px}.admin-dashboard{grid-template-columns:1fr 1fr}.admin-content{padding-left:14px;padding-right:14px}}
+
+
     #adminArea {
       display: none;
       min-height: 100vh;
@@ -1619,6 +1633,16 @@
 
     </header>
 
+    <nav class="admin-workspace-nav" aria-label="Admin sections">
+      <button class="workspace-tab active" data-admin-view="dashboard">Dashboard</button>
+      <button class="workspace-tab" id="newEnquiriesTab" data-admin-view="new">New Enquiries <span class="workspace-badge" id="newEnquiryTabCount">0</span></button>
+      <button class="workspace-tab" data-admin-view="enquiries">Enquiries</button>
+      <button class="workspace-tab" data-admin-view="contracts">Contracts</button>
+      <button class="workspace-tab" data-admin-view="jobs">Jobs</button>
+      <button class="workspace-tab" data-admin-view="calendar">Calendar</button>
+      <button class="workspace-tab" data-admin-view="inventory">Inventory</button>
+      <button class="workspace-tab" data-admin-view="settings">Settings</button>
+    </nav>
 
     <main class="admin-content">
 
@@ -1646,15 +1670,20 @@
       </div>
 
 
-      <section class="contractAdmin" id="contractAdmin"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label>Default deposit / booking payment ($)<input id="contractTemplateDeposit" type="number" min="0" step="0.01" placeholder="Leave blank to set per booking"></label><div></div><div class="contractAdminWide" id="weddingContractPricePreview" style="padding:14px;border:1px solid var(--border);border-radius:12px"><strong id="contractPricePreviewTitle">Wedding price preview</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label>Total price ($)<input id="contractPreviewTotal" type="number" min="0" step="0.01" value="0"></label><label>Deposit ($)<input id="contractPreviewDeposit" type="number" min="0" step="0.01" value="0"></label><label>Added extras ($)<input id="contractPreviewExtras" type="number" min="0" step="0.01" value="0"></label></div><small style="color:var(--muted)">Preview only — customer booking prices are entered inside that customer's enquiry.</small></div><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea><small style="display:block;margin-top:7px;color:var(--muted)">Available fields: {{TOTAL_PRICE}}, {{DEPOSIT_AMOUNT}}, {{ADDED_EXTRAS}}, {{BALANCE_DUE}}.</small><div id="contractLivePreview" style="white-space:pre-wrap;margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:#08080e;color:#ddd"></div></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
-      <section
+<section id="adminDashboard" class="admin-dashboard">
+        <button class="dash-action urgent" data-admin-view="new"><strong id="dashNewCount">0</strong><span>New enquiries waiting</span></button>
+        <button class="dash-action" data-admin-view="contracts"><strong id="dashContractCount">0</strong><span>Contract actions</span></button>
+        <button class="dash-action" data-admin-view="jobs"><strong id="dashJobsCount">0</strong><span>Confirmed jobs</span></button>
+      </section>
+      <section class="contractAdmin" id="contractAdmin" data-admin-section="settings"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label>Default deposit / booking payment ($)<input id="contractTemplateDeposit" type="number" min="0" step="0.01" placeholder="Leave blank to set per booking"></label><div></div><div class="contractAdminWide" id="weddingContractPricePreview" style="padding:14px;border:1px solid var(--border);border-radius:12px"><strong id="contractPricePreviewTitle">Wedding price preview</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label>Total price ($)<input id="contractPreviewTotal" type="number" min="0" step="0.01" value="0"></label><label>Deposit ($)<input id="contractPreviewDeposit" type="number" min="0" step="0.01" value="0"></label><label>Added extras ($)<input id="contractPreviewExtras" type="number" min="0" step="0.01" value="0"></label></div><small style="color:var(--muted)">Preview only — customer booking prices are entered inside that customer's enquiry.</small></div><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea><small style="display:block;margin-top:7px;color:var(--muted)">Available fields: {{TOTAL_PRICE}}, {{DEPOSIT_AMOUNT}}, {{ADDED_EXTRAS}}, {{BALANCE_DUE}}.</small><div id="contractLivePreview" style="white-space:pre-wrap;margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:#08080e;color:#ddd"></div></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section data-admin-section="enquiries" id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
+      <section data-admin-section="enquiries"
         id="adminNotificationArea"
         class="admin-notification-area"
         aria-live="assertive"
       ></section>
 
 
-      <section class="stats">
+      <section class="stats" data-admin-section="dashboard">
 
         <div class="stat-card">
           <div class="stat-label">
@@ -1710,7 +1739,7 @@
 
       <!-- ADMIN CALENDAR MANAGER -->
 
-      <section class="admin-calendar-panel">
+      <section class="admin-calendar-panel" data-admin-section="calendar">
 
         <div class="admin-calendar-top">
 
@@ -1873,7 +1902,7 @@
       </section>
 
 
-      <section class="toolbar">
+      <section class="toolbar" data-admin-section="enquiries">
 
         <input
           id="searchInput"
@@ -1932,7 +1961,7 @@
       </section>
 
 
-      <section
+      <section data-admin-section="enquiries"
         id="enquiryList"
         class="enquiry-list"
       >
@@ -4665,6 +4694,45 @@ const { createClient } =
     }
 
 
+
+    let activeAdminView='dashboard';
+    function setAdminView(view){
+      activeAdminView=view||'dashboard';
+      document.querySelectorAll('.workspace-tab').forEach(b=>b.classList.toggle('active',b.dataset.adminView===activeAdminView));
+      const dashboard=document.getElementById('adminDashboard');
+      if(dashboard)dashboard.classList.toggle('admin-view-hidden',activeAdminView!=='dashboard');
+      document.querySelectorAll('[data-admin-section]').forEach(el=>{
+        const section=el.dataset.adminSection;
+        let show=false;
+        if(activeAdminView==='dashboard')show=section==='dashboard';
+        else if(activeAdminView==='calendar')show=section==='calendar';
+        else if(activeAdminView==='settings')show=section==='settings';
+        else if(activeAdminView==='contracts')show=section==='enquiries';
+        else if(activeAdminView==='jobs')show=section==='enquiries';
+        else if(activeAdminView==='inventory')show=section==='enquiries';
+        else show=section==='enquiries';
+        el.classList.toggle('admin-view-hidden',!show);
+      });
+      if(activeAdminView==='new'){statusFilter.value='new';filterEnquiries();}
+      if(activeAdminView==='enquiries'){statusFilter.value='all';filterEnquiries();}
+      if(activeAdminView==='jobs'){statusFilter.value='booked';filterEnquiries();}
+      if(activeAdminView==='contracts'){
+        const contractStatuses=new Set(['customer_accepted','quote_sent','booked']);
+        renderEnquiries(allEnquiries.filter(x=>contractStatuses.has(normaliseStatus(x.status))));
+      }
+      if(activeAdminView==='inventory'){
+        searchInput.value='';
+        statusFilter.value='all';
+        filterEnquiries();
+        alert('Inventory management remains available inside enquiries and the existing Inventory tools. A dedicated stock workspace can be separated next without changing your inventory data.');
+      }
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    document.addEventListener('click',event=>{
+      const target=event.target.closest('[data-admin-view]');
+      if(target)setAdminView(target.dataset.adminView);
+    });
+
     function updateStats() {
 
       const total =
@@ -4720,6 +4788,13 @@ const { createClient } =
         "photoCount"
       ).textContent =
         withPhotos;
+      const tabCount=document.getElementById('newEnquiryTabCount'),newTab=document.getElementById('newEnquiriesTab');
+      const dashNew=document.getElementById('dashNewCount'),dashJobs=document.getElementById('dashJobsCount'),dashContracts=document.getElementById('dashContractCount');
+      if(tabCount)tabCount.textContent=newTotal;
+      if(newTab)newTab.classList.toggle('new-alert',newTotal>0);
+      if(dashNew)dashNew.textContent=newTotal;
+      if(dashJobs)dashJobs.textContent=bookedTotal;
+      if(dashContracts)dashContracts.textContent=allEnquiries.filter(x=>['customer_accepted','quote_sent'].includes(normaliseStatus(x.status))).length;
     }
 
 
