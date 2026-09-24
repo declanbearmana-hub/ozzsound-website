@@ -609,6 +609,8 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="./js/signed-contract-pdf.js"></script>
 
   <script>
     const SUPABASE_URL =
@@ -1310,7 +1312,7 @@
         if (!currentAgreement?.price_confirmed_at) {
           contractArea = `<div class="card"><h2>Your Agreement</h2><p class="muted">OzzSound is preparing your final agreement using the accepted quote. You’ll be able to review and sign it here once it is ready.</p></div>`;
         } else if (agreementSigned) {
-          contractArea = `<div class="card"><h2>Your Agreement</h2><div class="response-banner accepted"><strong>Agreement signed.</strong><br>Your digital signature was recorded ${formatDateTime(currentAgreement.signed_at)}.</div>${isGearHire ? `<p class="muted" style="margin-top:14px;">Gear Hire total: <strong>${money(currentAgreement.total_price)}</strong> · Payment required in full upfront: <strong>${money(currentAgreement.payment_due)}</strong>${currentAgreement.paid_in_full ? " · <strong>Payment recorded</strong>" : " · Payment not yet recorded"}</p>` : `<p class="muted" style="margin-top:14px;">Total: <strong>${money(currentAgreement.total_price)}</strong> · Deposit: <strong>${money(currentAgreement.deposit_amount)}</strong> · Balance: <strong>${money(currentAgreement.balance_due)}</strong></p>`}</div>`;
+          contractArea = `<div class="card"><h2>Your Agreement</h2><div class="response-banner accepted"><strong>Agreement signed.</strong><br>Your digital signature was recorded ${formatDateTime(currentAgreement.signed_at)}.</div><button id="downloadSignedAgreement" class="primary-button" type="button" style="margin-top:15px">Download Signed Agreement (PDF)</button>${isGearHire ? `<p class="muted" style="margin-top:14px;">Gear Hire total: <strong>${money(currentAgreement.total_price)}</strong> · Payment required in full upfront: <strong>${money(currentAgreement.payment_due)}</strong>${currentAgreement.paid_in_full ? " · <strong>Payment recorded</strong>" : " · Payment not yet recorded"}</p>` : `<p class="muted" style="margin-top:14px;">Total: <strong>${money(currentAgreement.total_price)}</strong> · Deposit: <strong>${money(currentAgreement.deposit_amount)}</strong> · Balance: <strong>${money(currentAgreement.balance_due)}</strong></p>`}</div>`;
         } else {
           contractArea = `<div class="card"><h2>${isGearHire ? "Gear Hire Agreement" : "Wedding Agreement"}</h2><p class="muted">This agreement has been prepared from the quote you accepted. Review the terms before signing.</p><div class="contract-box"><strong>${isGearHire ? "Total payable upfront: " + money(currentAgreement.payment_due) + " — no deposit applies." : "Agreed total: " + money(currentAgreement.total_price) + " · Deposit: " + money(currentAgreement.deposit_amount) + " · Balance: " + money(currentAgreement.balance_due)}</strong><div class="contract-terms">${escapeHtml(currentAgreement.contract_snapshot || "")}</div><div class="contract-sign-grid"><label><span>Full legal name *</span><input id="contractSignature" type="text" autocomplete="name"></label><label><span>${isGearHire ? "Residential / business address *" : "Address"}</span><input id="contractAddress" type="text" autocomplete="street-address" value="${escapeHtml(currentAgreement.hirer_address || currentAgreement.address || "")}"></label></div><label class="contract-check"><input id="contractTermsAccepted" type="checkbox"><span>I have read and agree to this agreement and intend my typed full legal name to be my digital signature.</span></label><button id="signContractButton" class="primary-button" type="button">Sign Agreement</button><div id="contractMessage" class="message"></div></div></div>`;
         }
@@ -1520,6 +1522,12 @@
       `;
 
       document.getElementById("signContractButton")?.addEventListener("click", signPreparedContract);
+      document.getElementById("downloadSignedAgreement")?.addEventListener("click",async()=>{
+        try{
+          const kind=/gear|hire/i.test(currentEnquiry.enquiry_type||currentEnquiry.event_type||"")?"gear_hire":"wedding";
+          await window.OzzsoundSignedPDF.download(currentAgreement,kind);
+        }catch(error){alert(error.message||"Unable to download the signed agreement.");}
+      });
 
       document.getElementById(
         "acceptQuoteButton"
