@@ -181,7 +181,7 @@ if(!reduceMotion&&matchMedia('(pointer:fine)').matches){hero?.addEventListener('
 
       const timeLine=
         !isPast&&
-        (status==='available_from'||status==='limited')&&
+        status==='available_from'&&
         info.time
           ?`<em class="calTime">From ${info.time}</em>`
           :'';
