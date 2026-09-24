@@ -270,7 +270,7 @@ body.theme-halloween .halloweenFxLayer{display:block}
 <div class="christmasSleigh" id="christmasSleigh" aria-hidden="true">
   <img class="christmasSantaFlyby" src="assets/seasonal/christmas-santa-sleigh.webp?v=20260919-2" alt="" decoding="async">
 </div><main class="seasonMain"><div class="wrap"><img class="halloweenVampire" src="assets/seasonal/ozzsound-vampire.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><img class="halloweenMummy" src="assets/seasonal/mummy.webp?v=20260919-1" alt="" aria-hidden="true" decoding="async"><a class="seasonBack" href="index.html#events">← Back to events</a>
-<section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="nyBackdrop" aria-hidden="true"></div><div class="easterScene" aria-hidden="true"><div class="easterSun"></div><div class="easterHill"></div><div class="easterHill h2"></div><i class="easterEgg" style="--x:7%;--b:5%;--r:-12deg;--egg1:#ff8ad8;--egg2:#8b55d9"></i><i class="easterEgg" style="--x:18%;--b:2%;--r:9deg;--egg1:#7ee7ff;--egg2:#468cd8"></i><i class="easterEgg" style="--x:79%;--b:3%;--r:-8deg;--egg1:#ffd98e;--egg2:#ff8eaa"></i><i class="easterEgg" style="--x:90%;--b:7%;--r:14deg;--egg1:#d5a5ff;--egg2:#7ee7ff"></i><span class="easterButterfly" style="--x:12%;--y:24%;--d:4.7s;--delay:-1s">🦋</span><span class="easterButterfly" style="--x:75%;--y:18%;--d:5.4s;--delay:-3s">🦋</span><span class="easterBunny">🐇</span></div><div class="newYearCountdown" id="newYearCountdown" aria-live="polite"><div class="nyClockLabel">COUNTDOWN TO MIDNIGHT</div><div class="nyClock" id="newYearClock">00:10</div><div class="nyPartySign">Happy New Year!<span>Time to Party!</span></div></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
+<section class="seasonHero"><div class="halloweenScene" aria-hidden="true"></div><div class="nyBackdrop" aria-hidden="true"></div><div class="easterScene" aria-hidden="true"><div class="easterSun"></div><div class="easterHill"></div><div class="easterHill h2"></div><i class="easterEgg" style="--x:7%;--b:5%;--r:-12deg;--egg1:#ff8ad8;--egg2:#8b55d9"></i><i class="easterEgg" style="--x:18%;--b:2%;--r:9deg;--egg1:#7ee7ff;--egg2:#468cd8"></i><i class="easterEgg" style="--x:79%;--b:3%;--r:-8deg;--egg1:#ffd98e;--egg2:#ff8eaa"></i><i class="easterEgg" style="--x:90%;--b:7%;--r:14deg;--egg1:#d5a5ff;--egg2:#7ee7ff"></i><span class="easterButterfly" style="--x:12%;--y:24%;--d:4.7s;--delay:-1s">🦋</span><span class="easterButterfly" style="--x:75%;--y:18%;--d:5.4s;--delay:-3s">🦋</span><span class="easterBunny">🐇</span></div><div class="newYearCountdown" id="newYearCountdown" aria-live="polite"><div class="nyClockLabel">COUNTDOWN TO MIDNIGHT</div><div class="nyClock" id="newYearClock">00:05</div><div class="nyPartySign">Happy New Year!<span>Time to Party!</span></div></div><div class="eyebrow">Seasonal Events</div><h1 id="seasonTitle">Make the season <span class="gradientText">a proper event.</span></h1><p id="seasonIntro">Pick the occasion and the page changes with it. A few quick choices gives Dazz the direction without turning planning into homework.</p></section>
 <div class="seasonProgress"><i></i><i></i><i></i><i></i></div><form id="seasonBuilder">
 <section class="seasonStep active"><div class="stepNo">01 · Pick the season</div><h2>What's the occasion?</h2><p class="lead">Choose one and we'll tailor the rest.</p><div class="seasonChoices">
 <button type="button" class="seasonChoice" data-single="season" data-value="Halloween"><strong>🎃 Halloween</strong><small>Costumes, spooky atmosphere and party energy.</small></button>
@@ -474,7 +474,7 @@ body.theme-halloween .halloweenFxLayer{display:block}
 (function(){
   const clock=document.getElementById('newYearClock');
   if(!clock)return;
-  let timer=null,streamerTimer=null,celebrationTimer=null,restartTimer=null,lastTheme=false,value=10;
+  let timer=null,streamerTimer=null,celebrationTimer=null,restartTimer=null,lastTheme=false,value=5;
   function paint(){
     clock.textContent='00:'+String(value).padStart(2,'0');
     clock.classList.remove('tick');void clock.offsetWidth;clock.classList.add('tick');
@@ -484,7 +484,7 @@ body.theme-halloween .halloweenFxLayer{display:block}
     if(streamerTimer){clearTimeout(streamerTimer);streamerTimer=null}
     if(celebrationTimer){clearTimeout(celebrationTimer);celebrationTimer=null}
     if(restartTimer){clearTimeout(restartTimer);restartTimer=null}
-    value=10;clock.classList.remove('zero');document.body.classList.remove('newyear-fireworks-live');
+    value=5;clock.classList.remove('zero');document.body.classList.remove('newyear-fireworks-live');
     document.getElementById('newYearCountdown')?.classList.remove('celebrating');
     const fx=document.getElementById('nyPartyFx');if(fx)fx.dataset.confetti='off';paint();
   }
