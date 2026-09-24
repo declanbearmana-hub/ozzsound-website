@@ -118,6 +118,32 @@ border-color:rgba(239,197,96,.60)}
 .corpChoice:hover,.corpChip:hover{background:linear-gradient(145deg,rgba(232,177,55,.24),rgba(255,230,163,.08))}
 .corpField input,.corpField select,.corpField textarea{background:#332a1d;border-color:rgba(240,200,103,.40)}
 .corpSummaryCard{background:rgba(182,122,22,.13);border-color:rgba(239,199,101,.32)}
+
+/* Final corporate colour balance: champagne, pearl and true metallic logo */
+body.corporatePage{background:
+radial-gradient(circle at 9% 10%,rgba(221,181,83,.20),transparent 24%),
+radial-gradient(circle at 86% 30%,rgba(244,226,178,.12),transparent 29%),
+linear-gradient(180deg,#302b22 0%,#25241f 35%,#2d2921 68%,#20201e 100%)}
+.corporatePage:before{background:
+radial-gradient(circle at 15% 14%,rgba(246,214,135,.19),transparent 27%),
+radial-gradient(circle at 78% 30%,rgba(235,239,243,.09),transparent 29%),
+radial-gradient(circle at 48% 70%,rgba(213,172,72,.07),transparent 34%)}
+.corporatePage .nav{background:linear-gradient(90deg,rgba(83,68,39,.22),rgba(35,35,33,.10),rgba(90,74,42,.12))}
+.corporatePage .brand .logo{
+ filter:grayscale(1) sepia(.22) saturate(.72) brightness(1.38) contrast(1.22) drop-shadow(0 0 13px rgba(239,214,151,.20));
+}
+.corporatePage .brand:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(105deg,rgba(174,132,43,.16),rgba(255,238,185,.12) 36%,rgba(245,248,251,.18) 53%,rgba(197,153,59,.13) 72%,transparent);mix-blend-mode:color}
+.corporatePage .brand:after{z-index:3;background:linear-gradient(105deg,transparent 22%,rgba(255,241,199,.03) 35%,rgba(255,246,213,.58) 47%,rgba(238,244,249,.42) 53%,transparent 68%)}
+.corpHero{background:
+radial-gradient(circle at 17% 16%,rgba(224,190,111,.10),transparent 27%),
+radial-gradient(circle at 84% 75%,rgba(236,240,244,.055),transparent 30%),
+linear-gradient(132deg,#38342c 0%,#282824 43%,#34312b 73%,#252522 100%);
+border-color:rgba(231,207,148,.55)}
+.corpHero:before{border-color:rgba(232,207,145,.44)}.corpHero:after{border-color:rgba(231,236,241,.22)}
+.corpHero h1 em{background-image:linear-gradient(105deg,#b18b3d 0%,#dfbd6d 21%,#f8e7b5 39%,#f7f5ef 50%,#d8dde3 58%,#e2c276 73%,#a87f31 100%)}
+.corpKicker{background:linear-gradient(100deg,#b28a3b,#e7c978 42%,#f5e8bd 57%,#b58b3a 82%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.corpBuilder{background:radial-gradient(circle at 94% 5%,rgba(236,218,169,.08),transparent 25%),linear-gradient(145deg,#343129,#262622 52%,#302d27)}
+.corpFeature,.corpChoice,.corpChip{background:linear-gradient(145deg,rgba(229,211,165,.075),rgba(255,255,255,.028))}
 </style></head>
 <body class="subPage corporatePage"><nav class="nav wrap"><a class="brand" href="index.html" aria-label="Ozzsound home"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><div class="navDrop"><button class="navDropButton" type="button">Plan <span>⌄</span></button><div class="navDropMenu"><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a><a href="event-enquiry.html">Enquire</a></div></div><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <main class="corpMain"><div class="wrap"><a class="corpBack" href="index.html#events">← Back to events</a>
