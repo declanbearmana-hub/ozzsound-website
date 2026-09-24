@@ -4745,7 +4745,14 @@ const { createClient } =
         renderEnquiries(contractEnquiries());
       }
       if(activeAdminView==='inventory'){
-        searchInput.value='';statusFilter.value='all';filterEnquiries();
+        const inventoryButton=document.getElementById('inventoryNavButton');
+        if(inventoryButton){
+          inventoryButton.click();
+          // The dedicated inventory manager is its own full-screen workspace.
+          // Return the top navigation highlight to Dashboard when that workspace closes.
+        } else {
+          alert('Inventory is still loading. Please try again in a moment.');
+        }
       }
       window.scrollTo({top:0,behavior:'smooth'});
     }
