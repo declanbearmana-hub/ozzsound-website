@@ -1646,7 +1646,7 @@
       </div>
 
 
-      <section class="contractAdmin" id="contractAdmin"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label>Default deposit / booking payment ($)<input id="contractTemplateDeposit" type="number" min="0" step="0.01" placeholder="Leave blank to set per booking"></label><div></div><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea><small style="display:block;margin-top:7px;color:var(--muted)">Price fields available in contracts: {{TOTAL_PRICE}}, {{DEPOSIT_AMOUNT}}, {{BALANCE_DUE}}. These are filled from the approved booking/hire, not manually typed into the legal wording.</small></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
+      <section class="contractAdmin" id="contractAdmin"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label>Default deposit / booking payment ($)<input id="contractTemplateDeposit" type="number" min="0" step="0.01" placeholder="Leave blank to set per booking"></label><div></div><div class="contractAdminWide" id="weddingContractPricePreview" style="padding:14px;border:1px solid var(--border);border-radius:12px"><strong>Wedding price preview</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label>Total price ($)<input id="contractPreviewTotal" type="number" min="0" step="0.01" value="0"></label><label>Deposit ($)<input id="contractPreviewDeposit" type="number" min="0" step="0.01" value="0"></label><label>Added extras ($)<input id="contractPreviewExtras" type="number" min="0" step="0.01" value="0"></label></div><small style="color:var(--muted)">Preview only — customer booking prices are entered inside that customer's enquiry.</small></div><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea><small style="display:block;margin-top:7px;color:var(--muted)">Available fields: {{TOTAL_PRICE}}, {{DEPOSIT_AMOUNT}}, {{ADDED_EXTRAS}}, {{BALANCE_DUE}}.</small><div id="contractLivePreview" style="white-space:pre-wrap;margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:#08080e;color:#ddd"></div></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
       <section
         id="adminNotificationArea"
         class="admin-notification-area"
@@ -2046,6 +2046,7 @@ const { createClient } =
     let currentQuoteItems = [];
     let currentNotes = [];
     let currentBooking = null;
+    let weddingExtraPrices = new Map();
 
     let currentUserId = null;
     let deepLinkOpened = false;
@@ -5115,6 +5116,31 @@ const { createClient } =
     }
 
 
+    async function seedWeddingRequestedExtras() {
+      if (!currentEnquiry || currentQuote || String(currentEnquiry.event_type || '').toLowerCase() !== 'wedding') return;
+      const selected = Array.isArray(currentEnquiry?.enquiry_data?.wedding?.extras) ? currentEnquiry.enquiry_data.wedding.extras : [];
+      if (!selected.length) return;
+      const {data,error}=await supabaseClient.from('wedding_extra_prices').select('extra_name,default_price');
+      if(error){ console.error('Wedding extra price load error:',error); return; }
+      weddingExtraPrices=new Map((data||[]).map(x=>[String(x.extra_name),Number(x.default_price||0)]));
+      const existing=new Set(currentQuoteItems.map(x=>String(x.item_name).toLowerCase()));
+      selected.forEach(name=>{
+        if(existing.has(String(name).toLowerCase())) return;
+        currentQuoteItems.push({inventory_id:null,item_name:String(name),item_type:'wedding_extra',quantity:1,unit_price:weddingExtraPrices.get(String(name))||0,source:'customer',is_suggestion:false,notes:'Selected by customer in Wedding Experience Builder',sort_order:currentQuoteItems.length});
+      });
+    }
+    function weddingExtrasTotal(){
+      return roundCurrency(currentQuoteItems.filter(x=>x.item_type==='wedding_extra'||x.source==='customer').reduce((sum,x)=>sum+(Number(x.quantity||1)*Number(x.unit_price||0)),0));
+    }
+    async function saveWeddingExtraDefault(index){
+      const item=currentQuoteItems[index]; if(!item)return;
+      const price=Math.max(0,Number(item.unit_price||0));
+      const {error}=await supabaseClient.from('wedding_extra_prices').upsert({extra_name:item.item_name,default_price:price,updated_at:new Date().toISOString()},{onConflict:'extra_name'});
+      if(error){alert('Default price could not be saved.\n\n'+error.message);return;}
+      weddingExtraPrices.set(item.item_name,price); alert(item.item_name+' default price saved as '+money(price)+'.');
+    }
+    window.saveWeddingExtraDefault=saveWeddingExtraDefault;
+
     function venuePathsFor(
       enquiry
     ) {
@@ -5424,6 +5450,8 @@ const { createClient } =
 
               </div>
 
+
+              ${item.item_type==='wedding_extra'?'<button class="small-button" type="button" onclick="saveWeddingExtraDefault('+index+')" title="Use this price automatically next time this wedding extra is selected">Save default price</button>':''}
 
               <button
                 class="remove-button"
@@ -6543,16 +6571,23 @@ total,
 
     async function prepareContractFromQuote(){
       if(!currentEnquiry)return;
-      const saved=await saveQuoteDraft(false); if(!saved||!currentQuote)return;
-      const depField=document.getElementById('bookingContractDeposit');
+      const isWedding=String(currentEnquiry.event_type||'').toLowerCase()==='wedding';
+      const depField=document.getElementById('bookingContractDeposit'),totalField=document.getElementById('bookingContractTotal'),extrasField=document.getElementById('bookingContractExtras');
       const dep=depField&&depField.value!==''?Number(depField.value):null;
+      const requestedTotal=totalField&&totalField.value!==''?Number(totalField.value):null;
+      const extras=extrasField&&extrasField.value!==''?Number(extrasField.value):weddingExtrasTotal();
       if(dep!==null&&(!Number.isFinite(dep)||dep<0)){alert('Enter a valid deposit amount.');return;}
+      if(requestedTotal!==null&&(!Number.isFinite(requestedTotal)||requestedTotal<0)){alert('Enter a valid total price.');return;}
+      if(!Number.isFinite(extras)||extras<0){alert('Enter a valid added extras amount.');return;}
+      if(isWedding&&requestedTotal!==null){const adjustmentField=document.getElementById('quoteAdjustment');if(adjustmentField)adjustmentField.value=roundCurrency(requestedTotal-quoteSubtotal()).toFixed(2);updateQuoteTotals();}
+      const saved=await saveQuoteDraft(false); if(!saved||!currentQuote)return;
       const btn=document.getElementById('prepareContractButton'),status=document.getElementById('preparedContractStatus');
       if(btn){btn.disabled=true;btn.textContent='Preparing Contract...';}
       try{
-        const {data,error}=await supabaseClient.rpc('prepare_contract_from_quote',{p_enquiry_id:currentEnquiry.id,p_deposit:dep});
+        const {data,error}=await supabaseClient.rpc('prepare_contract_from_quote_v2',{p_enquiry_id:currentEnquiry.id,p_deposit:dep,p_total:isWedding?requestedTotal:null,p_added_extras:isWedding?extras:null});
         if(error)throw error;
-        if(data.contract_type==='gear_hire'){if(status)status.textContent='Gear Hire contract prepared: '+money(data.total_price)+' payable in full upfront.';alert('Gear Hire contract price approved and prepared.\n\nTotal payable upfront: '+money(data.total_price)+'\nNo deposit applies.');}else{if(status)status.textContent='Contract prepared: Total '+money(data.total_price)+' · Deposit '+money(data.deposit_amount)+' · Balance '+money(data.balance_due);alert('Contract price approved and prepared.\n\nTotal: '+money(data.total_price)+'\nDeposit: '+money(data.deposit_amount)+'\nBalance: '+money(data.balance_due));}
+        if(data.contract_type==='gear_hire'){if(status)status.textContent='Gear Hire contract prepared: '+money(data.total_price)+' payable in full upfront.';alert('Gear Hire contract price approved and prepared.\n\nTotal payable upfront: '+money(data.total_price)+'\nNo deposit applies.');}
+        else{if(status)status.textContent='Wedding contract prepared: Total '+money(data.total_price)+' · Deposit '+money(data.deposit_amount)+' · Extras '+money(data.added_extras)+' · Balance '+money(data.balance_due);alert('Wedding contract prepared.\n\nTotal: '+money(data.total_price)+'\nDeposit: '+money(data.deposit_amount)+'\nAdded extras: '+money(data.added_extras)+'\nBalance: '+money(data.balance_due));}
       }catch(error){console.error(error);alert('Contract could not be prepared.\n\n'+(error?.message||'Unknown error.'))}
       finally{if(btn&&document.body.contains(btn)){btn.disabled=false;btn.textContent='Approve Price & Prepare Contract';}}
     }
@@ -7777,7 +7812,7 @@ total,
               >
                 Send Quote to Customer
               </button>
-              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div>':'<label style="margin-top:0">Contract deposit / booking payment ($)</label><input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="Uses contract default if blank">'}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
+              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div>':`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label style="margin-top:0">Deposit ($)<input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="e.g. 200"></label><label style="margin-top:0">Total price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}"></label><label style="margin-top:0">Added extras ($)<input id="bookingContractExtras" type="number" min="0" step="0.01" value="${weddingExtrasTotal().toFixed(2)}"></label></div><div style="margin-top:8px;color:var(--muted);font-size:12px">Wedding extras selected by the customer are listed in the quote above. Enter or change each price there; <strong>Save default price</strong> remembers it for future weddings.</div>`}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div></div>`:''}
 
             </div>
 
@@ -9134,6 +9169,7 @@ total,
           enquiry.id
         );
 
+        await seedWeddingRequestedExtras();
 
         renderModalContent();
 
@@ -9487,8 +9523,12 @@ total,
 <script src="inventory-module.js?v=20260920-1"></script>\n<script>
 document.addEventListener('DOMContentLoaded',()=>{
  const sel=document.querySelector('#contractTemplateSelect'),title=document.querySelector('#contractTemplateTitle'),ver=document.querySelector('#contractTemplateVersion'),supplier=document.querySelector('#contractTemplateSupplier'),terms=document.querySelector('#contractTemplateTerms'),deposit=document.querySelector('#contractTemplateDeposit'),save=document.querySelector('#saveContractTemplate'),status=document.querySelector('#contractTemplateStatus');
- async function loadContract(){if(!window.OZZSOUND_ADMIN_CLIENT||!sel)return;status.textContent='Loading…';const {data,error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').select('*').eq('contract_type',sel.value).single();if(error){status.textContent=error.message;return}title.value=data.title||'';ver.value=data.version||'';supplier.value=data.supplier_display||'';terms.value=data.terms_text||'';deposit.value=data.default_deposit??'';status.textContent=''}
- sel?.addEventListener('change',loadContract);save?.addEventListener('click',async()=>{status.textContent='Saving…';const {error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').update({title:title.value,version:ver.value,supplier_display:supplier.value,terms_text:terms.value,default_deposit:deposit.value===''?null:Number(deposit.value),updated_at:new Date().toISOString()}).eq('contract_type',sel.value);status.textContent=error?error.message:'Saved ✓';});
+ const previewWrap=document.querySelector('#weddingContractPricePreview'),pt=document.querySelector('#contractPreviewTotal'),pd=document.querySelector('#contractPreviewDeposit'),pe=document.querySelector('#contractPreviewExtras'),preview=document.querySelector('#contractLivePreview');
+ const cash=v=>Number(v||0).toFixed(2);
+ function renderPreview(){if(!preview||!terms)return;const total=Number(pt?.value||0),dep=Number(pd?.value||0),extra=Number(pe?.value||0),bal=Math.max(0,total-dep);preview.textContent=(terms.value||'').replaceAll('{{TOTAL_PRICE}}',cash(total)).replaceAll('{{DEPOSIT_AMOUNT}}',cash(dep)).replaceAll('{{ADDED_EXTRAS}}',cash(extra)).replaceAll('{{BALANCE_DUE}}',cash(bal));}
+ async function loadContract(){if(!window.OZZSOUND_ADMIN_CLIENT||!sel)return;status.textContent='Loading…';const {data,error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').select('*').eq('contract_type',sel.value).single();if(error){status.textContent=error.message;return}title.value=data.title||'';ver.value=data.version||'';supplier.value=data.supplier_display||'';terms.value=data.terms_text||'';deposit.value=data.default_deposit??'';if(pd)pd.value=data.default_deposit??0;if(previewWrap)previewWrap.style.display=sel.value==='wedding'?'block':'none';renderPreview();status.textContent=''}
+ [terms,pt,pd,pe].forEach(el=>el?.addEventListener('input',renderPreview)); sel?.addEventListener('change',loadContract);
+ save?.addEventListener('click',async()=>{status.textContent='Saving…';const {error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').update({title:title.value,version:ver.value,supplier_display:supplier.value,terms_text:terms.value,default_deposit:deposit.value===''?null:Number(deposit.value),updated_at:new Date().toISOString()}).eq('contract_type',sel.value);status.textContent=error?error.message:'Saved ✓';});
  setTimeout(loadContract,1200);
 });
 </script></body>
