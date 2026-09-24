@@ -1650,12 +1650,12 @@
 
         <div>
 
-          <h1>
-            Enquiries
+          <h1 id="adminPageTitle">
+            Dashboard
           </h1>
 
-          <p>
-            Review enquiries, prepare quotes and manage Ozzsound bookings.
+          <p id="adminPageSubtitle">
+            See what needs attention across Ozzsound.
           </p>
 
         </div>
@@ -2077,6 +2077,7 @@ const { createClient } =
     let currentBooking = null;
     let weddingExtraPrices = new Map();
     let currentContractActivity = [];
+    let allContractActivity = [];
     let currentGearChecklist = [];
 
     let currentUserId = null;
@@ -2791,6 +2792,13 @@ const { createClient } =
 
       allEnquiries =
         enquiryResult.data || [];
+
+      const {data:contractActivityData,error:contractActivityError}=await supabaseClient
+        .from('contract_activity')
+        .select('enquiry_id,contract_type,status,total_price,deposit_amount,balance_due,payment_status,sent_at,viewed_at,signed_at,created_at')
+        .order('created_at',{ascending:false});
+      if(contractActivityError){console.error('Contract activity load error:',contractActivityError);allContractActivity=[];}
+      else allContractActivity=contractActivityData||[];
 
 
       if (
@@ -4696,8 +4704,27 @@ const { createClient } =
 
 
     let activeAdminView='dashboard';
+    function setAdminHeading(view){
+      const titles={
+        dashboard:['Dashboard','See what needs attention across Ozzsound.'],
+        new:['New Enquiries','New customer enquiries waiting to be reviewed.'],
+        enquiries:['Enquiries','Review enquiries, prepare quotes and manage customer requests.'],
+        contracts:['Contracts','Prepared, sent and signed customer agreements.'],
+        jobs:['Jobs','Confirmed Ozzsound bookings and upcoming work.'],
+        calendar:['Calendar','Manage availability and confirmed booking dates.'],
+        inventory:['Inventory','Manage Ozzsound equipment and stock.'],
+        settings:['Settings','Contract templates and less frequently used administration tools.']
+      };
+      const copy=titles[view]||titles.dashboard;
+      const title=document.getElementById('adminPageTitle'),sub=document.getElementById('adminPageSubtitle');
+      if(title)title.textContent=copy[0]; if(sub)sub.textContent=copy[1];
+    }
+    function contractEnquiries(){
+      const ids=new Set(allContractActivity.map(a=>String(a.enquiry_id)));
+      return allEnquiries.filter(e=>ids.has(String(e.id)));
+    }
     function setAdminView(view){
-      activeAdminView=view||'dashboard';
+      activeAdminView=view||'dashboard'; setAdminHeading(activeAdminView);
       document.querySelectorAll('.workspace-tab').forEach(b=>b.classList.toggle('active',b.dataset.adminView===activeAdminView));
       const dashboard=document.getElementById('adminDashboard');
       if(dashboard)dashboard.classList.toggle('admin-view-hidden',activeAdminView!=='dashboard');
@@ -4707,9 +4734,6 @@ const { createClient } =
         if(activeAdminView==='dashboard')show=section==='dashboard';
         else if(activeAdminView==='calendar')show=section==='calendar';
         else if(activeAdminView==='settings')show=section==='settings';
-        else if(activeAdminView==='contracts')show=section==='enquiries';
-        else if(activeAdminView==='jobs')show=section==='enquiries';
-        else if(activeAdminView==='inventory')show=section==='enquiries';
         else show=section==='enquiries';
         el.classList.toggle('admin-view-hidden',!show);
       });
@@ -4717,14 +4741,11 @@ const { createClient } =
       if(activeAdminView==='enquiries'){statusFilter.value='all';filterEnquiries();}
       if(activeAdminView==='jobs'){statusFilter.value='booked';filterEnquiries();}
       if(activeAdminView==='contracts'){
-        const contractStatuses=new Set(['customer_accepted','quote_sent','booked']);
-        renderEnquiries(allEnquiries.filter(x=>contractStatuses.has(normaliseStatus(x.status))));
+        statusFilter.value='all'; searchInput.value='';
+        renderEnquiries(contractEnquiries());
       }
       if(activeAdminView==='inventory'){
-        searchInput.value='';
-        statusFilter.value='all';
-        filterEnquiries();
-        alert('Inventory management remains available inside enquiries and the existing Inventory tools. A dedicated stock workspace can be separated next without changing your inventory data.');
+        searchInput.value='';statusFilter.value='all';filterEnquiries();
       }
       window.scrollTo({top:0,behavior:'smooth'});
     }
@@ -4794,7 +4815,7 @@ const { createClient } =
       if(newTab)newTab.classList.toggle('new-alert',newTotal>0);
       if(dashNew)dashNew.textContent=newTotal;
       if(dashJobs)dashJobs.textContent=bookedTotal;
-      if(dashContracts)dashContracts.textContent=allEnquiries.filter(x=>['customer_accepted','quote_sent'].includes(normaliseStatus(x.status))).length;
+      if(dashContracts)dashContracts.textContent=new Set(allContractActivity.map(x=>String(x.enquiry_id))).size;
     }
 
 
