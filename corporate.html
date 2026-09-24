@@ -208,6 +208,24 @@ body.corporatePage{background:#0b0d11;color:#f8f7f3}
 .corporatePage .brand{background:none!important;border:0!important;box-shadow:none!important;outline:0!important;overflow:visible!important}
 .corporatePage .brand:before,.corporatePage .brand:after{content:none!important;display:none!important;background:none!important;border:0!important;box-shadow:none!important}
 .corporatePage .brand .logo{background:none!important;border:0!important;outline:0!important;box-shadow:none!important;filter:grayscale(1) sepia(1) saturate(3.1) hue-rotate(352deg) brightness(1.08) contrast(1.24) drop-shadow(0 6px 14px rgba(111,75,14,.28))!important;opacity:1!important}
+
+/* Corporate elegance pass: jewellery-like highlights and restrained movement */
+.corporatePage .brand{isolation:isolate}
+.corporatePage .brand:after{content:""!important;display:block!important;position:absolute!important;z-index:4!important;pointer-events:none!important;left:0!important;top:4%!important;width:100%!important;height:88%!important;border:0!important;box-shadow:none!important;background:linear-gradient(108deg,transparent 0 37%,rgba(255,241,185,0) 42%,rgba(255,244,196,.78) 48%,rgba(255,255,255,.94) 50%,rgba(255,221,119,.72) 53%,rgba(255,221,119,0) 59%,transparent 100%)!important;mix-blend-mode:screen!important;transform:translateX(-125%) skewX(-14deg)!important;animation:corpLogoShine 6.8s cubic-bezier(.45,0,.2,1) infinite!important}
+.corporatePage .brand .logo{filter:grayscale(1) sepia(1) saturate(3.35) hue-rotate(351deg) brightness(1.12) contrast(1.28) drop-shadow(0 7px 15px rgba(103,69,10,.30)) drop-shadow(0 0 9px rgba(221,178,72,.10))!important}
+.corpHero{position:relative}
+.corpHeroContent:before{content:"";position:absolute;left:0;top:-28px;width:86px;height:1px;background:linear-gradient(90deg,#b89550,#ead9a9,transparent);box-shadow:0 0 12px rgba(211,181,112,.16)}
+.corpHeroContent:after{content:"◆";position:absolute;left:93px;top:-36px;color:#c5aa6c;font-size:9px;opacity:.75}
+.corpHero:after{animation:corpMetalSweep 11s ease-in-out infinite}
+.corpHeroActions:after{content:"";height:1px;flex:1;min-width:80px;align-self:center;margin-left:10px;background:linear-gradient(90deg,rgba(196,170,111,.34),rgba(218,224,231,.15),transparent)}
+.corpIntro{position:relative;padding-top:22px}.corpIntro:before{content:"✦";display:block;color:#bda467;font-size:12px;margin-bottom:12px;text-shadow:0 0 15px rgba(202,173,105,.28)}.corpIntro:after{content:"";display:block;width:130px;height:1px;margin:28px auto 0;background:linear-gradient(90deg,transparent,#b79c60,#d7dde3,#b79c60,transparent)}
+.corpFeature{transition:transform .28s ease,border-color .28s ease,background .28s ease,box-shadow .28s ease}.corpFeature:hover{transform:translateY(-4px);border-color:rgba(198,173,116,.34);background:linear-gradient(145deg,rgba(201,177,122,.055),rgba(226,232,238,.025));box-shadow:0 22px 55px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045)}
+.corpFeature small{color:#c3a867}.corpFeature h3{letter-spacing:-.02em}
+.corpBuilder{box-shadow:0 28px 75px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.035)}.corpBuilder:after{content:"";position:absolute;right:30px;top:30px;width:55px;height:55px;border-top:1px solid rgba(199,174,115,.27);border-right:1px solid rgba(218,224,231,.16);pointer-events:none}
+.corpGoldBtn{transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.corpGoldBtn:hover{transform:translateY(-2px);border-color:rgba(221,194,130,.75);box-shadow:0 13px 34px rgba(0,0,0,.22),0 0 22px rgba(190,160,92,.07)}
+@keyframes corpLogoShine{0%,58%{transform:translateX(-125%) skewX(-14deg)}76%,100%{transform:translateX(125%) skewX(-14deg)}}
+@media(max-width:700px){.corpHeroActions:after{display:none}.corpHeroContent:before{width:55px}.corpHeroContent:after{left:61px}}
+@media(prefers-reduced-motion:reduce){.corporatePage .brand:after{animation:none!important}}
 </style></head>
 <body class="subPage corporatePage"><nav class="nav wrap"><a class="brand" href="index.html" aria-label="Ozzsound home"><img class="logo" src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a><div class="navlinks"><a href="index.html#events">Event Types</a><div class="navDrop"><button class="navDropButton" type="button">Plan <span>⌄</span></button><div class="navDropMenu"><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a><a href="event-enquiry.html">Enquire</a></div></div><a href="why-ozzsound.html">Why Ozzsound</a><a class="pill navCta" href="index.html#availability">Check My Date</a></div></nav>
 <main class="corpMain"><div class="wrap"><a class="corpBack" href="index.html#events">← Back to events</a>
