@@ -233,6 +233,7 @@
     .dash-action strong{font-size:26px;display:block;margin-bottom:4px}.dash-action span{color:var(--muted);font-size:13px}
     .dash-action.urgent{border-color:rgba(255,56,209,.55);box-shadow:0 0 20px rgba(255,56,209,.1)}
     .admin-view-hidden{display:none!important}
+    .job-list{display:grid;gap:14px}.job-card{border:1px solid var(--border);border-radius:16px;background:var(--panel);padding:20px;display:grid;grid-template-columns:1.25fr .9fr .9fr 1.15fr auto;gap:18px;align-items:center}.job-card.next{border-color:rgba(34,211,238,.45);box-shadow:0 0 20px rgba(34,211,238,.07)}.job-name{font-size:20px;font-weight:900}.job-ref{color:var(--purple);font-size:12px;font-weight:800;margin-top:4px}.job-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:5px}.job-value{font-weight:750}.job-progress{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.job-pill{font-size:11px;font-weight:850;padding:5px 8px;border-radius:999px;border:1px solid var(--border);color:#bbb}.job-pill.ok{color:#7debd0;border-color:rgba(53,230,165,.3);background:rgba(53,230,165,.07)}.job-pill.warn{color:#ffc37d;border-color:rgba(255,180,84,.3);background:rgba(255,180,84,.07)}.job-open{padding:11px 15px;border-radius:10px;border:1px solid rgba(168,85,247,.45);background:rgba(168,85,247,.1);color:#e7c9ff;font-weight:850;cursor:pointer}@media(max-width:950px){.job-card{grid-template-columns:1fr 1fr}.job-card>div:first-child,.job-card>div:nth-last-child(2){grid-column:1/-1}}
     @media(max-width:760px){.admin-workspace-nav{top:70px;padding:9px 12px}.admin-dashboard{grid-template-columns:1fr 1fr}.admin-content{padding-left:14px;padding-right:14px}}
 
 
@@ -2078,6 +2079,7 @@ const { createClient } =
     let weddingExtraPrices = new Map();
     let currentContractActivity = [];
     let allContractActivity = [];
+    let allBookings = [];
     let currentGearChecklist = [];
 
     let currentUserId = null;
@@ -2799,6 +2801,13 @@ const { createClient } =
         .order('created_at',{ascending:false});
       if(contractActivityError){console.error('Contract activity load error:',contractActivityError);allContractActivity=[];}
       else allContractActivity=contractActivityData||[];
+
+      const {data:bookingData,error:allBookingsError}=await supabaseClient
+        .from('bookings')
+        .select('id,enquiry_id,quote_id,event_date,booking_type,status,confirmed_at,event_start_time,event_finish_time,event_times,final_income,completed_at')
+        .order('event_date',{ascending:true});
+      if(allBookingsError){console.error('Bookings load error:',allBookingsError);allBookings=[];}
+      else allBookings=bookingData||[];
 
 
       if (
@@ -4723,6 +4732,22 @@ const { createClient } =
       const ids=new Set(allContractActivity.map(a=>String(a.enquiry_id)));
       return allEnquiries.filter(e=>ids.has(String(e.id)));
     }
+    function latestContractFor(enquiryId){return allContractActivity.find(a=>String(a.enquiry_id)===String(enquiryId))||null;}
+    function renderJobs(){
+      const confirmed=allBookings.filter(b=>!['cancelled','completed'].includes(String(b.status||'').toLowerCase()));
+      const rows=confirmed.map(b=>({booking:b,enquiry:allEnquiries.find(e=>String(e.id)===String(b.enquiry_id))})).filter(x=>x.enquiry).sort((a,b)=>String(a.booking.event_date||a.enquiry.event_date||'9999').localeCompare(String(b.booking.event_date||b.enquiry.event_date||'9999')));
+      if(!rows.length){enquiryList.innerHTML='<div class="empty-state">No confirmed jobs yet.</div>';return;}
+      enquiryList.innerHTML='<div class="job-list">'+rows.map((row,i)=>{
+        const e=row.enquiry,b=row.booking,contract=latestContractFor(e.id);
+        const contractOk=contract&&['signed'].includes(String(contract.status||'').toLowerCase());
+        const payment=contract?.payment_status||'unpaid';
+        const paymentOk=payment==='paid_in_full'||(String(e.event_type||'').toLowerCase()==='wedding'&&payment==='deposit_paid');
+        const detailsOk=Boolean(e.event_date&&(e.venue_suburb||e.message));
+        const time=b.event_times||[b.event_start_time,b.event_finish_time].filter(Boolean).join(' – ')||e.event_times||[e.event_start_time,e.event_finish_time].filter(Boolean).join(' – ')||'Time not supplied';
+        return '<article class="job-card '+(i===0?'next':'')+'"><div><div class="job-name">'+displayValue(e.name)+'</div><div class="job-ref">'+displayValue(e.enquiry_ref)+'</div><div class="job-progress"><span class="job-pill '+(contractOk?'ok':'warn')+'">Contract '+(contractOk?'✓':'needs action')+'</span><span class="job-pill '+(paymentOk?'ok':'warn')+'">Payment '+(paymentOk?'✓':'owing')+'</span><span class="job-pill '+(detailsOk?'ok':'warn')+'">Details '+(detailsOk?'✓':'check')+'</span></div></div><div><div class="job-label">Event</div><div class="job-value">'+displayValue(e.event_type||e.enquiry_type)+'</div></div><div><div class="job-label">Date / Time</div><div class="job-value">'+formatDate(b.event_date||e.event_date)+'</div><div class="photos">'+escapeHtml(time)+'</div></div><div><div class="job-label">Venue</div><div class="job-value">'+displayValue(e.venue_suburb)+'</div><div class="photos">'+(i===0?'Next confirmed job':'Confirmed booking')+'</div></div><button class="job-open" type="button" onclick="openEnquiry(\''+escapeHtml(e.id)+'\')">Open Job</button></article>';
+      }).join('')+'</div>';
+    }
+
     function setAdminView(view){
       activeAdminView=view||'dashboard'; setAdminHeading(activeAdminView);
       document.querySelectorAll('.workspace-tab').forEach(b=>b.classList.toggle('active',b.dataset.adminView===activeAdminView));
@@ -4739,7 +4764,7 @@ const { createClient } =
       });
       if(activeAdminView==='new'){statusFilter.value='new';filterEnquiries();}
       if(activeAdminView==='enquiries'){statusFilter.value='all';filterEnquiries();}
-      if(activeAdminView==='jobs'){statusFilter.value='booked';filterEnquiries();}
+      if(activeAdminView==='jobs'){searchInput.value='';statusFilter.value='all';renderJobs();}
       if(activeAdminView==='contracts'){
         statusFilter.value='all'; searchInput.value='';
         renderEnquiries(contractEnquiries());
@@ -4821,7 +4846,7 @@ const { createClient } =
       if(tabCount)tabCount.textContent=newTotal;
       if(newTab)newTab.classList.toggle('new-alert',newTotal>0);
       if(dashNew)dashNew.textContent=newTotal;
-      if(dashJobs)dashJobs.textContent=bookedTotal;
+      if(dashJobs)dashJobs.textContent=allBookings.filter(b=>!['cancelled','completed'].includes(String(b.status||'').toLowerCase())).length;
       if(dashContracts)dashContracts.textContent=new Set(allContractActivity.map(x=>String(x.enquiry_id))).size;
     }
 
