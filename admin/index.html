@@ -6581,6 +6581,28 @@ total,
     }
 
 
+    async function sendPreparedContract(){
+      if(!currentEnquiry)return;
+      const r=contractReadiness();
+      if(r.missing.length){alert('Contract is not ready to send. Please complete: '+r.missing.join(', '));return;}
+      if(!currentEnquiry.email){alert('Customer email is missing.');return;}
+      if(!confirm('Send the prepared agreement to '+currentEnquiry.email+'?'))return;
+      const btn=document.getElementById('sendContractButton');
+      if(btn){btn.disabled=true;btn.textContent='Sending Contract...';}
+      try{
+        const result=await supabaseClient.functions.invoke('send-contract-email',{body:{enquiry_id:currentEnquiry.id}});
+        if(result.error)throw result.error;
+        if(result.data?.success!==true)throw new Error(result.data?.error||'Contract email failed.');
+        alert('Contract sent successfully.');
+        await loadEnquiryWorkflow(currentEnquiry.id);
+        renderModalContent();
+        await renderUploadSections();
+      }catch(error){
+        console.error('Contract email failed:',error);
+        alert('The contract could not be sent. '+(error?.message||'Unknown error.'));
+      }
+    }
+
     async function prepareContractFromQuote(){
       if(!currentEnquiry)return;
       const isWedding=String(currentEnquiry.event_type||'').toLowerCase()==='wedding';
@@ -7884,7 +7906,7 @@ total,
               >
                 Send Quote to Customer
               </button>
-              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?`<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div><label style="margin-top:0;max-width:320px">Total hire price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}" placeholder="Enter this hire's total price"></label><div style="margin-top:6px;color:var(--muted);font-size:12px">This price is for this Gear Hire only. It is inserted automatically into the contract and is not saved as a default.</div>`:`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label style="margin-top:0">Deposit ($)<input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="e.g. 200"></label><label style="margin-top:0">Total price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}"></label><label style="margin-top:0">Added extras ($)<input id="bookingContractExtras" type="number" min="0" step="0.01" value="${weddingExtrasTotal().toFixed(2)}"></label></div><div style="margin-top:8px;color:var(--muted);font-size:12px">Wedding extras selected by the customer are listed in the quote above. Enter or change each price there; <strong>Save default price</strong> remembers it for future weddings.</div>`}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div><div id="contractControlPanel"></div></div>`:''}
+              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?`<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div><label style="margin-top:0;max-width:320px">Total hire price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}" placeholder="Enter this hire's total price"></label><div style="margin-top:6px;color:var(--muted);font-size:12px">This price is for this Gear Hire only. It is inserted automatically into the contract and is not saved as a default.</div>`:`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label style="margin-top:0">Deposit ($)<input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="e.g. 200"></label><label style="margin-top:0">Total price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}"></label><label style="margin-top:0">Added extras ($)<input id="bookingContractExtras" type="number" min="0" step="0.01" value="${weddingExtrasTotal().toFixed(2)}"></label></div><div style="margin-top:8px;color:var(--muted);font-size:12px">Wedding extras selected by the customer are listed in the quote above. Enter or change each price there; <strong>Save default price</strong> remembers it for future weddings.</div>`}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><button type="button" class="action-button action-send" id="sendContractButton" style="margin-top:10px">Send Contract to Customer</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div><div id="contractControlPanel"></div></div>`:''}
 
             </div>
 
@@ -8020,6 +8042,7 @@ total,
         confirmAcceptedBooking
       );
       document.getElementById("prepareContractButton")?.addEventListener("click", prepareContractFromQuote);
+      document.getElementById("sendContractButton")?.addEventListener("click", sendPreparedContract);
       document.getElementById("markGearPaidButton")?.addEventListener("click", markGearHirePaid);
 
 
