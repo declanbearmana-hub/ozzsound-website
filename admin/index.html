@@ -6581,6 +6581,18 @@ total,
     }
 
 
+    async function downloadAdminSignedContract(){
+      if(!currentEnquiry)return;
+      const kind=/gear|hire/i.test(currentEnquiry.enquiry_type||currentEnquiry.event_type||"")?'gear_hire':'wedding';
+      const table=kind==='gear_hire'?'gear_hire_agreements':'wedding_agreements';
+      try{
+        const {data,error}=await supabaseClient.from(table).select('*').eq('enquiry_id',currentEnquiry.id).single();
+        if(error)throw error;
+        if(!data?.signed_at||!data?.terms_acknowledged)throw new Error('No signed agreement is available for this enquiry.');
+        await window.OzzsoundSignedPDF.download(data,kind);
+      }catch(error){console.error(error);alert(error.message||'Unable to download signed agreement.');}
+    }
+
     async function sendPreparedContract(){
       if(!currentEnquiry)return;
       const r=contractReadiness();
@@ -7906,7 +7918,7 @@ total,
               >
                 Send Quote to Customer
               </button>
-              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?`<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div><label style="margin-top:0;max-width:320px">Total hire price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}" placeholder="Enter this hire's total price"></label><div style="margin-top:6px;color:var(--muted);font-size:12px">This price is for this Gear Hire only. It is inserted automatically into the contract and is not saved as a default.</div>`:`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label style="margin-top:0">Deposit ($)<input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="e.g. 200"></label><label style="margin-top:0">Total price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}"></label><label style="margin-top:0">Added extras ($)<input id="bookingContractExtras" type="number" min="0" step="0.01" value="${weddingExtrasTotal().toFixed(2)}"></label></div><div style="margin-top:8px;color:var(--muted);font-size:12px">Wedding extras selected by the customer are listed in the quote above. Enter or change each price there; <strong>Save default price</strong> remembers it for future weddings.</div>`}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><button type="button" class="action-button action-send" id="sendContractButton" style="margin-top:10px">Send Contract to Customer</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div><div id="contractControlPanel"></div></div>`:''}
+              ${(String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')||String(currentEnquiry?.event_type||'').toLowerCase()==='wedding')?`<div style="width:100%;margin-top:10px;padding:14px;border:1px solid var(--border);border-radius:12px">${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?`<div style="margin-bottom:10px;color:var(--muted)"><strong style="color:#fff">Gear Hire:</strong> payment is due in full upfront. No deposit applies.</div><label style="margin-top:0;max-width:320px">Total hire price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}" placeholder="Enter this hire's total price"></label><div style="margin-top:6px;color:var(--muted);font-size:12px">This price is for this Gear Hire only. It is inserted automatically into the contract and is not saved as a default.</div>`:`<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label style="margin-top:0">Deposit ($)<input id="bookingContractDeposit" type="number" min="0" step="0.01" placeholder="e.g. 200"></label><label style="margin-top:0">Total price ($)<input id="bookingContractTotal" type="number" min="0" step="0.01" value="${Number(currentQuote?.total||quoteSubtotal()||0).toFixed(2)}"></label><label style="margin-top:0">Added extras ($)<input id="bookingContractExtras" type="number" min="0" step="0.01" value="${weddingExtrasTotal().toFixed(2)}"></label></div><div style="margin-top:8px;color:var(--muted);font-size:12px">Wedding extras selected by the customer are listed in the quote above. Enter or change each price there; <strong>Save default price</strong> remembers it for future weddings.</div>`}<button type="button" class="action-button action-ready" id="prepareContractButton" style="margin-top:10px">Approve Price & Prepare Contract</button><button type="button" class="action-button action-send" id="sendContractButton" style="margin-top:10px">Send Contract to Customer</button><button type="button" class="action-button" id="downloadAdminSignedContract" style="margin-top:10px">Download Signed PDF</button>${String(currentEnquiry?.event_type||currentEnquiry?.enquiry_type||'').toLowerCase().includes('gear')?'<button type="button" class="action-button action-save" id="markGearPaidButton" style="margin-top:10px">Mark Paid in Full</button>':''}<div id="preparedContractStatus" style="margin-top:9px;color:var(--muted);font-size:12px"></div><div id="contractControlPanel"></div></div>`:''}
 
             </div>
 
@@ -8043,6 +8055,7 @@ total,
       );
       document.getElementById("prepareContractButton")?.addEventListener("click", prepareContractFromQuote);
       document.getElementById("sendContractButton")?.addEventListener("click", sendPreparedContract);
+      document.getElementById("downloadAdminSignedContract")?.addEventListener("click", downloadAdminSignedContract);
       document.getElementById("markGearPaidButton")?.addEventListener("click", markGearHirePaid);
 
 
@@ -9627,5 +9640,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  save?.addEventListener('click',async()=>{status.textContent='Saving…';const {error}=await window.OZZSOUND_ADMIN_CLIENT.from('contract_templates').update({title:title.value,version:ver.value,supplier_display:supplier.value,terms_text:terms.value,default_deposit:deposit.value===''?null:Number(deposit.value),updated_at:new Date().toISOString()}).eq('contract_type',sel.value);status.textContent=error?error.message:'Saved ✓';});
  setTimeout(loadContract,1200);
 });
-</script></body>
+</script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="../js/signed-contract-pdf.js"></script>
+</body>
 </html>
