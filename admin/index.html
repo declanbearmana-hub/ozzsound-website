@@ -228,10 +228,10 @@
     .workspace-tab.active{color:#fff;border-color:rgba(34,211,238,.55);box-shadow:0 0 0 1px rgba(34,211,238,.12),0 0 18px rgba(34,211,238,.08)}
     .workspace-tab.new-alert{border-color:rgba(255,56,209,.72);color:#fff;box-shadow:0 0 16px rgba(255,56,209,.2)}
     .workspace-badge{display:inline-flex;min-width:22px;height:22px;padding:0 6px;align-items:center;justify-content:center;border-radius:999px;background:var(--pink);color:#fff;font-size:11px;margin-left:6px}
-    .admin-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px}
+    .admin-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
     .dash-action{padding:18px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(145deg,var(--panel2),var(--panel3));cursor:pointer;color:#fff;text-align:left}
     .dash-action strong{font-size:26px;display:block;margin-bottom:4px}.dash-action span{color:var(--muted);font-size:13px}
-    .dash-action.urgent{border-color:rgba(255,56,209,.55);box-shadow:0 0 20px rgba(255,56,209,.1)}
+    .dash-action.urgent{border-color:rgba(255,56,209,.55);box-shadow:0 0 20px rgba(255,56,209,.1)}.dashboard-workspace{margin-bottom:28px}.dashboard-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.dashboard-panel{border:1px solid var(--border);border-radius:16px;background:var(--panel);padding:20px}.dashboard-panel h2{margin:0 0 15px;font-size:20px}.dashboard-action-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}.dashboard-action-row:last-child{border-bottom:0}.dashboard-action-copy strong{display:block}.dashboard-action-copy span{font-size:12px;color:var(--muted)}.dashboard-action-count{min-width:36px;height:36px;border-radius:999px;display:grid;place-items:center;background:rgba(168,85,247,.13);border:1px solid rgba(168,85,247,.3);font-weight:900}.dashboard-next{padding:14px;border-radius:13px;background:var(--panel2);border:1px solid var(--border);margin-bottom:10px;cursor:pointer}.dashboard-next strong{display:block;font-size:17px}.dashboard-next span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.dashboard-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.dashboard-quick button{padding:13px;border-radius:11px;border:1px solid var(--border);background:var(--panel2);color:#fff;font-weight:800;cursor:pointer}@media(max-width:850px){.dashboard-grid{grid-template-columns:1fr}}
     .admin-view-hidden{display:none!important}
     .contract-workspace-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.contract-summary-card{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2)}.contract-summary-card strong{display:block;font-size:24px}.contract-summary-card span{color:var(--muted);font-size:12px}.contract-card{border:1px solid var(--border);border-radius:16px;background:var(--panel);padding:20px;display:grid;grid-template-columns:1.2fr .8fr .9fr 1fr auto;gap:18px;align-items:center}.contract-stage{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.4px}.contract-stage.prepared{color:#ffc37d;background:rgba(255,180,84,.09);border:1px solid rgba(255,180,84,.28)}.contract-stage.sent,.contract-stage.viewed{color:#70dcff;background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.28)}.contract-stage.signed{color:#7debd0;background:rgba(53,230,165,.09);border:1px solid rgba(53,230,165,.28)}.contract-stage.superseded{color:#aaa;background:rgba(255,255,255,.04);border:1px solid var(--border)}@media(max-width:950px){.contract-card{grid-template-columns:1fr 1fr}.contract-workspace-summary{grid-template-columns:1fr 1fr}}.job-list{display:grid;gap:14px}.job-card{border:1px solid var(--border);border-radius:16px;background:var(--panel);padding:20px;display:grid;grid-template-columns:1.25fr .9fr .9fr 1.15fr auto;gap:18px;align-items:center}.job-card.next{border-color:rgba(34,211,238,.45);box-shadow:0 0 20px rgba(34,211,238,.07)}.job-name{font-size:20px;font-weight:900}.job-ref{color:var(--purple);font-size:12px;font-weight:800;margin-top:4px}.job-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:5px}.job-value{font-weight:750}.job-progress{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.job-pill{font-size:11px;font-weight:850;padding:5px 8px;border-radius:999px;border:1px solid var(--border);color:#bbb}.job-pill.ok{color:#7debd0;border-color:rgba(53,230,165,.3);background:rgba(53,230,165,.07)}.job-pill.warn{color:#ffc37d;border-color:rgba(255,180,84,.3);background:rgba(255,180,84,.07)}.job-open{padding:11px 15px;border-radius:10px;border:1px solid rgba(168,85,247,.45);background:rgba(168,85,247,.1);color:#e7c9ff;font-weight:850;cursor:pointer}@media(max-width:950px){.job-card{grid-template-columns:1fr 1fr}.job-card>div:first-child,.job-card>div:nth-last-child(2){grid-column:1/-1}}
     @media(max-width:760px){.admin-workspace-nav{top:70px;padding:9px 12px}.admin-dashboard{grid-template-columns:1fr 1fr}.admin-content{padding-left:14px;padding-right:14px}}
@@ -1675,6 +1675,12 @@
         <button class="dash-action urgent" data-admin-view="new"><strong id="dashNewCount">0</strong><span>New enquiries waiting</span></button>
         <button class="dash-action" data-admin-view="contracts"><strong id="dashContractCount">0</strong><span>Contract actions</span></button>
         <button class="dash-action" data-admin-view="jobs"><strong id="dashJobsCount">0</strong><span>Confirmed jobs</span></button>
+      </section>
+      <section id="dashboardWorkspace" class="dashboard-workspace" data-admin-section="dashboard">
+        <div class="dashboard-grid">
+          <div class="dashboard-panel"><h2>Action Required</h2><div id="dashboardActionList"></div></div>
+          <div class="dashboard-panel"><h2>Upcoming Jobs</h2><div id="dashboardUpcomingJobs"></div><div class="dashboard-quick"><button type="button" data-admin-view="calendar">Open Calendar</button><button type="button" data-admin-view="jobs">View All Jobs</button></div></div>
+        </div>
       </section>
       <section class="contractAdmin" id="contractAdmin" data-admin-section="settings"><details><summary>📄 Contracts — edit Wedding & Gear Hire agreements</summary><div class="contractAdminGrid"><label>Contract<select id="contractTemplateSelect"><option value="wedding">Wedding Agreement</option><option value="gear_hire">Gear Hire Agreement</option></select></label><label>Title<input id="contractTemplateTitle"></label><label>Version<input id="contractTemplateVersion"></label><label>Supplier details<input id="contractTemplateSupplier"></label><label>Default deposit / booking payment ($)<input id="contractTemplateDeposit" type="number" min="0" step="0.01" placeholder="Leave blank to set per booking"></label><div></div><div class="contractAdminWide" id="weddingContractPricePreview" style="padding:14px;border:1px solid var(--border);border-radius:12px"><strong id="contractPricePreviewTitle">Wedding price preview</strong><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><label>Total price ($)<input id="contractPreviewTotal" type="number" min="0" step="0.01" value="0"></label><label>Deposit ($)<input id="contractPreviewDeposit" type="number" min="0" step="0.01" value="0"></label><label>Added extras ($)<input id="contractPreviewExtras" type="number" min="0" step="0.01" value="0"></label></div><small style="color:var(--muted)">Preview only — customer booking prices are entered inside that customer's enquiry.</small></div><label class="contractAdminWide">Contract terms<textarea id="contractTemplateTerms" rows="14"></textarea><small style="display:block;margin-top:7px;color:var(--muted)">Available fields: {{TOTAL_PRICE}}, {{DEPOSIT_AMOUNT}}, {{ADDED_EXTRAS}}, {{BALANCE_DUE}}.</small><div id="contractLivePreview" style="white-space:pre-wrap;margin-top:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:#08080e;color:#ddd"></div></label><div class="contractAdminWide"><button type="button" class="primary-button" id="saveContractTemplate">Save contract template</button><span id="contractTemplateStatus"></span></div></div></details></section><section data-admin-section="enquiries" id="newEnquiryBanner" class="new-enquiry-banner" role="status" aria-live="polite"></section>
       <section data-admin-section="enquiries"
@@ -4765,6 +4771,26 @@ const { createClient } =
       }).join('')+'</div>';
     }
 
+    function renderDashboard(){
+      const newCount=allEnquiries.filter(e=>normaliseStatus(e.status)==='new').length;
+      const latest=new Map();allContractActivity.forEach(a=>{const k=String(a.enquiry_id);if(!latest.has(k))latest.set(k,a);});
+      const contracts=[...latest.values()];
+      const prepared=contracts.filter(a=>String(a.status||'')==='prepared').length;
+      const awaitingSignature=contracts.filter(a=>['sent','viewed'].includes(String(a.status||''))).length;
+      const paymentOwing=contracts.filter(a=>!['paid_in_full'].includes(String(a.payment_status||'unpaid'))).length;
+      const actions=[
+        {count:newCount,title:'New enquiries',text:newCount?'Waiting to be reviewed':'Nothing waiting',view:'new'},
+        {count:prepared,title:'Contracts ready to send',text:prepared?'Prepared and not yet sent':'Nothing waiting',view:'contracts'},
+        {count:awaitingSignature,title:'Awaiting customer signature',text:awaitingSignature?'Sent/viewed contracts still unsigned':'Nothing waiting',view:'contracts'},
+        {count:paymentOwing,title:'Payments to check',text:paymentOwing?'Contracts not marked paid in full':'Nothing waiting',view:'contracts'}
+      ];
+      const host=document.getElementById('dashboardActionList');
+      if(host)host.innerHTML=actions.map(a=>'<div class="dashboard-action-row" data-admin-view="'+a.view+'" style="cursor:pointer"><div class="dashboard-action-copy"><strong>'+escapeHtml(a.title)+'</strong><span>'+escapeHtml(a.text)+'</span></div><div class="dashboard-action-count">'+a.count+'</div></div>').join('');
+      const jobs=allBookings.filter(b=>!['cancelled','completed'].includes(String(b.status||'').toLowerCase())).map(b=>({b,e:allEnquiries.find(e=>String(e.id)===String(b.enquiry_id))})).filter(x=>x.e).sort((a,b)=>String(a.b.event_date||a.e.event_date||'9999').localeCompare(String(b.b.event_date||b.e.event_date||'9999'))).slice(0,3);
+      const upcoming=document.getElementById('dashboardUpcomingJobs');
+      if(upcoming)upcoming.innerHTML=jobs.length?jobs.map(x=>'<div class="dashboard-next" onclick="openEnquiry(\''+escapeHtml(x.e.id)+'\')"><strong>'+displayValue(x.e.name)+' — '+displayValue(x.e.event_type||x.e.enquiry_type)+'</strong><span>'+formatDate(x.b.event_date||x.e.event_date)+' · '+displayValue(x.e.venue_suburb)+'</span></div>').join(''):'<div class="empty-state">No confirmed upcoming jobs.</div>';
+    }
+
     function setAdminView(view){
       activeAdminView=view||'dashboard'; setAdminHeading(activeAdminView);
       document.querySelectorAll('.workspace-tab').forEach(b=>b.classList.toggle('active',b.dataset.adminView===activeAdminView));
@@ -4779,6 +4805,7 @@ const { createClient } =
         else show=section==='enquiries';
         el.classList.toggle('admin-view-hidden',!show);
       });
+      if(activeAdminView==='dashboard'){renderDashboard();}
       if(activeAdminView==='new'){statusFilter.value='new';filterEnquiries();}
       if(activeAdminView==='enquiries'){statusFilter.value='all';filterEnquiries();}
       if(activeAdminView==='jobs'){searchInput.value='';statusFilter.value='all';renderJobs();}
@@ -4865,6 +4892,7 @@ const { createClient } =
       if(dashNew)dashNew.textContent=newTotal;
       if(dashJobs)dashJobs.textContent=allBookings.filter(b=>!['cancelled','completed'].includes(String(b.status||'').toLowerCase())).length;
       if(dashContracts)dashContracts.textContent=new Set(allContractActivity.map(x=>String(x.enquiry_id))).size;
+      renderDashboard();
     }
 
 
