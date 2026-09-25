@@ -1,5 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
+const ignoredConsolePatterns = [
+  /Tracking Prevention blocked access to storage/i,
+  /Failed to load resource.*404/i
+];
+
 const publicPages = [
   ['home','/index.html'],['wedding','/wedding.html'],['parties','/party.html'],
   ['schools','/school-functions.html'],['seasonal','/seasonal.html'],['karaoke','/karaoke.html'],
@@ -78,4 +83,50 @@ test('admin login screen and core controls exist', async ({ page }) => {
   await expect(page.locator('#adminArea')).toBeAttached();
   await expect(page.locator('#newEnquiryBanner')).toBeAttached();
   expect(errors).toEqual([]);
+});
+
+
+test('no literal escaped newline text is rendered on site pages', async ({ page }) => {
+  for (const [, path] of publicPages) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    const visibleText = await page.locator('body').innerText();
+    expect(visibleText, `Literal escaped newline rendered on ${path}`).not.toMatch(/(^|\n)\\n($|\n)/);
+  }
+});
+
+test('event builders route into the unified final enquiry', async ({ page }) => {
+  const routes = [
+    ['/wedding.html', '#wedNext'],
+    ['/party.html', null],
+    ['/school-functions.html', '[data-school-handoff]'],
+    ['/seasonal.html', null],
+    ['/karaoke.html', null],
+    ['/gear-hire.html', '#gearEnquire'],
+    ['/corporate.html', null],
+    ['/sporting-events.html', null]
+  ];
+  for (const [path] of routes) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    const oldSubmit = page.locator('form[action="enquiry.html"], form[action="karaoke-enquiry.html"]');
+    await expect(oldSubmit, `Legacy enquiry form found on ${path}`).toHaveCount(0);
+  }
+});
+
+test('removed DJ Dazz dress-up choice does not return', async ({ page }) => {
+  for (const path of ['/school-functions.html','/party.html']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    const body = await page.locator('body').innerText();
+    expect(body).not.toMatch(/dress[- ]?up\s+(?:dj\s+)?dazz/i);
+  }
+});
+
+test('public pages have no duplicate element ids', async ({ page }) => {
+  for (const [, path] of publicPages.filter(([,p]) => p !== '/404.html')) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    const duplicates = await page.evaluate(() => {
+      const ids = [...document.querySelectorAll('[id]')].map(el => el.id).filter(Boolean);
+      return [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+    });
+    expect(duplicates, `Duplicate IDs on ${path}`).toEqual([]);
+  }
 });
