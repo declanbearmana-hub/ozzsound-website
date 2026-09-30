@@ -51,3 +51,11 @@ window.OZZSOUND_CONFIG = {
     karaoke: "assets/images/karaoke/card-karaoke.jpg"
   }
 };
+
+// Admin-only attention controls are loaded separately so public pages are unchanged.
+if (/\/admin\/?(?:index\.html)?$/i.test(location.pathname)) {
+  const adminAttentionScript = document.createElement('script');
+  adminAttentionScript.src = 'admin-attention.js?v=20260930-1';
+  adminAttentionScript.defer = true;
+  document.head.appendChild(adminAttentionScript);
+}
