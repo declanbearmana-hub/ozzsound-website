@@ -45,4 +45,15 @@
     doc.save(makeFilename(agreement.enquiry_ref,kind));
   }
   window.OzzsoundSignedPDF={download};
+
+  // Admin attention controls are loaded here because this file is a direct,
+  // cache-busted dependency of the Admin page. This avoids relying on the
+  // public site config to inject Admin-only functionality.
+  if (/\/admin(?:\/|\/index\.html$)/i.test(location.pathname) && !document.querySelector('script[data-ozz-admin-attention]')) {
+    const script=document.createElement('script');
+    script.src='admin-attention.js?v=20260930-4';
+    script.defer=true;
+    script.dataset.ozzAdminAttention='1';
+    document.body.appendChild(script);
+  }
 })();
