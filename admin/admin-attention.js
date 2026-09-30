@@ -1,6 +1,8 @@
 (()=>{
 'use strict';
 if(!/\/admin(?:\/|\/index\.html$)/i.test(location.pathname))return;
+if(window.__OZZSOUND_ADMIN_ATTENTION_LOADED__)return;
+window.__OZZSOUND_ADMIN_ATTENTION_LOADED__=true;
 const cfg=window.OZZSOUND_CONFIG||{};
 const state={rows:new Map(),db:null,busy:false,loaded:false};
 const refOf=text=>(String(text||'').match(/OZZ-[A-Z0-9]+/i)||[])[0]?.toUpperCase()||'';
