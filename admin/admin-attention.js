@@ -82,6 +82,17 @@ async function setAttention(ref,value){
  }catch(e){console.error('Could not update admin attention flag',e);alert('Could not update this enquiry. Please try again.')}
  finally{state.busy=false;render()}
 }
+// School Quick Tap fix: the original single-choice handler removes the active class
+// before toggling it, which makes an already-selected option impossible to clear.
+// Intercept only clicks on an already-active tile; unselected tiles continue through
+// the original handler unchanged, preserving all existing single/multi-select logic.
+document.addEventListener('click',e=>{
+ const tile=e.target.closest?.('.school-quick-panel .quick-tile.active');
+ if(!tile)return;
+ e.preventDefault();
+ e.stopImmediatePropagation();
+ tile.classList.remove('active');
+},true);
 document.addEventListener('click',e=>{
  const mark=e.target.closest?.('.mark-new-btn');if(mark){e.preventDefault();e.stopPropagation();setAttention(mark.dataset.ref,true);return}
  const newTab=e.target.closest?.('[data-admin-view="new"]');if(newTab)setTimeout(applyNewView,40);
