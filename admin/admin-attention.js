@@ -7,7 +7,7 @@ const cfg=window.OZZSOUND_CONFIG||{};
 const state={rows:new Map(),db:null,busy:false,loaded:false,applying:false};
 const refOf=text=>(String(text||'').match(/OZZ-[A-Z0-9]+/i)||[])[0]?.toUpperCase()||'';
 const style=document.createElement('style');
-style.textContent=`.attention-new{border-color:rgba(255,56,209,.72)!important;box-shadow:0 0 18px rgba(255,56,209,.12)!important}.mark-new-btn{border:1px solid rgba(255,56,209,.55);background:rgba(255,56,209,.08);color:#ffd4f6;border-radius:10px;padding:10px 12px;font-weight:850;cursor:pointer;width:100%;margin-top:7px}.mark-new-btn:hover{background:rgba(255,56,209,.16)}.mark-new-btn.is-new{color:#fff;background:rgba(255,56,209,.18)}.mark-new-btn:disabled{opacity:.55;cursor:wait}`;
+style.textContent=`.attention-new{border-color:rgba(255,56,209,.72)!important;box-shadow:0 0 18px rgba(255,56,209,.12)!important}.mark-new-btn{border:1px solid rgba(255,56,209,.55);background:rgba(255,56,209,.08);color:#ffd4f6;border-radius:10px;padding:10px 12px;font-weight:850;cursor:pointer;width:100%;margin-top:7px}.mark-new-btn:hover{background:rgba(255,56,209,.16)}.mark-new-btn.is-new{color:#fff;background:rgba(255,56,209,.18)}.mark-new-btn:disabled{opacity:.55;cursor:wait}.school-callback-badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 9px;border:1px solid rgba(94,223,255,.5);border-radius:999px;background:rgba(70,221,255,.1);color:#bdf5ff;font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}`;
 document.head.appendChild(style);
 function getDb(){
  if(window.OZZSOUND_ADMIN_CLIENT)return window.OZZSOUND_ADMIN_CLIENT;
@@ -16,9 +16,16 @@ function getDb(){
 }
 function cardForButton(btn){let n=btn;for(let i=0;i<7&&n;i++,n=n.parentElement){if(refOf(n.innerText))return n}return btn.parentElement}
 function isNewView(){return document.querySelector('.workspace-tab.active')?.dataset?.adminView==='new'}
+function rowNeedsAttention(row){
+ if(!row)return false;
+ if(row.admin_attention===true)return true;
+ if(row.admin_attention===false)return false;
+ return String(row.status||'new').toLowerCase()==='new';
+}
+function isSchoolCallback(row){return String(row?.enquiry_type||'').toLowerCase()==='callback_request'}
 function updateCounters(){
  if(!state.loaded)return;
- const count=[...state.rows.values()].filter(x=>x.admin_attention).length;
+ const count=[...state.rows.values()].filter(rowNeedsAttention).length;
  const badge=document.getElementById('newEnquiryTabCount');if(badge)badge.textContent=String(count);
  const tab=document.getElementById('newEnquiriesTab');if(tab)tab.classList.toggle('new-alert',count>0);
  const dash=document.getElementById('dashNewCount');if(dash)dash.textContent=String(count);
@@ -41,13 +48,13 @@ function applyNewView(){
    if(!/^Open Enquiry$/i.test((open.textContent||'').trim()))return;
    const card=cardForButton(open),ref=refOf(card?.innerText),row=state.rows.get(ref);
    if(!card||!ref)return;
-   const show=!!row?.admin_attention;
+   const show=rowNeedsAttention(row);
    card.style.display=show?'':'none';
    if(show)shown++;
   });
   const old=list.querySelector('[data-attention-empty]');if(old)old.remove();
   if(!shown){
-   const empty=document.createElement('div');empty.className='empty-state';empty.dataset.attentionEmpty='1';empty.textContent='No new enquiries are waiting for review.';list.appendChild(empty);
+   const empty=document.createElement('div');empty.className='empty-state';empty.dataset.attentionEmpty='1';empty.textContent='No new enquiries or callback requests are waiting for review.';list.appendChild(empty);
   }
  }finally{state.applying=false}
 }
@@ -55,21 +62,25 @@ function render(){
  document.querySelectorAll('button').forEach(open=>{
   if(!/^Open Enquiry$/i.test((open.textContent||'').trim()))return;
   const card=cardForButton(open),ref=refOf(card?.innerText);if(!card||!ref)return;
-  const row=state.rows.get(ref);
-  card.classList.toggle('attention-new',!!row?.admin_attention);
+  const row=state.rows.get(ref),needsAttention=rowNeedsAttention(row);
+  card.classList.toggle('attention-new',needsAttention);
+  let callbackBadge=card.querySelector('.school-callback-badge');
+  if(isSchoolCallback(row)){
+   if(!callbackBadge){callbackBadge=document.createElement('div');callbackBadge.className='school-callback-badge';callbackBadge.textContent='☎ School callback request';const refEl=card.querySelector('.reference');(refEl?.parentElement||card).appendChild(callbackBadge)}
+  }else if(callbackBadge)callbackBadge.remove();
   let btn=card.querySelector('.mark-new-btn');
   if(!btn){btn=document.createElement('button');btn.type='button';btn.className='mark-new-btn';open.parentElement?.appendChild(btn)}
   btn.dataset.ref=ref;
   btn.disabled=!state.loaded||!row;
-  btn.classList.toggle('is-new',!!row?.admin_attention);
-  btn.textContent=!state.loaded?'Loading…':!row?'Mark as New':row.admin_attention?'Marked as New ✓':'Mark as New';
+  btn.classList.toggle('is-new',needsAttention);
+  btn.textContent=!state.loaded?'Loading…':!row?'Mark as New':needsAttention?'Marked as New ✓':'Mark as New';
  });
  updateCounters();
  applyNewView();
 }
 async function load(){
  const db=state.db=getDb();if(!db)return false;
- const {data,error}=await db.from('enquiries').select('id,enquiry_ref,admin_attention');
+ const {data,error}=await db.from('enquiries').select('id,enquiry_ref,enquiry_type,status,admin_attention');
  if(error){console.warn('Could not load admin attention flags',error);return false}
  state.rows=new Map((data||[]).map(x=>[String(x.enquiry_ref||'').toUpperCase(),x]));state.loaded=true;render();return true;
 }
@@ -82,10 +93,8 @@ async function setAttention(ref,value){
  }catch(e){console.error('Could not update admin attention flag',e);alert('Could not update this enquiry. Please try again.')}
  finally{state.busy=false;render()}
 }
-// School Quick Tap fix: the original single-choice handler removes the active class
-// before toggling it, which makes an already-selected option impossible to clear.
-// Intercept only clicks on an already-active tile; unselected tiles continue through
-// the original handler unchanged, preserving all existing single/multi-select logic.
+// School Quick Tap fix: clicking an already-selected tile clears it. Unselected
+// tiles continue through the original handler so existing single/multi-select rules remain intact.
 document.addEventListener('click',e=>{
  const tile=e.target.closest?.('.school-quick-panel .quick-tile.active');
  if(!tile)return;
@@ -96,7 +105,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('click',e=>{
  const mark=e.target.closest?.('.mark-new-btn');if(mark){e.preventDefault();e.stopPropagation();setAttention(mark.dataset.ref,true);return}
  const newTab=e.target.closest?.('[data-admin-view="new"]');if(newTab)setTimeout(applyNewView,40);
- const open=e.target.closest?.('button');if(open&&/^Open Enquiry$/i.test((open.textContent||'').trim())){const card=cardForButton(open),ref=refOf(card?.innerText);if(ref&&state.rows.get(ref)?.admin_attention)setTimeout(()=>setAttention(ref,false),150)}
+ const open=e.target.closest?.('button');if(open&&/^Open Enquiry$/i.test((open.textContent||'').trim())){const card=cardForButton(open),ref=refOf(card?.innerText);if(ref&&rowNeedsAttention(state.rows.get(ref)))setTimeout(()=>setAttention(ref,false),150)}
 },true);
 const observer=new MutationObserver(()=>{clearTimeout(observer.t);observer.t=setTimeout(render,80)});observer.observe(document.documentElement,{childList:true,subtree:true});
 render();
