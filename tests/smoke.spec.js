@@ -183,6 +183,28 @@ test('party builder carries customer choices into final enquiry', async ({ page 
   await expect(page.locator('[name="guests"]')).toHaveValue('80');
   await expect(page.locator('#extraKaraoke')).toBeChecked();
   await expect(page.locator('#extraBubble')).toBeChecked();
-  await expect(page.locator('textarea[name="message"]')).toContainText('21st Birthday');
-  await expect(page.locator('textarea[name="message"]')).toContainText('Test carry-over note');
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/21st Birthday/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Test carry-over note/);
+});
+
+test('wedding builder carries planning details and activates wedding agreement', async ({ page }) => {
+  await page.goto('/wedding.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundWeddingBuilder', JSON.stringify({
+    coverage:['Reception'], setting:'Indoor', style:'Modern party', ceremonyNeeds:['Wireless microphone'],
+    receptionNeeds:['MC service'], extras:['Smoke machine','Karaoke'], date:'2027-03-13',
+    venue:'Wedding Test Venue, Hobart', guests:'120', mustPlay:'Test first dance',
+    wouldLove:'90s dance', doNotPlay:'Test banned song', timeline:[{time:'7:30 PM',event:'First dance'}]
+  })));
+  await page.goto('/event-enquiry.html?event=Wedding&from=wedding', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('Wedding');
+  await expect(page.locator('#eventDate')).toHaveValue('2027-03-13');
+  await expect(page.locator('[name="venue"]')).toHaveValue('Wedding Test Venue, Hobart');
+  await expect(page.locator('[name="guests"]')).toHaveValue('120');
+  await expect(page.locator('#extraKaraoke')).toBeChecked();
+  await expect(page.locator('#extraSmoke')).toBeChecked();
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Test first dance/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/First dance/);
+  await expect(page.locator('#weddingContract')).toBeVisible();
+  await expect(page.locator('[name="weddingSignature"]')).toHaveAttribute('required', '');
+  await expect(page.locator('#weddingEffectsCheck')).toBeVisible();
 });
