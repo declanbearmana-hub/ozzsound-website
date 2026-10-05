@@ -69,7 +69,6 @@ test('core customer journeys keep their enquiry routes', async ({ page }) => {
   await expect(page.locator('a[href="school-functions.html"]').first()).toBeVisible();
   await expect(page.locator('a[href="corporate.html"]').first()).toBeVisible();
   await expect(page.locator('a[href="sporting-events.html"]').first()).toBeVisible();
-
   await page.goto('/gear-hire.html');
   await expect(page.locator('#gearEnquire')).toHaveAttribute('href', /event-enquiry\.html/);
 });
@@ -167,4 +166,23 @@ test('school quick choices can be selected and unselected', async ({ page }) => 
   await expect(choice).toHaveClass(/selected/);
   await choice.click();
   await expect(choice).not.toHaveClass(/selected/);
+});
+
+test('party builder carries customer choices into final enquiry', async ({ page }) => {
+  await page.goto('/party.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundPartyBuilder', JSON.stringify({
+    type:'21st Birthday', vibe:'Dance party', crowd:'Mixed ages', music:['90s','Current Hits'],
+    musicControl:'Let Dazz read the room', moments:['Speeches / microphone'], fun:[],
+    extras:['Karaoke','Bubble machine'], strobe:'No', strobeApproval:'Not applicable',
+    date:'2027-02-20', venue:'Test Venue, Hobart', guests:'80', setting:'Indoor', notes:'Test carry-over note'
+  })));
+  await page.goto('/event-enquiry.html?event=Birthday%20%26%20Party&from=party', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('Birthday & Party');
+  await expect(page.locator('#eventDate')).toHaveValue('2027-02-20');
+  await expect(page.locator('[name="venue"]')).toHaveValue('Test Venue, Hobart');
+  await expect(page.locator('[name="guests"]')).toHaveValue('80');
+  await expect(page.locator('#extraKaraoke')).toBeChecked();
+  await expect(page.locator('#extraBubble')).toBeChecked();
+  await expect(page.locator('textarea[name="message"]')).toContainText('21st Birthday');
+  await expect(page.locator('textarea[name="message"]')).toContainText('Test carry-over note');
 });
