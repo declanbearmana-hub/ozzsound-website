@@ -1,0 +1,102 @@
+name: Fix Continue Quote button
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-continue-quote.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch Continue Quote behaviour
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('admin/index.html')
+          s = p.read_text()
+          old = '''    async function startReview() {
+
+      if (
+        await updateEnquiryStatus(
+          "reviewing"
+        )
+      ) {
+
+        renderModalContent();
+
+        await renderUploadSections();
+      }
+    }
+'''
+          new = '''    async function startReview() {
+
+      if (!currentEnquiry) {
+        return;
+      }
+
+      const alreadyReviewing =
+        normaliseStatus(currentEnquiry.status) === "reviewing";
+
+      if (!alreadyReviewing) {
+        const updated =
+          await updateEnquiryStatus("reviewing");
+
+        if (!updated) {
+          return;
+        }
+
+        renderModalContent();
+        await renderUploadSections();
+      }
+
+      /*
+        Start Review and Continue Quote use the same button.
+        Once an enquiry is already being reviewed, do not just
+        save the same status again. Move the admin directly to
+        the quote editor so the button always performs an obvious action.
+      */
+      requestAnimationFrame(() => {
+        const quoteButton =
+          document.getElementById("saveQuoteButton");
+
+        const quoteSection =
+          quoteButton?.closest(".section-card") ||
+          document.getElementById("quoteItems");
+
+        quoteSection?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+        const firstQuoteControl =
+          document.getElementById("inventorySelect") ||
+          document.getElementById("customItemName") ||
+          document.getElementById("customerQuoteComments");
+
+        if (firstQuoteControl && typeof firstQuoteControl.focus === "function") {
+          setTimeout(() => firstQuoteControl.focus({ preventScroll: true }), 350);
+        }
+      });
+    }
+'''
+          if old not in s:
+              raise SystemExit('Expected startReview function was not found; refusing unsafe patch')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Verify patch
+        run: |
+          grep -q 'alreadyReviewing' admin/index.html
+          grep -q 'scrollIntoView' admin/index.html
+          grep -q 'id="saveQuoteButton"' admin/index.html
+      - name: Commit fix
+        run: |
+          git config user.name "Ozzsound Admin Fix"
+          git config user.email "actions@users.noreply.github.com"
+          git add admin/index.html
+          git commit -m "Fix Continue Quote navigation"
+          git push
