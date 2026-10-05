@@ -1,0 +1,35 @@
+name: Apply mobile footer fix
+on:
+  push:
+    paths:
+      - 'css/mobile-footer-fix.css'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load fix and hide floating controls at footer
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          link='  <link rel="stylesheet" href="css/mobile-footer-fix.css?v=20261005-1">\n'
+          if 'css/mobile-footer-fix.css' not in s:
+              s=s.replace('  <link rel="stylesheet" href="css/styles.css?v=20260919-10">\n', '  <link rel="stylesheet" href="css/styles.css?v=20260919-10">\n'+link)
+          marker='</body>'
+          script='''<script>\n(()=>{\n  const init=()=>{\n    const footerActions=document.querySelector('.ozz-bottom-actions');\n    if(!footerActions||!('IntersectionObserver' in window)) return;\n    const io=new IntersectionObserver(entries=>{\n      document.body.classList.toggle('ozz-footer-actions-visible',entries.some(e=>e.isIntersecting));\n    },{threshold:0.01});\n    io.observe(footerActions);\n  };\n  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));\n  else setTimeout(init,0);\n})();\n</script>\n'''
+          if 'ozz-footer-actions-visible' not in s:
+              s=s.replace(marker,script+marker)
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "Ozzsound Site Fix"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix mobile footer controls overlapping"
+          git push
