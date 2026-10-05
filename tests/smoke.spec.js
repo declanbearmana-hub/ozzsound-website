@@ -85,7 +85,6 @@ test('admin login screen and core controls exist', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-
 test('no literal escaped newline text is rendered on site pages', async ({ page }) => {
   for (const [, path] of publicPages) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
@@ -96,27 +95,20 @@ test('no literal escaped newline text is rendered on site pages', async ({ page 
 
 test('event builders route into the unified final enquiry', async ({ page }) => {
   const routes = [
-    ['/wedding.html', '#wedNext'],
-    ['/party.html', null],
-    ['/school-functions.html', '[data-school-handoff]'],
-    ['/seasonal.html', null],
-    ['/karaoke.html', null],
-    ['/gear-hire.html', '#gearEnquire'],
-    ['/corporate.html', null],
-    ['/sporting-events.html', null]
+    ['/wedding.html', '#wedNext'], ['/party.html', null], ['/school-functions.html', '[data-school-handoff]'],
+    ['/seasonal.html', null], ['/karaoke.html', null], ['/gear-hire.html', '#gearEnquire'],
+    ['/corporate.html', null], ['/sporting-events.html', null]
   ];
   for (const [path] of routes) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
-    const oldSubmit = page.locator('form[action="enquiry.html"], form[action="karaoke-enquiry.html"]');
-    await expect(oldSubmit, `Legacy enquiry form found on ${path}`).toHaveCount(0);
+    await expect(page.locator('form[action="enquiry.html"], form[action="karaoke-enquiry.html"]'), `Legacy enquiry form found on ${path}`).toHaveCount(0);
   }
 });
 
 test('removed DJ Dazz dress-up choice does not return', async ({ page }) => {
   for (const path of ['/school-functions.html','/party.html']) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
-    const body = await page.locator('body').innerText();
-    expect(body).not.toMatch(/dress[- ]?up\s+(?:dj\s+)?dazz/i);
+    expect(await page.locator('body').innerText()).not.toMatch(/dress[- ]?up\s+(?:dj\s+)?dazz/i);
   }
 });
 
@@ -129,4 +121,50 @@ test('public pages have no duplicate element ids', async ({ page }) => {
     });
     expect(duplicates, `Duplicate IDs on ${path}`).toEqual([]);
   }
+});
+
+test('temporary website notice is below navigation and can be dismissed', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  const nav = page.locator('body > nav.nav, body > .nav').first();
+  const banner = page.locator('.ozz-work-banner');
+  await expect(nav).toBeVisible();
+  await expect(banner).toBeVisible();
+  const order = await page.evaluate(() => {
+    const nav = document.querySelector('body > nav.nav, body > .nav');
+    const banner = document.querySelector('.ozz-work-banner');
+    return !!(nav && banner && (nav.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(order, 'Website update notice should render after the navigation').toBeTruthy();
+  await banner.locator('.ozz-work-banner-close').click();
+  await expect(banner).toHaveCount(0);
+});
+
+test('request-a-call controls are accessible and open the callback form', async ({ page }) => {
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('button', { name: /request a call/i }).first()).toBeVisible();
+  await page.getByRole('button', { name: /request a call/i }).first().click();
+  const dialog = page.getByRole('dialog', { name: /request a call from ozzsound/i });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('input[name="name"]')).toHaveAttribute('required', '');
+  await expect(dialog.locator('input[name="phone"]')).toHaveAttribute('required', '');
+});
+
+test('mobile home keeps primary hero actions clear of temporary notice', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.startsWith('desktop-'));
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  const banner = page.locator('.ozz-work-banner');
+  const hero = page.locator('.hero').first();
+  await expect(banner).toBeVisible();
+  await expect(hero).toBeVisible();
+  const boxes = await Promise.all([banner.boundingBox(), hero.boundingBox()]);
+  expect(boxes[0] && boxes[1] && boxes[0].y + boxes[0].height <= boxes[1].y + 5, 'Temporary notice should not overlap the hero').toBeTruthy();
+});
+
+test('school quick choices can be selected and unselected', async ({ page }) => {
+  await page.goto('/school-functions.html', { waitUntil: 'domcontentloaded' });
+  const choice = page.locator('#schoolVibeChoices .schoolChoice').first();
+  await choice.click();
+  await expect(choice).toHaveClass(/selected/);
+  await choice.click();
+  await expect(choice).not.toHaveClass(/selected/);
 });
