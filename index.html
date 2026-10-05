@@ -21,6 +21,7 @@
   >
 
   <link rel="stylesheet" href="css/styles.css?v=20260919-10">
+  <link rel="stylesheet" href="css/mobile-footer-fix.css?v=20261005-1">
 
   <!-- Critical booked-date styling: keep visible even if an older stylesheet is cached -->
   <style>
@@ -444,5 +445,19 @@
   <button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button>
   <button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>
 </div>
+<script>
+(()=>{
+  const init=()=>{
+    const footerActions=document.querySelector('.ozz-bottom-actions');
+    if(!footerActions||!('IntersectionObserver' in window)) return;
+    const io=new IntersectionObserver(entries=>{
+      document.body.classList.toggle('ozz-footer-actions-visible',entries.some(e=>e.isIntersecting));
+    },{threshold:0.01});
+    io.observe(footerActions);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
+  else setTimeout(init,0);
+})();
+</script>
 </body>
 </html>
