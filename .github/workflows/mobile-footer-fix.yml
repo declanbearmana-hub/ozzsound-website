@@ -1,8 +1,9 @@
-name: Apply mobile footer fix
+name: Apply site fixes
 on:
   push:
     paths:
       - 'css/mobile-footer-fix.css'
+      - '.github/workflows/mobile-footer-fix.yml'
 permissions:
   contents: write
 jobs:
@@ -10,10 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Load fix and hide floating controls at footer
+      - name: Apply safe site patches
         run: |
           python3 - <<'PY'
           from pathlib import Path
+
+          # Existing mobile footer patch
           p=Path('index.html')
           s=p.read_text()
           link='  <link rel="stylesheet" href="css/mobile-footer-fix.css?v=20261005-1">\n'
@@ -24,12 +27,28 @@ jobs:
           if 'ozz-footer-actions-visible' not in s:
               s=s.replace(marker,script+marker)
           p.write_text(s)
+
+          # Admin Continue Quote patch
+          p=Path('admin/index.html')
+          s=p.read_text()
+          old='''    async function startReview() {\n\n      if (\n        await updateEnquiryStatus(\n          "reviewing"\n        )\n      ) {\n\n        renderModalContent();\n\n        await renderUploadSections();\n      }\n    }\n'''
+          new='''    async function startReview() {\n\n      if (!currentEnquiry) {\n        return;\n      }\n\n      const alreadyReviewing =\n        normaliseStatus(currentEnquiry.status) === "reviewing";\n\n      if (!alreadyReviewing) {\n        const updated = await updateEnquiryStatus("reviewing");\n        if (!updated) return;\n        renderModalContent();\n        await renderUploadSections();\n      }\n\n      requestAnimationFrame(() => {\n        const quoteButton = document.getElementById("saveQuoteButton");\n        const quoteSection = quoteButton?.closest(".section-card") || document.getElementById("quoteItems");\n        quoteSection?.scrollIntoView({ behavior: "smooth", block: "start" });\n        const firstQuoteControl = document.getElementById("inventorySelect") || document.getElementById("customItemName") || document.getElementById("customerQuoteComments");\n        if (firstQuoteControl && typeof firstQuoteControl.focus === "function") {\n          setTimeout(() => firstQuoteControl.focus({ preventScroll: true }), 350);\n        }\n      });\n    }\n'''
+          if 'const alreadyReviewing =' not in s:
+              if old not in s:
+                  raise SystemExit('Continue Quote target not found; refusing unsafe patch')
+              s=s.replace(old,new,1)
+          p.write_text(s)
           PY
+      - name: Verify admin patch
+        run: |
+          grep -q 'const alreadyReviewing =' admin/index.html
+          grep -q 'quoteSection?.scrollIntoView' admin/index.html
+          grep -q 'id="saveQuoteButton"' admin/index.html
       - name: Commit patch
         run: |
           if git diff --quiet; then exit 0; fi
           git config user.name "Ozzsound Site Fix"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html
-          git commit -m "Fix mobile footer controls overlapping"
+          git add index.html admin/index.html
+          git commit -m "Fix Continue Quote navigation"
           git push
