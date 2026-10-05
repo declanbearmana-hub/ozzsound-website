@@ -15,27 +15,19 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
-          # Existing mobile footer patch
-          p=Path('index.html')
-          s=p.read_text()
+          p=Path('index.html'); s=p.read_text()
           link='  <link rel="stylesheet" href="css/mobile-footer-fix.css?v=20261005-1">\n'
           if 'css/mobile-footer-fix.css' not in s:
               s=s.replace('  <link rel="stylesheet" href="css/styles.css?v=20260919-10">\n', '  <link rel="stylesheet" href="css/styles.css?v=20260919-10">\n'+link)
           marker='</body>'
           script='''<script>\n(()=>{\n  const init=()=>{\n    const footerActions=document.querySelector('.ozz-bottom-actions');\n    if(!footerActions||!('IntersectionObserver' in window)) return;\n    const io=new IntersectionObserver(entries=>{\n      document.body.classList.toggle('ozz-footer-actions-visible',entries.some(e=>e.isIntersecting));\n    },{threshold:0.01});\n    io.observe(footerActions);\n  };\n  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));\n  else setTimeout(init,0);\n})();\n</script>\n'''
-          if 'ozz-footer-actions-visible' not in s:
-              s=s.replace(marker,script+marker)
+          if 'ozz-footer-actions-visible' not in s: s=s.replace(marker,script+marker)
           p.write_text(s)
-
-          # Admin Continue Quote patch
-          p=Path('admin/index.html')
-          s=p.read_text()
+          p=Path('admin/index.html'); s=p.read_text()
           old='''    async function startReview() {\n\n      if (\n        await updateEnquiryStatus(\n          "reviewing"\n        )\n      ) {\n\n        renderModalContent();\n\n        await renderUploadSections();\n      }\n    }\n'''
           new='''    async function startReview() {\n\n      if (!currentEnquiry) {\n        return;\n      }\n\n      const alreadyReviewing =\n        normaliseStatus(currentEnquiry.status) === "reviewing";\n\n      if (!alreadyReviewing) {\n        const updated = await updateEnquiryStatus("reviewing");\n        if (!updated) return;\n        renderModalContent();\n        await renderUploadSections();\n      }\n\n      requestAnimationFrame(() => {\n        const quoteButton = document.getElementById("saveQuoteButton");\n        const quoteSection = quoteButton?.closest(".section-card") || document.getElementById("quoteItems");\n        quoteSection?.scrollIntoView({ behavior: "smooth", block: "start" });\n        const firstQuoteControl = document.getElementById("inventorySelect") || document.getElementById("customItemName") || document.getElementById("customerQuoteComments");\n        if (firstQuoteControl && typeof firstQuoteControl.focus === "function") {\n          setTimeout(() => firstQuoteControl.focus({ preventScroll: true }), 350);\n        }\n      });\n    }\n'''
           if 'const alreadyReviewing =' not in s:
-              if old not in s:
-                  raise SystemExit('Continue Quote target not found; refusing unsafe patch')
+              if old not in s: raise SystemExit('Continue Quote target not found; refusing unsafe patch')
               s=s.replace(old,new,1)
           p.write_text(s)
           PY
@@ -52,3 +44,4 @@ jobs:
           git add index.html admin/index.html
           git commit -m "Fix Continue Quote navigation"
           git push
+# trigger
