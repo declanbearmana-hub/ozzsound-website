@@ -1,0 +1,46 @@
+/* Mobile footer/action collision fix — 2026-10-05 */
+@media (max-width:700px){
+  /* Keep the real footer actions in normal document flow and give them breathing room. */
+  .ozz-bottom-actions{
+    position:relative!important;
+    z-index:31!important;
+    display:grid!important;
+    gap:10px!important;
+    padding:18px 14px calc(24px + env(safe-area-inset-bottom,0px))!important;
+    background:#05070b!important;
+  }
+  .ozz-bottom-actions .ozz-action-btn{
+    width:100%!important;
+    max-width:520px!important;
+    margin:0 auto!important;
+    min-height:48px!important;
+  }
+
+  /* The sticky date CTA remains useful while browsing, but must never cover footer controls. */
+  .mobileDateCta{
+    bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;
+    z-index:28!important;
+  }
+
+  /* Move quick top/bottom controls clear of the sticky CTA. */
+  .pageJumpNav{
+    right:10px!important;
+    bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+    z-index:27!important;
+  }
+
+  /* When the visitor reaches the footer actions, remove floating UI entirely. */
+  body.ozz-footer-actions-visible .mobileDateCta,
+  body.ozz-footer-actions-visible .pageJumpNav{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translateY(12px)!important;
+  }
+
+  /* Footer utility links must remain readable on a phone. */
+  .adminLoginLink{
+    color:#8f98a8!important;
+    opacity:.82!important;
+  }
+}
