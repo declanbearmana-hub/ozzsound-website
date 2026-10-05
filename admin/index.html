@@ -6160,16 +6160,29 @@ const { createClient } =
 
     async function startReview() {
 
-      if (
-        await updateEnquiryStatus(
-          "reviewing"
-        )
-      ) {
+      if (!currentEnquiry) {
+        return;
+      }
 
+      const alreadyReviewing =
+        normaliseStatus(currentEnquiry.status) === "reviewing";
+
+      if (!alreadyReviewing) {
+        const updated = await updateEnquiryStatus("reviewing");
+        if (!updated) return;
         renderModalContent();
-
         await renderUploadSections();
       }
+
+      requestAnimationFrame(() => {
+        const quoteButton = document.getElementById("saveQuoteButton");
+        const quoteSection = quoteButton?.closest(".section-card") || document.getElementById("quoteItems");
+        quoteSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const firstQuoteControl = document.getElementById("inventorySelect") || document.getElementById("customItemName") || document.getElementById("customerQuoteComments");
+        if (firstQuoteControl && typeof firstQuoteControl.focus === "function") {
+          setTimeout(() => firstQuoteControl.focus({ preventScroll: true }), 350);
+        }
+      });
     }
 
 
