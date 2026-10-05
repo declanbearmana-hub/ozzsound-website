@@ -244,3 +244,16 @@ test('seasonal builder carries event details into the unified final enquiry', as
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Prize presentation/);
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Seasonal test carry-over note/);
 });
+
+test('karaoke builder carries music preferences into the unified final enquiry', async ({ page }) => {
+  await page.goto('/karaoke.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundKaraoke', JSON.stringify({
+    eras:['80s','90s'], genres:['Rock','Pop'], event:'Birthday party', requests:'Bon Jovi and Queen'
+  })));
+  await page.goto('/event-enquiry.html?event=Karaoke&from=karaoke', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('Karaoke');
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/80s, 90s/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Rock, Pop/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Birthday party/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Bon Jovi and Queen/);
+});
