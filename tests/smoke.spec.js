@@ -223,3 +223,24 @@ test('school builder carries choices into the unified final enquiry', async ({ p
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Air guitar competition/);
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Strobe lighting: No/);
 });
+
+test('seasonal builder carries event details into the unified final enquiry', async ({ page }) => {
+  await page.goto('/seasonal.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundSeasonalBuilder', JSON.stringify({
+    season:'Halloween', vibe:'Big party', music:['80s','Current Hits'], musicControl:'Let Dazz read the room',
+    extras:['Karaoke','Bubble machine','Costume competition'], moments:['Prize presentation'],
+    strobe:'No', strobeApproval:'Not applicable', date:'2027-10-30', venue:'Seasonal Test Venue, Hobart',
+    guests:'150', crowd:'Mixed ages', notes:'Seasonal test carry-over note'
+  })));
+  await page.goto('/event-enquiry.html?event=Seasonal%20Event&from=seasonal', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('Seasonal Event');
+  await expect(page.locator('#eventDate')).toHaveValue('2027-10-30');
+  await expect(page.locator('[name="venue"]')).toHaveValue('Seasonal Test Venue, Hobart');
+  await expect(page.locator('[name="guests"]')).toHaveValue('150');
+  await expect(page.locator('#extraKaraoke')).toBeChecked();
+  await expect(page.locator('#extraBubble')).toBeChecked();
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Halloween/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Costume competition/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Prize presentation/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Seasonal test carry-over note/);
+});
