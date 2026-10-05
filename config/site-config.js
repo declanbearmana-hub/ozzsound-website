@@ -22,5 +22,5 @@ window.OZZSOUND_CONFIG = {
 if (/\/admin\/?(?:index\.html)?$/i.test(location.pathname)) {
   ['admin-attention.js?v=20261005-3','admin-issues.js?v=20261005-1'].forEach(src=>{const s=document.createElement('script');s.src=src;s.defer=true;document.head.appendChild(s)});
 } else {
-  const s=document.createElement('script');s.src='js/site-feedback.js?v=20261005-1';s.defer=true;document.head.appendChild(s);
+  const s=document.createElement('script');s.src='js/site-feedback.js?v=20261005-2';s.defer=true;document.head.appendChild(s);
 }
