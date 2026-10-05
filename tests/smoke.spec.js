@@ -208,3 +208,18 @@ test('wedding builder carries planning details and activates wedding agreement',
   await expect(page.locator('[name="weddingSignature"]')).toHaveAttribute('required', '');
   await expect(page.locator('#weddingEffectsCheck')).toBeVisible();
 });
+
+test('school builder carries choices into the unified final enquiry', async ({ page }) => {
+  await page.goto('/school-functions.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundSchoolPlan', JSON.stringify({
+    vibe:'A bit of both', extras:['Karaoke','Bubble machine','Air guitar competition'],
+    strobe:'No', strobeApproval:'Not applicable'
+  })));
+  await page.goto('/event-enquiry.html?event=School%20Function&from=school', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('School Function');
+  await expect(page.locator('#extraKaraoke')).toBeChecked();
+  await expect(page.locator('#extraBubble')).toBeChecked();
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/A bit of both/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Air guitar competition/);
+  await expect(page.locator('textarea[name="message"]')).toHaveValue(/Strobe lighting: No/);
+});
