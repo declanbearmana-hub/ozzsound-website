@@ -54,12 +54,6 @@ jobs:
         await renderUploadSections();
       }
 
-      /*
-        Start Review and Continue Quote use the same button.
-        Once an enquiry is already being reviewed, do not just
-        save the same status again. Move the admin directly to
-        the quote editor so the button always performs an obvious action.
-      */
       requestAnimationFrame(() => {
         const quoteButton =
           document.getElementById("saveQuoteButton");
@@ -100,3 +94,4 @@ jobs:
           git add admin/index.html
           git commit -m "Fix Continue Quote navigation"
           git push
+# trigger patch
