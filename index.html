@@ -20,7 +20,7 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="css/styles.css?v=20261006-restore1">
+  <link rel="stylesheet" href="css/styles.css?v=20260919-10">
   <link rel="stylesheet" href="css/mobile-footer-fix.css?v=20261005-1">
 
   <!-- Critical booked-date styling: keep visible even if an older stylesheet is cached -->
@@ -98,115 +98,366 @@
     <a href="#events">Event Types</a>
     <div class="navDrop"><button class="navDropButton" type="button">Plan <span>⌄</span></button><div class="navDropMenu"><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a><a href="event-enquiry.html">Enquire</a></div></div>
     <a href="why-ozzsound.html">Why Ozzsound</a>
-    <div class="languageMenu" data-language-menu>
-      <button class="languageToggle" type="button" aria-expanded="false" aria-haspopup="true"><span class="languageIcon">🌐</span><span class="languageCode">EN</span><span class="languageChevron">⌄</span></button>
-      <div class="languagePanel" hidden>
-        <button type="button" data-lang="en"><span>English</span><small>EN</small></button>
-        <button type="button" data-lang="zh"><span>简体中文</span><small>ZH</small></button>
-        <button type="button" data-lang="ja"><span>日本語</span><small>JA</small></button>
-        <button type="button" data-lang="de"><span>Deutsch</span><small>DE</small></button>
-        <button type="button" data-lang="ru"><span>Русский</span><small>RU</small></button>
-      </div>
-    </div>
-    <a class="pill navCta" href="#availability">Check My Date</a>
+
+    <a
+      class="pill navCta"
+      href="#availability"
+    >
+      Check My Date
+    </a>
 
   </div>
+
+
+  <button
+    class="menuToggle"
+    id="menuToggle"
+    type="button"
+    aria-label="Open menu"
+    aria-controls="mobileMenu"
+    aria-expanded="false"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
 </nav>
 
-<div id="top"></div>
 
-<div id="siteMaintenanceBanner" class="maintenanceBanner" role="status" aria-live="polite" hidden>
-  <button id="maintenanceBannerClose" class="maintenanceBannerClose" type="button" aria-label="Dismiss website maintenance notice">×</button>
-  <div class="maintenanceBannerInner">
-    <strong>Website under maintenance:</strong>
-    <span>We are currently updating the Ozzsound website, so some pages or features may not work as expected. For enquiries, please <strong>request a call from Ozzsound</strong>.</span>
-    <button id="maintenanceBannerCallback" class="maintenanceBannerCallback" type="button">Request a call</button>
+<div
+  class="mobileMenu"
+  id="mobileMenu"
+  aria-hidden="true"
+>
+
+  <div class="mobileMenuGlow"></div>
+
+  <div class="mobileMenuInner">
+
+    <div class="mobileMenuEyebrow">
+      Ozzsound Mobile Music
+    </div>
+
+    <a href="#events">
+      <small>01</small>
+      <span>Events</span>
+    </a>
+
+    <a href="karaoke.html">
+      <small>02</small>
+      <span>Karaoke</span>
+    </a>
+
+    <a href="gear-hire.html">
+      <small>03</small>
+      <span>Gear Hire</span>
+    </a>
+
+    <a href="why-ozzsound.html">
+      <small>04</small>
+      <span>Why Ozzsound</span>
+    </a>
+
+    <a href="#availability">
+      <small>05</small>
+      <span>Check My Date</span>
+    </a>
+
+    <a href="event-enquiry.html">
+      <small>06</small>
+      <span>Enquire</span>
+    </a>
+
+    <div class="mobileMenuFoot">
+      Tasmania · DJ & Event Entertainment
+    </div>
+
   </div>
+
 </div>
 
-<section class="hero" aria-label="Ozzsound hero">
-  <div class="heroFallback"></div>
-  <div class="heroMedia" aria-hidden="true"></div>
+
+<header
+  class="hero"
+  id="top"
+>
+
+  <div
+    class="heroMedia"
+    id="heroMedia"
+    aria-hidden="true"
+  >
+    <div class="heroFallback"></div>
+    <div class="mediaLayer layerA"></div>
+    <div class="mediaLayer layerB"></div>
+  </div>
+
   <div class="heroShade"></div>
   <div class="heroGlow"></div>
 
-  <div class="heroContent wrap reveal">
-    <div class="eyebrow">Ozzsound Mobile Music</div>
-    <h1>Professional DJ &amp; event entertainment · Tasmania</h1>
-    <p>Weddings, birthdays, school events, corporate functions, sporting events, karaoke and more — tailored to your crowd, venue and event.</p>
+
+  <div class="wrap heroContent reveal">
+
+    <div class="eyebrow">
+      Professional DJ & event entertainment · Tasmania
+    </div>
+
+    <h1>
+      Your event deserves
+      <span class="gradientText">
+        more than a playlist.
+      </span>
+    </h1>
+
+    <p>Professional DJ and event entertainment shaped around your crowd, your venue and the atmosphere you want to create.</p>
+
     <div class="actions">
-      <a class="btn primary" href="#events">Explore event types</a>
-      <a class="btn secondary" href="#availability">Check my date</a>
+
+      <a
+        class="btn primary"
+        href="#availability"
+      >
+        Check My Date <span>→</span>
+      </a>
+
+      <a
+        class="btn secondary"
+        href="#events"
+      >
+        Explore events <span>↘</span>
+      </a>
+
     </div>
+
   </div>
 
-  <div class="coverage"><div class="wrap"><span>Hobart · Tasmania-wide</span><span>Mobile DJ · Karaoke · Gear Hire</span></div></div>
-  <div class="scrollLine"></div>
-</section>
 
-<div class="ticker" aria-hidden="true"><div class="tickerTrack"><span>Weddings</span><b>✦</b><span>Birthdays &amp; Parties</span><b>✦</b><span>School Events</span><b>✦</b><span>Corporate</span><b>✦</b><span>Sporting Events</span><b>✦</b><span>Karaoke</span><b>✦</b><span>Gear Hire</span><b>✦</b><span>Weddings</span><b>✦</b><span>Birthdays &amp; Parties</span><b>✦</b><span>School Events</span><b>✦</b><span>Corporate</span><b>✦</b><span>Sporting Events</span><b>✦</b><span>Karaoke</span><b>✦</b><span>Gear Hire</span><b>✦</b></div></div>
-
-<section id="events" class="intro">
-  <div class="wrap">
-    <div class="sectionTop reveal">
-      <h2>Your event, your way.</h2>
-      <p>Choose your event type to see the options, then build your enquiry around what you actually need.</p>
-    </div>
-    <div id="eventGrid" class="eventGrid"></div>
-    <div id="eventDetail" class="eventDetail" hidden></div>
+  <div
+    class="heroStatus"
+    id="heroStatus"
+  >
+    <span class="pulse"></span>
+    <span>Ozzsound · Tasmania-wide</span>
   </div>
-</section>
 
-<section class="statement">
-  <div class="orb orbOne"></div><div class="orb orbTwo"></div>
+
+  <div
+    class="heroProgress"
+    id="heroProgress"
+    aria-hidden="true"
+  ></div>
+
+
+  <div class="scrollCue">
+    <span>Scroll</span>
+    <i></i>
+  </div>
+
+</header>
+
+
+<section class="homeEvents" id="events">
   <div class="wrap reveal">
-    <h2>More than music. <span>Built around your event.</span></h2>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="features reveal">
-      <article class="feature"><div class="num">01</div><h3>Events</h3><p>Flexible packages for weddings, parties, schools, corporate and sporting events.</p></article>
-      <article class="feature"><div class="num">02</div><h3>Karaoke</h3><p>Interactive karaoke options with music choices designed around your crowd.</p></article>
-      <article class="feature"><div class="num">03</div><h3>Gear Hire</h3><p>Speakers, lighting and effects available for package hire.</p></article>
-      <article class="feature"><div class="num">04</div><h3>Why Ozzsound</h3><p>Professional presentation, reliable equipment and event-first planning.</p></article>
-      <article class="feature"><div class="num">05</div><h3>Check My Date</h3><p>Use the live availability calendar to check whether your date is open.</p></article>
-      <article class="feature"><div class="num">06</div><h3>Enquire</h3><p>Build your event details and send one clear enquiry through to Ozzsound.</p></article>
+    <div class="cleanSectionHead">
+      <div class="eyebrow">Choose your experience</div>
+      <h2>What are you <span class="gradientText">celebrating?</span></h2>
+      <p>Find your event, then make it yours.</p>
     </div>
   </div>
+  <div class="eventFlowShell"><button class="eventFlowArrow eventFlowPrev" type="button" aria-label="Previous event">‹</button><div class="eventFlow" id="eventFlow" aria-label="Ozzsound event types" tabindex="0">
+    <div class="eventFlowTrack">
+      <a class="flowCard" href="wedding.html"><small>Wedding entertainment</small><strong>Weddings</strong><span>Explore →</span></a>
+      <a class="flowCard" href="party.html"><small>Private events</small><strong>Birthdays &amp; Parties</strong><span>Explore →</span></a>
+      <a class="flowCard" href="school-functions.html"><small>Schools &amp; students</small><strong>School Functions</strong><span>Explore →</span></a>
+      <a class="flowCard" href="seasonal.html"><small>Halloween, Christmas &amp; more</small><strong>Seasonal Events</strong><span>Explore →</span></a>
+      <a class="flowCard" href="corporate.html"><small>Business</small><strong>Corporate</strong><span>Explore →</span></a>
+      <a class="flowCard" href="sporting-events.html"><small>Clubs &amp; teams</small><strong>Sporting Events</strong><span>Explore →</span></a>
+      <a class="flowCard" href="karaoke.html"><small>Hosted entertainment</small><strong>Karaoke</strong><span>Explore →</span></a>
+      <a class="flowCard" href="event-enquiry.html?event=Other%20Event"><small>Something different</small><strong>Your Event</strong><span>Tell us →</span></a>
+      <a class="flowCard" href="wedding.html" aria-hidden="true" tabindex="-1"><small>Wedding entertainment</small><strong>Weddings</strong><span>Explore →</span></a>
+      <a class="flowCard" href="party.html" aria-hidden="true" tabindex="-1"><small>Private events</small><strong>Birthdays &amp; Parties</strong><span>Explore →</span></a>
+      <a class="flowCard" href="school-functions.html" aria-hidden="true" tabindex="-1"><small>Schools &amp; students</small><strong>School Functions</strong><span>Explore →</span></a>
+      <a class="flowCard" href="seasonal.html" aria-hidden="true" tabindex="-1"><small>Halloween, Christmas &amp; more</small><strong>Seasonal Events</strong><span>Explore →</span></a>
+      <a class="flowCard" href="corporate.html" aria-hidden="true" tabindex="-1"><small>Business</small><strong>Corporate</strong><span>Explore →</span></a>
+      <a class="flowCard" href="sporting-events.html" aria-hidden="true" tabindex="-1"><small>Clubs &amp; teams</small><strong>Sporting Events</strong><span>Explore →</span></a>
+      <a class="flowCard" href="karaoke.html" aria-hidden="true" tabindex="-1"><small>Hosted entertainment</small><strong>Karaoke</strong><span>Explore →</span></a>
+      <a class="flowCard" href="event-enquiry.html?event=Other%20Event" aria-hidden="true" tabindex="-1"><small>Something different</small><strong>Your Event</strong><span>Tell us →</span></a>
+    </div>
+  </div><button class="eventFlowArrow eventFlowNext" type="button" aria-label="Next event">›</button></div><div class="eventFlowHint">Drag or swipe to explore</div>
 </section>
 
-<section class="gallery">
-  <div class="wrap">
-    <div class="sectionTop reveal"><h2>Event atmosphere.</h2><p>Lighting, sound and presentation that suit the venue and the crowd.</p></div>
-    <div class="mediaGrid reveal">
-      <div class="mediaCard" data-label="Ozzsound"><div class="mediaPlaceholder"><b>Ozzsound</b>Event setup</div></div>
-      <div class="mediaCard" data-label="Lighting"><div class="mediaPlaceholder"><b>Lighting</b>Event lighting</div></div>
-      <div class="mediaCard" data-label="Crowd"><div class="mediaPlaceholder"><b>Crowd</b>Dance floor</div></div>
+<section class="homeStatement">
+  <div class="wrap homeStatementInner reveal">
+    <div>
+      <div class="eyebrow">The Ozzsound experience</div>
+      <h2>More than someone <span class="gradientText">pressing play.</span></h2>
+      <p>Music, atmosphere and entertainment built around the people in the room.</p>
     </div>
+    <a class="btn secondary" href="why-ozzsound.html">Why Ozzsound <span>→</span></a>
   </div>
 </section>
 
-<section id="availability" class="enquire">
+<section class="homeTools">
   <div class="wrap reveal">
-    <h2>Check My Date</h2>
-    <p>Choose a date below to check availability and start your enquiry.</p>
-    <div id="calendarWrap"></div>
+    <div class="cleanSectionHead">
+      <div class="eyebrow">Make it yours</div>
+      <h2>Build the night <span class="gradientText">your way.</span></h2>
+    </div>
+    <div class="homeToolGrid">
+      <a href="karaoke.html"><small>Hosted entertainment</small><strong>Karaoke</strong><span>Build your night →</span></a>
+      <a href="gear-hire.html"><small>Equipment</small><strong>Gear Hire</strong><span>Choose your gear →</span></a>
+      <a href="virtual-setup.html"><small>Planning tool</small><strong>Virtual Setup</strong><span>See your setup →</span></a>
+    </div>
   </div>
-</section>
+</section><section
+  class="availability"
+  id="availability"
+>
 
-<footer>
-  <div class="wrap foot">
-    <span>© Ozzsound Mobile Music</span>
-    <a href="privacy.html">Privacy</a>
-    <a href="policies.html">Policies</a>
-    <a class="adminLoginLink" href="admin.html">Admin</a>
+  <div class="wrap reveal">
+
+    <div class="sectionTop availabilityIntro">
+  <div><div class="eyebrow">Availability</div><h2>Have a date <span class="gradientText">in mind?</span></h2></div>
+  <p>Choose your date and get a quick indication of Ozzsound's availability. If it looks good, choose your event next — we'll remember the date for you.</p>
+</div>
+
+
+    <div class="calendarShell">
+
+      <div class="calendarHead">
+
+        <h3 id="calendarMonth">
+          Availability
+        </h3>
+
+        <div class="calNav">
+
+          <button
+            id="calPrev"
+            type="button"
+            aria-label="Previous month"
+          >
+            ←
+          </button>
+
+          <button
+            id="calNext"
+            type="button"
+            aria-label="Next month"
+          >
+            →
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <details class="calendarLegendWrap">
+  <summary>Availability guide <span>+</span></summary>
+  <div class="calendarLegend">
+    <span><i class="legendAvailable"></i>Available</span>
+    <span><i class="legendAvailableFrom"></i>Available from time</span>
+    <span><i class="legendLimited"></i>Limited / enquire</span>
+    <span><i class="legendUnavailable"></i>Unavailable</span>
+    <span><i class="legendBooked"></i>Booked</span>
+  </div>
+</details>
+<div class="calendarGrid"
+        id="calendarGrid"
+        aria-label="Ozzsound availability calendar"
+      ></div>
+
+
+      <div
+        class="dateResult"
+        id="dateResult"
+        aria-live="polite"
+      >
+
+        <div>
+
+          <strong>
+            Select a date
+          </strong>
+
+          <p>
+            Pick a future date above to check availability.
+          </p>
+
+        </div>
+
+
+        <a
+          class="btn primary"
+          id="dateEnquire"
+          href="event-enquiry.html"
+        >
+          Choose your event →
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section><section class="homeFinalCta"><div class="wrap reveal"><div class="homeFinalCtaBox"><div><div class="eyebrow">Ready when you are</div><h2>Tell us about <span class="gradientText">your event.</span></h2><p>Have a date or an idea in mind? Send Ozzsound the details and we'll take it from there.</p></div><a class="btn primary large" href="event-enquiry.html">Start your enquiry <span>→</span></a></div></div></section>
+
+
+
+<a
+  class="mobileDateCta"
+  href="#availability"
+  aria-label="Check Ozzsound availability"
+>
+  Check My Date <span>→</span>
+</a>
+
+
+
+<footer class="siteFooter">
+  <div class="wrap footerMain footerMainExpanded">
+    <div class="footerIdentity">
+      <a class="footerBrand" href="#top" aria-label="Ozzsound home"><img src="assets/logos/ozzsound-logo-transparent.png" alt="Ozzsound Mobile Music"></a>
+      <div class="footerTagline">DJ &amp; event entertainment<br><span>Tasmania-wide</span></div>
+      <p class="footerContact"><a href="mailto:ozzsound@hotmail.com">ozzsound@hotmail.com</a></p>
+    </div>
+    <div class="footerColumn"><strong>Explore</strong><a href="#events">Events</a><a href="why-ozzsound.html">Why Ozzsound</a><a href="karaoke.html">Karaoke</a><a href="gear-hire.html">Gear Hire</a><a href="virtual-setup.html">Virtual Setup</a></div>
+    <div class="footerColumn"><strong>Plan your event</strong><a href="#availability">Check My Date</a><a href="event-enquiry.html">Enquire</a><a href="wedding.html">Wedding Builder</a><a href="school-functions.html">School Functions</a></div>
+    <div class="footerColumn"><strong>Legal &amp; trust</strong><a href="privacy.html">Privacy</a><a href="terms.html">Booking &amp; Website Terms</a><a href="security.html">Security &amp; Data Protection</a><a href="cookies.html">Cookies &amp; Local Storage</a><a href="copyright.html">Copyright &amp; Content</a></div>
+  </div>
+  <div class="wrap footerBottom">
+    <span>© 2026 Ozzsound Mobile Music · ABN 33 235 488 201</span>
+    <div class="decwebCredit" aria-label="Website created and managed by DECWEB Digital Design"><img src="assets/branding/decweb-footer-transparent.png" alt="DECWEB Digital Design"><span>Website created &amp; managed by <strong>DECWEB Digital Design</strong></span></div>
+    <a class="adminLoginLink" href="admin/" aria-label="Ozzsound administrator login">Admin Login</a>
   </div>
 </footer>
 
-<script src="config/site-config.js?v=20261006-1"></script>
-<script src="js/main.js?v=20261006-1"></script>
+
+<script src="config/site-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/main.js?v=20260920-calendar-return1"></script>
+
+<script src="js/i18n.js?v=20260919-3"></script>
+<div class="pageJumpNav" aria-label="Page navigation">
+  <button type="button" class="pageJumpButton pageJumpTop" aria-label="Back to top" title="Back to top">↑<span>Top</span></button>
+  <button type="button" class="pageJumpButton pageJumpBottom" aria-label="Go to bottom" title="Go to bottom">↓<span>Bottom</span></button>
+</div>
+<script>
+(()=>{
+  const init=()=>{
+    const footerActions=document.querySelector('.ozz-bottom-actions');
+    if(!footerActions||!('IntersectionObserver' in window)) return;
+    const io=new IntersectionObserver(entries=>{
+      document.body.classList.toggle('ozz-footer-actions-visible',entries.some(e=>e.isIntersecting));
+    },{threshold:0.01});
+    io.observe(footerActions);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0));
+  else setTimeout(init,0);
+})();
+</script>
 </body>
 </html>
