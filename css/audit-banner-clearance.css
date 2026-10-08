@@ -1,0 +1,12 @@
+/* Keep the temporary notice and callback controls clear of the site navigation.
+   Only applies while a temporary notice exists; normal header layout is unchanged. */
+@media (min-width: 801px) {
+  body:has(.ozz-work-banner) > .nav {
+    position: relative;
+  }
+}
+@media (max-width: 800px) {
+  body:has(.ozz-work-banner) .ozz-work-banner {
+    margin-top: 88px;
+  }
+}
