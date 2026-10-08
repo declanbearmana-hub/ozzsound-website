@@ -54,12 +54,15 @@ test('mobile pages do not overflow horizontally', async ({ page }, testInfo) => 
   }
 });
 
-test('development pages clearly show their holding notice', async ({ page }) => {
-  for (const path of ['/corporate.html','/sporting-events.html','/virtual-setup.html']) {
-    await page.goto(path);
-    await expect(page.locator('.developmentGate')).toBeVisible();
-    await expect(page.locator('.developmentGate')).toContainText('still being developed');
-  }
+test('development pages show their current intended state', async ({ page }) => {
+  await page.goto('/sporting-events.html');
+  await expect(page.locator('.developmentGate')).toBeVisible();
+  await expect(page.locator('.developmentGate')).toContainText('still being developed');
+  await page.goto('/corporate.html');
+  await expect(page.locator('#corporateBuilder')).toBeAttached();
+  await page.goto('/virtual-setup.html');
+  await expect(page.locator('.vsBuildNotice')).toContainText('Development preview');
+  await expect(page.locator('#setupCanvas')).toBeAttached();
 });
 
 test('core customer journeys keep their enquiry routes', async ({ page }) => {
