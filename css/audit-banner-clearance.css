@@ -1,11 +1,11 @@
-/* Keep the temporary notice and callback controls clear of the site navigation.
-   Only applies while a temporary notice exists; normal header layout is unchanged. */
+/* Keep the temporary maintenance notice and callback controls clear of the header.
+   Preserve normal sticky navigation once scrolling begins. */
 @media (min-width: 801px) {
-  body:has(.ozz-work-banner) > .nav {
+  body:has(.ozz-work-banner) > .nav:not(.nav-scrolled) {
     position: relative;
   }
 }
-@media (max-width: 800px) {
+@media (min-width: 651px) and (max-width: 800px) {
   body:has(.ozz-work-banner) .ozz-work-banner {
     margin-top: 88px;
   }
