@@ -898,3 +898,13 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper{
 .homePage .flowCard:has(.flowCardPhoto)::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,6,9,.96),rgba(5,6,9,.25));pointer-events:none;z-index:0}
 .homePage .flowCard:hover .flowCardPhoto{transform:scale(1.06)}
 @media(prefers-reduced-motion:reduce){.homePage .flowCardPhoto{transition:none}.homePage .flowCard:hover .flowCardPhoto{transform:none}}
+
+/* Reserve logo space before the maintenance notice at every viewport. */
+body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled){position:absolute!important;top:0;height:124px;min-height:124px;padding-block:12px}
+body:has(> .ozz-work-banner)>nav.nav .brand{display:flex;align-items:center}
+body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled) .logo{max-height:100px;object-fit:contain}
+body:has(>nav.nav)>.ozz-work-banner{margin-top:124px!important;padding-right:42px!important;z-index:8!important}
+.homePage:has(> .ozz-work-banner) .hero{padding-top:54px;min-height:clamp(560px,calc(88svh - 124px),736px)}
+.meetDazzPage:has(> .ozz-work-banner) .dazzHero{padding-top:64px}
+@media(max-width:800px){body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled){height:92px;min-height:92px;padding-block:10px}body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled) .logo{max-height:72px}body:has(>nav.nav)>.ozz-work-banner{margin-top:92px!important}.homePage:has(> .ozz-work-banner) .hero{padding-top:40px;min-height:620px}}
+@media(max-width:520px){body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled){height:80px;min-height:80px}body:has(> .ozz-work-banner)>nav.nav:not(.nav-scrolled) .logo{max-height:60px}body:has(>nav.nav)>.ozz-work-banner{margin-top:80px!important}}
