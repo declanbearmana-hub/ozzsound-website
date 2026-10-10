@@ -9,7 +9,7 @@ const publicPages = [
   ['home','/index.html'],['wedding','/wedding.html'],['parties','/party.html'],
   ['schools','/school-functions.html'],['seasonal','/seasonal.html'],['karaoke','/karaoke.html'],
   ['gear hire','/gear-hire.html'],['corporate','/corporate.html'],['sporting','/sporting-events.html'],
-  ['virtual setup','/virtual-setup.html'],['why OzzSound','/why-ozzsound.html'],
+  ['virtual setup','/virtual-setup.html'],['why OzzSound','/why-ozzsound.html'],['Meet Dazz','/meet-dazz.html'],
   ['event enquiry','/event-enquiry.html'],['gear enquiry','/enquiry.html'],
   ['karaoke enquiry','/karaoke-enquiry.html'],['my event','/my-event.html'],
   ['privacy','/privacy.html'],['terms','/terms.html'],['security','/security.html'],
@@ -256,4 +256,36 @@ test('karaoke builder carries music preferences into the unified final enquiry',
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Rock, Pop/);
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Birthday party/);
   await expect(page.locator('textarea[name="message"]')).toHaveValue(/Bon Jovi and Queen/);
+});
+
+test('Meet Dazz shows the supplied image and keeps the booking route', async ({ page }) => {
+  await page.goto('/meet-dazz.html');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Meet Dazz');
+  const portrait = page.locator('.dazzHero .dazzPortrait img');
+  await expect(portrait).toBeVisible();
+  await expect.poll(() => portrait.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(page.locator('.dazzTimeline li')).toHaveCount(3);
+  await expect(page.locator('.dazzHero a.btn.primary')).toHaveAttribute('href', 'event-enquiry.html');
+  await expect(page.locator('.decwebCredit')).toContainText('© 2026 DECWEB Digital Design');
+});
+
+test('Meet Dazz navigation works on desktop and mobile', async ({ page }, testInfo) => {
+  await page.goto('/index.html');
+  if (testInfo.project.name.startsWith('desktop-')) {
+    await page.locator('.aboutDrop .navDropButton').click();
+    await page.locator('.aboutDrop a[href="meet-dazz.html"]').click();
+  } else {
+    await page.locator('#menuToggle').click();
+    await page.locator('#mobileMenu a[href="meet-dazz.html"]').click();
+  }
+  await expect(page).toHaveURL(/meet-dazz\.html$/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+});
+
+test('Meet Dazz respects reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/meet-dazz.html');
+  const animation = await page.locator('.dazzHero .dazzPortrait img').evaluate(img => getComputedStyle(img).animationName);
+  expect(animation).toBe('none');
+  await expect(page.locator('.dazzIntro')).toBeVisible();
 });
