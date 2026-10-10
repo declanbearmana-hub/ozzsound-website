@@ -134,6 +134,10 @@ test('temporary website notice is below navigation and can be dismissed', async 
     return !!(nav && banner && (nav.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING));
   });
   expect(order, 'Website update notice should render after the navigation').toBeTruthy();
+  const [navBox, bannerBox] = await Promise.all([nav.boundingBox(), banner.boundingBox()]);
+  expect(bannerBox.y).toBeGreaterThanOrEqual(navBox.y + navBox.height - 1);
+  const logoBox = await page.locator('nav .logo').boundingBox();
+  expect(bannerBox.y).toBeGreaterThanOrEqual(logoBox.y + logoBox.height - 1);
   await banner.locator('.ozz-work-banner-close').click();
   await expect(banner).toHaveCount(0);
 });
@@ -271,7 +275,7 @@ test('Meet Dazz shows the supplied image and keeps the booking route', async ({ 
 
 test('Meet Dazz navigation works on desktop and mobile', async ({ page }, testInfo) => {
   await page.goto('/index.html');
-  if (testInfo.project.name.startsWith('desktop-')) {
+  if (!(await page.locator('#menuToggle').isVisible())) {
     await page.locator('.aboutDrop .navDropButton').click();
     await page.locator('.aboutDrop a[href="meet-dazz.html"]').click();
   } else {
