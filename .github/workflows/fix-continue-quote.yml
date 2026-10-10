@@ -1,97 +1,32 @@
-name: Fix Continue Quote button
+name: Verify Continue Quote button
 
 on:
   push:
     paths:
+      - 'admin/index.html'
       - '.github/workflows/fix-continue-quote.yml'
+  pull_request:
+    paths:
+      - 'admin/index.html'
+      - '.github/workflows/fix-continue-quote.yml'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  fix:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch Continue Quote behaviour
+      - name: Verify Continue Quote controls
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('admin/index.html')
-          s = p.read_text()
-          old = '''    async function startReview() {
-
-      if (
-        await updateEnquiryStatus(
-          "reviewing"
-        )
-      ) {
-
-        renderModalContent();
-
-        await renderUploadSections();
-      }
-    }
-'''
-          new = '''    async function startReview() {
-
-      if (!currentEnquiry) {
-        return;
-      }
-
-      const alreadyReviewing =
-        normaliseStatus(currentEnquiry.status) === "reviewing";
-
-      if (!alreadyReviewing) {
-        const updated =
-          await updateEnquiryStatus("reviewing");
-
-        if (!updated) {
-          return;
-        }
-
-        renderModalContent();
-        await renderUploadSections();
-      }
-
-      requestAnimationFrame(() => {
-        const quoteButton =
-          document.getElementById("saveQuoteButton");
-
-        const quoteSection =
-          quoteButton?.closest(".section-card") ||
-          document.getElementById("quoteItems");
-
-        quoteSection?.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-        const firstQuoteControl =
-          document.getElementById("inventorySelect") ||
-          document.getElementById("customItemName") ||
-          document.getElementById("customerQuoteComments");
-
-        if (firstQuoteControl && typeof firstQuoteControl.focus === "function") {
-          setTimeout(() => firstQuoteControl.focus({ preventScroll: true }), 350);
-        }
-      });
-    }
-'''
-          if old not in s:
-              raise SystemExit('Expected startReview function was not found; refusing unsafe patch')
-          p.write_text(s.replace(old, new, 1))
+          page = Path('admin/index.html').read_text(encoding='utf-8')
+          required = ['startReview', 'saveQuoteButton', 'scrollIntoView']
+          missing = [item for item in required if item not in page]
+          if missing:
+              raise SystemExit('Missing Continue Quote controls: ' + ', '.join(missing))
+          print('Continue Quote controls present')
           PY
-      - name: Verify patch
-        run: |
-          grep -q 'alreadyReviewing' admin/index.html
-          grep -q 'scrollIntoView' admin/index.html
-          grep -q 'id="saveQuoteButton"' admin/index.html
-      - name: Commit fix
-        run: |
-          git config user.name "Ozzsound Admin Fix"
-          git config user.email "actions@users.noreply.github.com"
-          git add admin/index.html
-          git commit -m "Fix Continue Quote navigation"
-          git push
-# trigger patch
