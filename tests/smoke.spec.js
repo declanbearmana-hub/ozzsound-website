@@ -54,11 +54,23 @@ test('mobile pages do not overflow horizontally', async ({ page }, testInfo) => 
   }
 });
 
-test('development pages clearly show their holding notice', async ({ page }) => {
-  for (const path of ['/corporate.html','/sporting-events.html','/virtual-setup.html']) {
-    await page.goto(path);
-    await expect(page.locator('.developmentGate')).toBeVisible();
-    await expect(page.locator('.developmentGate')).toContainText('still being developed');
+test('event pages show the appropriate current content', async ({ page }) => {
+  await page.goto('/corporate.html');
+  await expect(page.locator('.corpHero')).toBeVisible();
+  await expect(page.locator('.corpBuilder')).toBeVisible();
+
+  await page.goto('/sporting-events.html');
+  await expect(page.locator('.developmentGate')).toBeVisible();
+  await expect(page.locator('.developmentGate')).toContainText('still being developed');
+
+  await page.goto('/virtual-setup.html');
+  await expect(page.locator('.vsIntro h1')).toBeVisible();
+  await expect(page.locator('.vsBuildNotice')).toBeVisible();
+  const narrowScreen = await page.evaluate(() => window.innerWidth < 900);
+  if (narrowScreen) {
+    await expect(page.locator('#vsScreenGate')).toBeVisible();
+  } else {
+    await expect(page.locator('.vsWorkspace')).toBeVisible();
   }
 });
 
