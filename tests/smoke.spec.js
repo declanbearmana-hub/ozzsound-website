@@ -305,3 +305,26 @@ test('Meet Dazz respects reduced motion', async ({ page }) => {
   expect(animation).toBe('none');
   await expect(page.locator('.dazzIntro')).toBeVisible();
 });
+
+test('corporate cue planner carries the correct event type and schedule into enquiry', async ({ page }) => {
+  await page.goto('/corporate.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ozzsoundCorporateBuilder', JSON.stringify({
+    type:'Awards night',style:'Formal first, party later',organisation:'Example Organisation',
+    date:'2027-11-20',venue:'Example Function Centre',guests:'120',
+    requirements:['Awards walk-up music'],music:['Easy listening'],
+    cues:[{time:'18:00',moment:'Welcome speeches',signal:'MC signals DJ'},
+          {time:'19:00',moment:'Awards',signal:'Walk-up music'}],
+    notes:'Example planning notes'
+  })));
+  await page.goto('/event-enquiry.html?event=Corporate&from=corporate', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#eventType')).toHaveValue('Corporate Event');
+  await expect(page.locator('#eventDate')).toHaveValue('2027-11-20');
+  await expect(page.locator('[name="venue"]')).toHaveValue('Example Function Centre');
+  await expect(page.locator('[name="guests"]')).toHaveValue('120');
+  const message=page.locator('textarea[name="message"]');
+  await expect(message).toHaveValue(/Corporate Event Builder/);
+  await expect(message).toHaveValue(/Welcome speeches/);
+  await expect(message).toHaveValue(/MC signals DJ/);
+  await expect(message).toHaveValue(/Awards/);
+  await expect(message).toHaveValue(/Walk-up music/);
+});
