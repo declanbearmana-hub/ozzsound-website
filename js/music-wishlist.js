@@ -3,6 +3,27 @@
 const form=document.querySelector('#enquiryForm'),root=document.querySelector('#musicWishlist');
 if(!form||!root)return;
 const state={song:[],artist:[]};
+const artistArtworkCache=new Map();
+async function artistArtwork(artist,signal){
+ const id=artist.id;
+ if(!id)return '';
+ if(artistArtworkCache.has(id))return artistArtworkCache.get(id);
+ try{
+  const url='https://itunes.apple.com/lookup?'+new URLSearchParams({id:String(id),entity:'album',limit:'12',country:'AU'});
+  const response=await fetch(url,{signal});
+  if(!response.ok)return '';
+  const data=await response.json();
+  const album=(data.results||[]).find(x=>x.wrapperType==='collection'&&String(x.artistId)===String(id)&&x.artworkUrl100);
+  const art=album?.artworkUrl100||'';
+  artistArtworkCache.set(id,art);
+  return art;
+ }catch(e){return ''}
+}
+function artworkNode(item){
+ const img=document.createElement('img');img.alt='';img.loading='lazy';
+ if(item.art){img.src=item.art;return img}
+ const fallback=document.createElement('span');fallback.className='musicArtworkFallback';fallback.textContent='♫';fallback.setAttribute('aria-hidden','true');return fallback;
+}
 root.querySelectorAll('.musicPicker').forEach(picker=>{
  const kind=picker.dataset.kind,limit=Number(picker.dataset.limit),input=picker.querySelector('input'),results=picker.querySelector('.musicResults'),selected=picker.querySelector('.musicSelected'),count=picker.querySelector('.musicCount');
  let timer,controller,seq=0;
@@ -11,7 +32,7 @@ root.querySelectorAll('.musicPicker').forEach(picker=>{
   selected.replaceChildren();
   state[kind].forEach(item=>{
    const chip=document.createElement('div');chip.className='musicChip';
-   if(item.art){const img=document.createElement('img');img.src=item.art;img.alt='';img.loading='lazy';chip.append(img)}
+   chip.append(artworkNode(item));
    const label=document.createElement('span');label.textContent=item.name;chip.append(label);
    const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.setAttribute('aria-label','Remove '+item.name);
    remove.addEventListener('click',()=>{state[kind]=state[kind].filter(x=>key(x)!==key(item));render()});chip.append(remove);selected.append(chip);
@@ -26,7 +47,7 @@ root.querySelectorAll('.musicPicker').forEach(picker=>{
  }
  function resultButton(item){
   const btn=document.createElement('button');btn.type='button';btn.className='musicResult';btn.setAttribute('role','option');
-  if(item.art){const img=document.createElement('img');img.src=item.art;img.alt='';img.loading='lazy';btn.append(img)}
+  btn.append(artworkNode(item));
   const text=document.createElement('span');text.textContent=item.name;btn.append(text);btn.addEventListener('click',()=>add(item));return btn;
  }
  input.addEventListener('input',()=>{
@@ -45,7 +66,18 @@ root.querySelectorAll('.musicPicker').forEach(picker=>{
      if(!name)return;
      const id=kind==='song'?x.trackId:x.artistId;
      if(seen.has(id||name))return;seen.add(id||name);
-     results.append(resultButton({id,name,art:x.artworkUrl100||''}));
+     const item={id,name,art:x.artworkUrl100||''};
+     const btn=resultButton(item);results.append(btn);
+     if(kind==='artist'&&id){
+      artistArtwork(item,controller.signal).then(art=>{
+       if(!art||request!==seq)return;
+       item.art=art;
+       const image=artworkNode(item);
+       btn.firstElementChild?.replaceWith(image);
+       const selectedItem=state.artist.find(y=>key(y)===key(item));
+       if(selectedItem){selectedItem.art=art;render()}
+      });
+     }
     });
     if(!results.childElementCount)results.textContent='No matches. You can add your own entry below.';
    }catch(err){if(err.name!=='AbortError'&&request===seq)results.textContent='Search unavailable. You can add your own entry below.'}
