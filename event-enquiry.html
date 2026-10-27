@@ -75,6 +75,8 @@
 @media(max-width:600px){.enquiryExtras{padding:15px}.enquiryExtrasHead{display:block}.enquiryExtrasHead span{display:block;margin-top:4px}.enquiryExtraChips{display:grid;grid-template-columns:1fr 1fr}.enquiryExtra label{text-align:center;padding:11px 8px}}
 </style><style>.weddingContract{margin:14px 0;padding:24px;border:1px solid rgba(94,223,255,.25);border-radius:20px;background:#090c12}.weddingContractHead{display:flex;justify-content:space-between;gap:16px}.weddingContractHead small{color:#67dcff;font-weight:800;letter-spacing:.1em}.weddingContractHead h2{margin:5px 0}.weddingContractHead>span{font-size:11px;color:#8f9bad}.weddingContractParty{margin:18px 0;padding:14px;border-radius:12px;background:rgba(103,220,255,.06);line-height:1.55}.weddingContractTerms{margin:18px 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden}.weddingContractTerms summary{padding:14px 16px;cursor:pointer;font-weight:800}.weddingContractScroll{max-height:440px;overflow:auto;padding:0 18px 18px}.weddingContractScroll h3{font-size:14px;margin:18px 0 6px}.weddingContractScroll p{font-size:12px;line-height:1.6;color:#b5bfcd}.weddingContractFields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.weddingContractCheck{margin-top:14px}@media(max-width:650px){.weddingContract{padding:16px}.weddingContractHead,.weddingContractFields{display:grid;grid-template-columns:1fr}.weddingContractScroll{max-height:55vh}}</style><style id="musicWishlistStyles">
 .musicWishlist{grid-column:1/-1;margin:16px 0;padding:22px;border:1px solid #35435a;border-radius:18px;background:#0c111b;color:#f5f7fc}.musicWishlist h3{margin:0 0 8px}.musicWishlist p{color:#b9c5d6}.musicWishlist .musicSearch{width:100%;box-sizing:border-box;padding:13px;border-radius:10px;border:1px solid #64748b;background:#171e2b;color:white;font:inherit}.musicWishlist .musicResults{display:grid;gap:5px;margin-top:8px}.musicWishlist .musicResult{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:9px;border:1px solid #35435a;border-radius:10px;background:#172131;color:white;cursor:pointer}.musicWishlist .musicArtworkFallback{width:46px;height:46px;flex-shrink:0;display:grid;place-items:center;border-radius:6px;background:linear-gradient(135deg,#324663,#513c69);color:#fff;font-size:24px}.musicWishlist .musicResult img,.musicWishlist .musicChip img{width:46px;height:46px;object-fit:cover;border-radius:6px}.musicWishlist .musicResult span{flex:1}.musicWishlist .musicSelected{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.musicWishlist .musicChip{display:flex;align-items:center;gap:9px;padding:7px;border:1px solid #40516b;border-radius:10px;background:#182234}.musicWishlist .musicChip button{border:0;background:transparent;color:#ffb5cb;font-size:20px;cursor:pointer}.musicWishlist .musicCount{font-size:13px;color:#9fdbeb}.musicWishlist .musicManual{margin-top:8px;border:1px solid #6b819f;background:transparent;color:#fff;padding:8px 12px;border-radius:9px;cursor:pointer}@media(max-width:600px){.musicWishlist{padding:15px}.musicWishlist .musicResult{min-height:56px}}
+</style><style>
+.venueUploadCollapsible{padding:0!important;overflow:hidden}.venueUploadToggle{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:18px 20px;border:0;background:transparent;color:#fff;text-align:left;cursor:pointer;font:inherit}.venueUploadToggle strong{display:block;font-weight:800}.venueUploadToggle small{display:block;margin-top:5px;color:#9ab4cf;font-size:12px}.venueUploadToggleRight{display:flex;align-items:center;gap:14px;white-space:nowrap}.venueUploadChevron{font-size:25px;transition:transform .2s}.venueUploadToggle[aria-expanded="true"] .venueUploadChevron{transform:rotate(180deg)}#venueUploadContent{padding:0 18px 18px}#venueUploadContent[hidden]{display:none!important}.venueUploadToggle:focus-visible{outline:2px solid #28e6ff;outline-offset:-3px}
 </style></head>
 
 
@@ -504,10 +506,15 @@
         <!-- VENUE PHOTO / VIRTUAL SETUP -->
 
         <div
-          class="formWide weddingPhotoUpload enquiryUpload"
+          class="formWide weddingPhotoUpload enquiryUpload venueUploadCollapsible"
           id="enquiryAttachments"
         >
 
+          <button type="button" class="venueUploadToggle" id="venueUploadToggle" aria-expanded="false" aria-controls="venueUploadContent">
+            <span><strong>📷 Venue Photo &amp; Virtual Setup</strong><small>Optional — click to add venue photos or request setup guidance</small></span>
+            <span class="venueUploadToggleRight"><span class="photoCount" id="attachmentCount">0 photos</span><span aria-hidden="true" class="venueUploadChevron">⌄</span></span>
+          </button>
+          <div id="venueUploadContent" hidden>
           <div class="photoUploadHead">
 
             <div>
@@ -525,12 +532,7 @@
             </div>
 
 
-            <span
-              class="photoCount"
-              id="attachmentCount"
-            >
-              0 photos
-            </span>
+            
 
           </div>
 
@@ -639,6 +641,8 @@
             your event setup. Your original photo will remain separate
             from any virtual setup created by Ozzsound.
           </p>
+          </div>
+
 
         </div>
 
@@ -882,7 +886,16 @@
   });
 })();
 </script>
-<script>document.addEventListener('DOMContentLoaded',()=>{const type=document.querySelector('#eventType'),box=document.querySelector('#weddingContract');const sync=()=>{const wedding=(type?.value||new URLSearchParams(location.search).get('event')||'').toLowerCase()==='wedding';if(!box)return;box.hidden=!wedding;box.querySelectorAll('input[name="weddingClientAddress"],input[name="weddingSignature"],input[name="weddingTermsAccepted"]').forEach(x=>x.required=wedding);let d=null;try{d=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null')}catch(e){}const effects=(d?.extras||[]).some(x=>/smoke|fog|haze|bubble|laser|strobe/i.test(x));const ec=box.querySelector('#weddingEffectsCheck');if(ec){ec.hidden=!effects;const cb=ec.querySelector('input');if(cb)cb.required=wedding&&effects}};type?.addEventListener('change',sync);sync()});</script><script src="config/site-config.js"></script>
+<script>document.addEventListener('DOMContentLoaded',()=>{const type=document.querySelector('#eventType'),box=document.querySelector('#weddingContract');const sync=()=>{const wedding=(type?.value||new URLSearchParams(location.search).get('event')||'').toLowerCase()==='wedding';if(!box)return;box.hidden=!wedding;box.querySelectorAll('input[name="weddingClientAddress"],input[name="weddingSignature"],input[name="weddingTermsAccepted"]').forEach(x=>x.required=wedding);let d=null;try{d=JSON.parse(localStorage.getItem('ozzsoundWeddingBuilder')||'null')}catch(e){}const effects=(d?.extras||[]).some(x=>/smoke|fog|haze|bubble|laser|strobe/i.test(x));const ec=box.querySelector('#weddingEffectsCheck');if(ec){ec.hidden=!effects;const cb=ec.querySelector('input');if(cb)cb.required=wedding&&effects}};type?.addEventListener('change',sync);sync()});</script><script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const button=document.getElementById('venueUploadToggle'),panel=document.getElementById('venueUploadContent'),input=document.getElementById('attachmentPhotos');
+ if(!button||!panel)return;
+ const setOpen=open=>{button.setAttribute('aria-expanded',String(open));panel.hidden=!open};
+ button.addEventListener('click',()=>setOpen(button.getAttribute('aria-expanded')!=='true'));
+ input?.addEventListener('change',()=>{if(input.files?.length)setOpen(true)});
+});
+</script>
+<script src="config/site-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/music-wishlist.js?v=20261027-1"></script>
 <script src="js/main.js?v=20260921-wedding-contract1"></script>
