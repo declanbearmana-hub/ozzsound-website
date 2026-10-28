@@ -9,8 +9,10 @@ test('invoice builder requires admin access and calculates correctly for a manua
       auth: { getUser: async()=>({data:{user:{id:'test-admin'}}}) },
       rpc: async()=>({data:true}),
       from: (table)=>({
+        eq:()=>({maybeSingle:async()=>({data:null,error:null})}),
         select: () => ({
           order: ()=>({limit: async()=>({data:table==='invoices'?rows:[],error:null})}),
+          eq:()=>({maybeSingle:async()=>({data:null,error:null})}),
           single: async()=>({data:rows[rows.length-1],error:null})
         }),
         insert: (record)=>({select:()=>({single:async()=> {
