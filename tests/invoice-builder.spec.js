@@ -10,7 +10,7 @@ test('invoice builder requires admin access and calculates correctly for a manua
       rpc: async()=>({data:true}),
       from: (table)=>({
         select: () => ({
-          order: async()=>({data:table==='invoices'?rows:[],error:null}),
+          order: ()=>({limit: async()=>({data:table==='invoices'?rows:[],error:null})}),
           single: async()=>({data:rows[rows.length-1],error:null})
         }),
         insert: (record)=>({select:()=>({single:async()=> {
