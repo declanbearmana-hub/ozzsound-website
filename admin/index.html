@@ -1653,6 +1653,7 @@
       <button class="workspace-tab" data-admin-view="jobs">Jobs</button>
       <button class="workspace-tab" data-admin-view="calendar">Calendar</button>
       <button class="workspace-tab" data-admin-view="inventory">Inventory</button>
+      <button class="workspace-tab" data-admin-view="invoices">Invoices</button>
       <button class="workspace-tab" data-admin-view="settings">Settings</button>
     </nav>
 
@@ -4777,6 +4778,7 @@ const { createClient } =
         jobs:['Jobs','Confirmed Ozzsound bookings and upcoming work.'],
         calendar:['Calendar','Manage availability and confirmed booking dates.'],
         inventory:['Inventory','Manage Ozzsound equipment and stock.'],
+        invoices:['Invoices','Create, save and print invoices for all Ozzsound customers.'],
         settings:['Settings','Contract templates and less frequently used administration tools.']
       };
       const copy=titles[view]||titles.dashboard;
@@ -4854,6 +4856,7 @@ const { createClient } =
         if(activeAdminView==='dashboard')show=section==='dashboard';
         else if(activeAdminView==='calendar')show=section==='calendar';
         else if(activeAdminView==='settings')show=section==='settings';
+        else if(activeAdminView==='invoices')show=section==='invoices';
         else show=section==='enquiries';
         el.classList.toggle('admin-view-hidden',!show);
       });
@@ -4865,6 +4868,9 @@ const { createClient } =
       if(activeAdminView==='contracts'){
         statusFilter.value='all'; searchInput.value='';
         renderContracts();
+      }
+      if(activeAdminView==='invoices'){
+        if(window.OzzsoundInvoices?.open) window.OzzsoundInvoices.open();
       }
       if(activeAdminView==='inventory'){
         if(window.OzzsoundInventory?.open){
@@ -9908,6 +9914,7 @@ total,
   </script>
 
 <script src="inventory-module.js?v=20260924-2"></script>
+<script src="invoice-module.js?v=20261028-1"></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
  const sel=document.querySelector('#contractTemplateSelect'),title=document.querySelector('#contractTemplateTitle'),ver=document.querySelector('#contractTemplateVersion'),supplier=document.querySelector('#contractTemplateSupplier'),terms=document.querySelector('#contractTemplateTerms'),deposit=document.querySelector('#contractTemplateDeposit'),save=document.querySelector('#saveContractTemplate'),status=document.querySelector('#contractTemplateStatus');
